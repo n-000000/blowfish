@@ -1,0 +1,95 @@
+{{ define "main" }}
+  <div class="max-w-7xl mx-auto">
+    <h1 class="mt-8 mb-2 text-4xl font-extrabold text-neutral-900 dark:text-neutral">
+      {{ .Title }}
+    </h1>
+
+    {{/* Note: border-radius: 0 !important in musictide.css makes photos square, not circular */}}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+      {{ range where .Site.RegularPages "Section" "authors" }}
+        <div id="{{ .Title | urlize }}" class="flex gap-4 p-5 bg-neutral-100 dark:bg-neutral-800 scroll-mt-20">
+
+          {{/* Photo — use URL directly; R2 images are external and don't need Hugo processing */}}
+          {{ if .Params.photo }}
+            <img
+              src="{{ .Params.photo }}"
+              alt="{{ .Title }}"
+              class="shrink-0 w-20 h-20 rounded-full object-cover">
+          {{ else }}
+            <div class="shrink-0 w-20 h-20 rounded-full bg-neutral-300 dark:bg-neutral-600 flex items-center justify-center text-2xl font-bold text-neutral-600 dark:text-neutral-300">
+              {{ substr .Title 0 1 | upper }}
+            </div>
+          {{ end }}
+
+          {{/* Info */}}
+          <div class="flex-1 min-w-0">
+            <p class="text-lg font-bold text-neutral-900 dark:text-neutral-50 mb-1 mt-0">{{ .Title }}</p>
+
+            {{ if .Plain }}
+              <p class="text-sm text-neutral-600 dark:text-neutral-400 mb-3 mt-0 leading-normal">{{ .Plain }}</p>
+            {{ end }}
+
+            {{/* Social icons — each rendered only when field is non-empty */}}
+            <div class="flex gap-3 flex-wrap items-center">
+              {{ with .Params.email }}
+                <a href="mailto:{{ . }}" title="Email"
+                   class="text-neutral-500 dark:text-neutral-400 w-5 h-5 inline-flex items-center justify-center transition-colors hover:text-primary-500 dark:hover:text-primary-400">
+                  {{ partial "icon.html" "email" }}
+                </a>
+              {{ end }}
+              {{ with .Params.instagram }}
+                {{ $url := cond (strings.HasPrefix . "http") . (printf "https://instagram.com/%s" (strings.TrimPrefix . "@")) }}
+                <a href="{{ $url }}" target="_blank" rel="noopener noreferrer" title="Instagram"
+                   class="text-neutral-500 dark:text-neutral-400 w-5 h-5 inline-flex items-center justify-center transition-colors hover:text-primary-500 dark:hover:text-primary-400">
+                  {{ partial "icon.html" "instagram" }}
+                </a>
+              {{ end }}
+              {{ with .Params.facebook }}
+                {{ $url := cond (strings.HasPrefix . "http") . (printf "https://facebook.com/%s" (strings.TrimPrefix . "@")) }}
+                <a href="{{ $url }}" target="_blank" rel="noopener noreferrer" title="Facebook"
+                   class="text-neutral-500 dark:text-neutral-400 w-5 h-5 inline-flex items-center justify-center transition-colors hover:text-primary-500 dark:hover:text-primary-400">
+                  {{ partial "icon.html" "facebook" }}
+                </a>
+              {{ end }}
+              {{ with .Params.x_twitter }}
+                {{ $url := cond (strings.HasPrefix . "http") . (printf "https://x.com/%s" (strings.TrimPrefix . "@")) }}
+                <a href="{{ $url }}" target="_blank" rel="noopener noreferrer" title="X / Twitter"
+                   class="text-neutral-500 dark:text-neutral-400 w-5 h-5 inline-flex items-center justify-center transition-colors hover:text-primary-500 dark:hover:text-primary-400">
+                  {{ partial "icon.html" "x-twitter" }}
+                </a>
+              {{ end }}
+              {{ with .Params.bluesky }}
+                {{ $url := cond (strings.HasPrefix . "http") . (printf "https://bsky.app/profile/%s" (strings.TrimPrefix . "@")) }}
+                <a href="{{ $url }}" target="_blank" rel="noopener noreferrer" title="Bluesky"
+                   class="text-neutral-500 dark:text-neutral-400 w-5 h-5 inline-flex items-center justify-center transition-colors hover:text-primary-500 dark:hover:text-primary-400">
+                  {{ partial "icon.html" "bluesky" }}
+                </a>
+              {{ end }}
+              {{ with .Params.tiktok }}
+                {{ $url := cond (strings.HasPrefix . "http") . (printf "https://www.tiktok.com/@%s" (strings.TrimPrefix . "@")) }}
+                <a href="{{ $url }}" target="_blank" rel="noopener noreferrer" title="TikTok"
+                   class="text-neutral-500 dark:text-neutral-400 w-5 h-5 inline-flex items-center justify-center transition-colors hover:text-primary-500 dark:hover:text-primary-400">
+                  {{ partial "icon.html" "tiktok" }}
+                </a>
+              {{ end }}
+              {{ with .Params.youtube }}
+                {{ $url := cond (strings.HasPrefix . "http") . (printf "https://youtube.com/@%s" (strings.TrimPrefix . "@")) }}
+                <a href="{{ $url }}" target="_blank" rel="noopener noreferrer" title="YouTube"
+                   class="text-neutral-500 dark:text-neutral-400 w-5 h-5 inline-flex items-center justify-center transition-colors hover:text-primary-500 dark:hover:text-primary-400">
+                  {{ partial "icon.html" "youtube" }}
+                </a>
+              {{ end }}
+              {{ with .Params.spotify }}
+                <a href="{{ . }}" target="_blank" rel="noopener noreferrer" title="Spotify"
+                   class="text-neutral-500 dark:text-neutral-400 w-5 h-5 inline-flex items-center justify-center transition-colors hover:text-primary-500 dark:hover:text-primary-400">
+                  {{ partial "icon.html" "spotify" }}
+                </a>
+              {{ end }}
+            </div>
+          </div>
+
+        </div>
+      {{ end }}
+    </div>
+  </div>
+{{ end }}
