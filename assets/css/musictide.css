@@ -155,8 +155,6 @@ html {
 @media (min-width: 1536px) {
   .mt-card-grid--wide > * { flex: 0 0 calc(20% - 0.8rem); }
 }
-/* Override Blowfish's min-w-full on cards, which breaks flex sizing */
-.mt-card-grid .article-link--card { min-width: 0; }
 
 /* Partial last-row alignment */
 .mt-cards--left   { justify-content: flex-start; }
