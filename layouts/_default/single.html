@@ -14,7 +14,7 @@
     {{ end }}
 
     {{/* Header */}}
-    <header id="single_header" class="mt-5 max-w-prose">
+    <header id="single_header" class="mt-5">
       {{ if .Params.showBreadcrumbs | default (site.Params.article.showBreadcrumbs | default false) }}
         {{ partial "breadcrumbs.html" . }}
       {{ end }}
@@ -24,6 +24,18 @@
       <div class="mt-1 mb-6 text-base text-neutral-500 dark:text-neutral-400 print:hidden">
         {{ partial "article-meta/basic.html" (dict "context" . "scope" "single") }}
       </div>
+      {{- $ct := .Params.credit_texto -}}
+      {{- $cf := .Params.credit_fotos -}}
+      {{- $cv := .Params.credit_video -}}
+      {{- if or $ct $cf $cv }}
+        <p class="mt-1 mb-4 text-sm text-neutral-500 dark:text-neutral-400 print:hidden">
+          {{- if $ct }}Texto: {{ $ct }}{{ end -}}
+          {{- if and $ct (or $cf $cv) }} · {{ end -}}
+          {{- if $cf }}Fotos: {{ $cf }}{{ end -}}
+          {{- if and $cf $cv }} · {{ end -}}
+          {{- if $cv }}Vídeo: {{ $cv }}{{ end -}}
+        </p>
+      {{- end }}
       {{ if not (.Params.showAuthorBottom | default (site.Params.article.showAuthorBottom | default false)) }}
         {{ template "SingleAuthor" . }}
       {{ end }}
@@ -43,21 +55,19 @@
         </div>
       {{ end }}
 
-
-      <div class="min-w-0 min-h-0 max-w-fit">
+      <div class="min-w-0 min-h-0">
         {{ partial "series/series.html" . }}
-        <div class="article-content max-w-prose mb-20">
+        <div class="article-content mb-8">
           {{ .Content }}
           {{ $defaultReplyByEmail := site.Params.replyByEmail }}
           {{ $replyByEmail := default $defaultReplyByEmail .Params.replyByEmail }}
           {{ if $replyByEmail }}
-            {{ $replySubject := i18n "article.reply_to" (dict "Title" .Title) | default (printf "Reply to %s" .Title) }}
             <strong class="block mt-8">
               <a
                 class="email-link m-1 rounded bg-neutral-300 p-1.5 text-neutral-700 hover:bg-primary-500 hover:text-neutral dark:bg-neutral-700 dark:text-neutral-300 dark:hover:bg-primary-400 dark:hover:text-neutral-800"
                 href="#"
                 data-email="{{ site.Params.Author.email | base64Encode }}"
-                data-subject="{{ replace $replySubject "\"" "'" }}">
+                data-subject="{{ replace (printf "Reply to %s" .Title) "\"" "'" }}">
                 {{ i18n "article.reply_by_email" | default "Reply by Email" }}
               </a>
               <noscript>
@@ -69,6 +79,7 @@
             </strong>
           {{ end }}
         </div>
+        {{ partial "article-gallery.html" . }}
         {{ if (.Params.showAuthorBottom | default (site.Params.article.showAuthorBottom | default false)) }}
           {{ template "SingleAuthor" . }}
         {{ end }}
@@ -79,7 +90,7 @@
     </section>
 
     {{/* Footer */}}
-    <footer class="pt-8 max-w-prose print:hidden">
+    <footer class="pt-8 print:hidden">
       {{ partial "article-pagination.html" . }}
       {{ if .Params.showComments | default (site.Params.article.showComments | default false) }}
         {{ if templates.Exists "partials/comments.html" }}
@@ -124,7 +135,7 @@
       {{ end }}
 
       {{ $finalLink := $taxonomyLink }}
-      {{ $currentLang := site.Language.Name }}
+      {{ $currentLang := site.Language.Lang }}
       {{ if eq site.LanguagePrefix "" }}
         {{ $finalLink = printf "%sauthors/%s/" $baseURL $author }}
       {{ else }}
