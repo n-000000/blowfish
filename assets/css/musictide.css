@@ -224,21 +224,6 @@ body::after {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   CHROME — header, language switcher
-   ═══════════════════════════════════════════════════════════ */
-
-/* Transparent fixed header */
-header nav,
-header > div {
-  background: transparent !important;
-}
-
-/* Hide language switcher (no EN content yet) */
-.translation {
-  display: none !important;
-}
-
-/* ═══════════════════════════════════════════════════════════
    RESPONSIVE DESIGN - handlres
    ═══════════════════════════════════════════════════════════ */
 
