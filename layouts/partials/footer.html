@@ -1,4 +1,9 @@
-<footer id="site-footer" class="py-10 print:hidden">
+{{- $showContent := or
+  (.Site.Params.footer.showMenu | default true)
+  (.Site.Params.footer.showCopyright | default true)
+  (.Site.Params.footer.showScrollToTop | default true)
+-}}
+<footer id="site-footer"{{ if $showContent }} class="py-10 print:hidden"{{ end }}>
   {{/* Footer menu */}}
   {{ if .Site.Params.footer.showMenu | default true }}
     {{ if .Site.Menus.footer }}
