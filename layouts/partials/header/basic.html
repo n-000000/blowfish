@@ -4,7 +4,7 @@
     {{ if $logo }}
       <div>
         <a href="{{ "" | relLangURL }}" class="flex">
-          <span class="sr-only">{{ .Site.Title | markdownify }}</span>
+          <span class="sr-only">{{ hugo.Data.style.site_name | default .Site.Title | markdownify }}</span>
           {{ if eq $logo.MediaType.SubType "svg" }}
             <span class="logo object-scale-down object-left nozoom">
               {{ $logo.Content | safeHTML }}
@@ -14,7 +14,7 @@
               src="{{ $logo.RelPermalink }}"
               width="{{ div $logo.Width 2 }}"
               height="{{ div $logo.Height 2 }}"
-              class="logo max-h-20 max-w-20 object-scale-down object-left nozoom"
+              class="logo max-h-10 max-w-56 object-scale-down object-left nozoom"
               alt="">
           {{ end }}
         </a>
@@ -23,7 +23,7 @@
   {{ end }}
   {{ if not .Site.Params.disableTextInHeader | default true }}
     <a href="{{ "" | relLangURL }}" class="text-base font-medium truncate min-w-0 shrink">
-      {{ .Site.Title | markdownify }}
+      {{ hugo.Data.style.site_name | default .Site.Title | markdownify }}
     </a>
   {{ end }}
   <div class="flex items-center ms-auto">
