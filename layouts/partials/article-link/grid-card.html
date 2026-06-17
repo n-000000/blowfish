@@ -1,0 +1,44 @@
+{{- /*
+  article-link/grid-card.html — mini-hero card for the homepage grid.
+  Image fills the cell (absolute, object-cover). Category badge + title overlaid.
+  No summary. No date. No author. No meta.
+
+  Called with: (dict "Page" $page "categoryColor" $color)
+  The wrapper div (.mt-grid-item) is rendered by the CALLER so that
+  display:contents on #mt-article-grid propagates correctly to the parent grid.
+*/ -}}
+{{- $page          := .Page -}}
+{{- $categoryColor := .categoryColor | default "" -}}
+
+{{- $featuredURL := "" -}}
+{{- if not ($page.Params.hideFeatureImage | default false) -}}
+  {{- $img := partial "resolve-feature-image.html" (dict
+    "Page"       $page
+    "Globs"      (slice "*feature*" "*cover*" "*thumbnail*")
+    "DefaultKey" "defaultFeaturedImage"
+    "Resize"     "600x"
+  ) -}}
+  {{- with $img -}}{{- $featuredURL = .URL -}}{{- end -}}
+{{- end -}}
+
+<a
+  href="{{ $page.RelPermalink }}"
+  class="block absolute inset-0 no-underline overflow-hidden"
+  tabindex="0">
+  {{- if $featuredURL }}
+    <img
+      src="{{ $featuredURL }}"
+      class="nozoom absolute inset-0 w-full h-full object-cover"
+      loading="lazy"
+      decoding="async"
+      role="presentation"
+      alt="">
+  {{- else }}
+    <div class="absolute inset-0 bg-neutral-800"></div>
+  {{- end }}
+  <div class="mt-grid-overlay"></div>
+  <div class="mt-grid-content">
+    {{ partial "category-badge.html" $page }}
+    <h2 class="mt-grid-title">{{ $page.Title | emojify }}</h2>
+  </div>
+</a>
