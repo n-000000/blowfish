@@ -1,7 +1,12 @@
 {{- /*
   header/banner.html — full-viewport-width animated logo banner.
   Desktop: 15svh, glass effect (backdrop-blur), animated WebP logo.
-  Mobile: same height, includes hamburger + search on right edge.
+  Mobile: same height, hamburger toggle on right edge.
+
+  IMPORTANT: The peer checkbox input is emitted BEFORE mt-site-banner and BEFORE
+  the mobile-menu.html partial call so all three are siblings in the parent fixed div
+  (rendered by fixed.html). This makes the Tailwind peer-checked: CSS sibling selector
+  work correctly — input and drawer share the same parent.
 */ -}}
 {{- $bannerLogoName := .Site.Params.banner_logo | default "" -}}
 {{- $bannerLogo := "" -}}
@@ -9,6 +14,11 @@
   {{- with resources.Get $bannerLogoName -}}
     {{- $bannerLogo = .RelPermalink -}}
   {{- end -}}
+{{- end -}}
+
+{{- /* Peer checkbox: must be a previous sibling of peer-checked targets in mobile-menu.html */ -}}
+{{- if or .Site.Menus.main .Site.Menus.subnavigation -}}
+<input type="checkbox" id="mobile-menu-toggle" autocomplete="off" class="hidden peer">
 {{- end -}}
 
 <div class="mt-site-banner">
@@ -35,22 +45,24 @@
     {{- end }}
   </a>
 
-  {{- /* Mobile controls: search + hamburger (rendered on mobile only) */ -}}
+  {{- /* Mobile controls: search + hamburger label (mobile only) */ -}}
   <div class="mt-banner-mobile-controls md:hidden">
     {{ if .Site.Params.enableSearch | default false }}
       <button
         id="search-button-mobile"
-        aria-label="Pesquisar"
+        aria-label="{{ i18n "search.open_button_title" }}"
         class="flex items-center justify-center text-white/80 hover:text-white">
         {{ partial "icon.html" "search" }}
       </button>
     {{ end }}
 
     {{- if or .Site.Menus.main .Site.Menus.subnavigation -}}
-      <input type="checkbox" id="mobile-menu-toggle" autocomplete="off" class="hidden peer">
       <label for="mobile-menu-toggle" class="flex items-center justify-center cursor-pointer text-white/80 hover:text-white">
         {{ partial "icon.html" "bars" }}
       </label>
     {{- end }}
   </div>
 </div>
+
+{{- /* Mobile drawer: sibling to input above → peer-checked: CSS selector resolves correctly */ -}}
+{{ partial "header/components/mobile-menu.html" . }}

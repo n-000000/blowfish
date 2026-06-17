@@ -7,6 +7,9 @@
   --mt-max-width: 1600px;
   --mt-gutter: 30px;
   --mt-cat-bg-opacity: 0.90;
+  --mt-banner-h: 15svh;
+  --mt-nav-h: 5svh;
+  --mt-header-h: calc(var(--mt-banner-h) + var(--mt-nav-h));
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -14,7 +17,7 @@
    ═══════════════════════════════════════════════════════════ */
 
 .mt-site-banner {
-  height: 15svh;
+  height: var(--mt-banner-h);
   width: 100%;
   position: relative;
   display: flex;
@@ -54,7 +57,7 @@
 
 /* ── Nav strip (desktop, 5svh) ───────────────────────────── */
 .mt-nav-strip {
-  height: 5svh;
+  height: var(--mt-nav-h);
   min-height: 2.5rem;
   display: flex;
   align-items: center;
@@ -72,12 +75,12 @@
 
 /* ── Header spacer — prevents content hiding under fixed header ── */
 .mt-header-spacer {
-  height: 20svh;
+  height: var(--mt-header-h);
 }
 
 @media (max-width: 767px) {
   .mt-header-spacer {
-    height: 15svh;
+    height: var(--mt-banner-h);
   }
 }
 

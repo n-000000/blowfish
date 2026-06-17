@@ -10,7 +10,7 @@
   .Site.Params.enableA11y
 -}}
 {{ if .Site.Params.footer.showAppearanceSwitcher | default false }}
-<div class="hidden peer-checked:flex fixed inset-x-0 top-0 z-40 pt-[15svh] items-start justify-end px-4 pointer-events-none">
+<div class="hidden peer-checked:flex fixed inset-x-0 top-0 z-40 items-start justify-end px-4 pointer-events-none" style="padding-top: var(--mt-banner-h);">
   <button
     id="appearance-switcher-mobile"
     type="button"
@@ -24,7 +24,7 @@
 
 <nav
   class="hidden peer-checked:block fixed inset-x-0 z-40 overflow-y-auto"
-  style="top: 20svh; max-height: calc(100svh - 20svh);"
+  style="top: var(--mt-header-h); max-height: calc(100svh - var(--mt-header-h));"
   aria-label="Mobile navigation">
   <div class="backdrop-blur-xl bg-neutral-900/90 dark:bg-neutral-900/95 px-6 py-4">
     {{ if .Site.Menus.main }}
