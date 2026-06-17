@@ -1,12 +1,30 @@
-<div class="min-h-[148px]"></div>
-<div class="fixed inset-x-0 z-100">
-  <div
-    id="menu-blur"
-    class="absolute opacity-0 inset-x-0 top-0 h-full single_hero_background nozoom backdrop-blur-2xl shadow-2xl"></div>
-  <div class="relative m-auto leading-7 max-w-7xl px-6 sm:px-14 md:px-24 lg:px-32">
-    {{ partial "header/basic.html" . }}
+{{- /*
+  header/fixed.html — musictide fixed header.
+  Structure:
+    - Banner (15svh, full width, glass, animated logo) — fixed top:0
+    - Nav strip (5svh, full width, glass, menu links) — fixed top:15svh, desktop only
+  Mobile: banner includes hamburger; nav strip hidden.
+  Body spacer below prevents content from hiding under the header.
+*/ -}}
+
+{{- /* ── Body spacer: reserves space for the fixed header ── */ -}}
+<div class="mt-header-spacer"></div>
+
+{{- /* ── Banner ─────────────────────────────────────────────── */ -}}
+<div class="fixed inset-x-0 top-0 z-50">
+  {{ partial "header/banner.html" . }}
+</div>
+
+{{- /* ── Nav strip (desktop) + mobile drawer ─────────────────── */ -}}
+<div class="fixed inset-x-0 z-49" style="top: 15svh;">
+  <div class="mt-nav-strip">
+    <div class="relative m-auto leading-7 max-w-7xl px-6 sm:px-14 md:px-24 lg:px-32">
+      {{ partial "header/basic.html" . }}
+    </div>
   </div>
 </div>
+
+{{- /* ── Background blur overlay (for article hero scroll effect) ─ */ -}}
 {{ $backgroundBlur := resources.Get "js/background-blur.js" }}
 {{ $backgroundBlur = $backgroundBlur | resources.Minify | resources.Fingerprint (.Site.Params.fingerprintAlgorithm | default "sha512") }}
 <script

@@ -1,31 +1,11 @@
+{{- /*
+  header/basic.html — nav strip content only (no logo, no mobile hamburger).
+  Logo moved to header/banner.html. Mobile hamburger moved to banner.html.
+  This file renders:
+    - Desktop: horizontal nav links + optional search/appearance switcher
+    - Mobile: the slide-in drawer menu (triggered by checkbox in banner)
+*/ -}}
 <div class="main-menu flex items-center w-full gap-2 p-1 pl-0">
-  {{ if .Site.Params.Logo }}
-    {{ $logo := resources.Get .Site.Params.Logo }}
-    {{ if $logo }}
-      <div>
-        <a href="{{ "" | relLangURL }}" class="flex">
-          <span class="sr-only">{{ hugo.Data.style.site_name | default .Site.Title | markdownify }}</span>
-          {{ if eq $logo.MediaType.SubType "svg" }}
-            <span class="logo object-scale-down object-left nozoom">
-              {{ $logo.Content | safeHTML }}
-            </span>
-          {{ else }}
-            <img
-              src="{{ $logo.RelPermalink }}"
-              width="{{ div $logo.Width 2 }}"
-              height="{{ div $logo.Height 2 }}"
-              class="logo max-h-10 max-w-56 object-scale-down object-left nozoom"
-              alt="">
-          {{ end }}
-        </a>
-      </div>
-    {{ end }}
-  {{ end }}
-  {{ if not .Site.Params.disableTextInHeader | default true }}
-    <a href="{{ "" | relLangURL }}" class="text-base font-medium truncate min-w-0 shrink">
-      {{ hugo.Data.style.site_name | default .Site.Title | markdownify }}
-    </a>
-  {{ end }}
   <div class="flex items-center ms-auto">
     <div class="hidden md:flex">
       {{ partial "header/components/desktop-menu.html" . }}
@@ -37,10 +17,7 @@
 </div>
 
 {{ if .Site.Menus.subnavigation }}
-  <div
-    class="main-menu flex pb-3 flex-col items-end justify-between md:justify-start space-x-3 {{ if .Site.Params.Logo }}
-      -mt-[15px]
-    {{ end }}">
+  <div class="main-menu flex pb-3 flex-col items-end justify-between md:justify-start space-x-3">
     <div class="hidden md:flex items-center space-x-5">
       {{ range .Site.Menus.subnavigation }}
         <a
@@ -68,15 +45,11 @@
     (function () {
       var mainmenu = document.querySelector(".main-menu");
       if (!mainmenu) return;
-
       var path = window.location.pathname;
       var links = mainmenu.querySelectorAll('a[href="' + path + '"]');
-
       links.forEach(function (link) {
         var targets = link.querySelectorAll("span");
-        targets.forEach(function (el) {
-          el.classList.add("active");
-        });
+        targets.forEach(function (el) { el.classList.add("active"); });
       });
     })();
   </script>

@@ -9,6 +9,78 @@
   --mt-cat-bg-opacity: 0.90;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   SITE BANNER — animated logo strip (15svh, full width)
+   ═══════════════════════════════════════════════════════════ */
+
+.mt-site-banner {
+  height: 15svh;
+  width: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(14px) saturate(1.6);
+  -webkit-backdrop-filter: blur(14px) saturate(1.6);
+  background-color: rgba(0, 0, 0, 0.30);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mt-banner-logo-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 75%;
+  text-decoration: none;
+}
+
+.mt-banner-logo {
+  height: 100%;
+  width: auto;
+  max-width: 80vw;
+  object-fit: contain;
+}
+
+.mt-banner-mobile-controls {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.25rem;
+}
+
+/* ── Nav strip (desktop, 5svh) ───────────────────────────── */
+.mt-nav-strip {
+  height: 5svh;
+  min-height: 2.5rem;
+  display: flex;
+  align-items: center;
+  backdrop-filter: blur(14px) saturate(1.6);
+  -webkit-backdrop-filter: blur(14px) saturate(1.6);
+  background-color: rgba(0, 0, 0, 0.25);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+@media (max-width: 767px) {
+  .mt-nav-strip {
+    display: none;
+  }
+}
+
+/* ── Header spacer — prevents content hiding under fixed header ── */
+.mt-header-spacer {
+  height: 20svh;
+}
+
+@media (max-width: 767px) {
+  .mt-header-spacer {
+    height: 15svh;
+  }
+}
+
 /* ── Global zero border-radius ───────────────────────────── */
 *,
 *::before,
