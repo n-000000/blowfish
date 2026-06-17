@@ -416,11 +416,12 @@ body::after {
 }
 
 .mt-footer-top-btn svg {
+  transform: rotate(180deg);
   width: 1.25rem;
   height: 1.25rem;
 }
 
 /* Body padding so content clears the fixed footer */
 body {
-  padding-bottom: var(--mt-footer-h);
+  padding-bottom: max(var(--mt-footer-h), 2.25rem);
 }
