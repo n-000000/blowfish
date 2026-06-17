@@ -379,3 +379,48 @@ body::after {
 .dark .mt-ad-title {
   color: rgb(var(--color-neutral-100));
 }
+
+/* ═══════════════════════════════════════════════════════════
+   FIXED FOOTER — 5svh, glass, max blur
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  --mt-footer-h: 5svh;
+}
+
+.mt-fixed-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--mt-footer-h);
+  min-height: 2.25rem;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  backdrop-filter: blur(24px) saturate(2);
+  -webkit-backdrop-filter: blur(24px) saturate(2);
+  background-color: rgba(0, 0, 0, 0.45);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mt-footer-legal {
+  margin: 0;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 80%;
+}
+
+.mt-footer-top-btn svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Body padding so content clears the fixed footer */
+body {
+  padding-bottom: var(--mt-footer-h);
+}

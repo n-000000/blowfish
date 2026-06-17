@@ -1532,9 +1532,6 @@
   .overflow-visible {
     overflow: visible;
   }
-  .overflow-x-auto {
-    overflow-x: auto;
-  }
   .overflow-y-auto {
     overflow-y: auto;
   }
@@ -1940,9 +1937,6 @@
   }
   .text-center {
     text-align: center;
-  }
-  .text-end {
-    text-align: end;
   }
   .text-left {
     text-align: left;
@@ -2706,13 +2700,6 @@
       }
     }
   }
-  .hover\:decoration-2 {
-    &:hover {
-      @media (hover: hover) {
-        text-decoration-thickness: 2px;
-      }
-    }
-  }
   .hover\:underline-offset-2 {
     &:hover {
       @media (hover: hover) {
@@ -2830,19 +2817,9 @@
       transition-property: none;
     }
   }
-  .sm\:me-7 {
-    @media (width >= 640px) {
-      margin-inline-end: calc(var(--spacing) * 7);
-    }
-  }
   .sm\:mt-16 {
     @media (width >= 640px) {
       margin-top: calc(var(--spacing) * 16);
-    }
-  }
-  .sm\:mb-0 {
-    @media (width >= 640px) {
-      margin-bottom: calc(var(--spacing) * 0);
     }
   }
   .sm\:w-1\/2 {
@@ -2853,11 +2830,6 @@
   .sm\:grid-cols-2 {
     @media (width >= 640px) {
       grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-  .sm\:flex-row {
-    @media (width >= 640px) {
-      flex-direction: row;
     }
   }
   .sm\:overflow-hidden {
@@ -2884,13 +2856,6 @@
     @media (width >= 640px) {
       font-size: var(--text-lg);
       line-height: var(--tw-leading, var(--text-lg--line-height));
-    }
-  }
-  .sm\:last\:me-0 {
-    @media (width >= 640px) {
-      &:last-child {
-        margin-inline-end: calc(var(--spacing) * 0);
-      }
     }
   }
   .md\:-me-16 {
