@@ -571,12 +571,6 @@ body::after {
 }
 
 /* Body padding so content clears the fixed footer */
-/* max(70vw, 1280px) expands to 70% only on viewports > 1828px; smaller screens keep the 1280px cap */
-body,
-div.max-w-7xl {
-  max-width: max(70vw, 1280px) !important;
-}
-
 body {
   padding-bottom: max(var(--mt-footer-h), 2.25rem);
 }
