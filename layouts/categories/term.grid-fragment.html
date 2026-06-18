@@ -1,0 +1,38 @@
+{{- /*
+  categories/term.grid-fragment.html — bare grid cells for HTMX category filter on homepage.
+  Output format: grid-fragment (URL: /categories/{term}/grid-fragment.html)
+  Consumed by category-filter JS via htmx.ajax() targeting #mt-article-grid.
+  No month headers. No mt-card-grid wrapper. Bare .mt-grid-item divs only.
+  Ad slot at position index 6 on page 1 only.
+*/ -}}
+{{- $colorSlot := .Params.color | default "primary-500" -}}
+
+{{- $posts := where .Pages ".Params.draft" "ne" true -}}
+{{- $posts  = $posts.ByDate.Reverse -}}
+{{- $pager := .Paginate $posts 12 -}}
+
+{{- range $i, $page := $pager.Pages }}
+  {{- if and (eq $pager.PageNumber 1) (eq $i 6) }}
+<div class="mt-grid-item mt-grid-ad" data-ad-inject hidden>
+  <p class="mt-ad-label">Publicidade</p>
+  <a class="mt-ad-card" href="" target="_blank" rel="noopener noreferrer">
+    <img class="mt-ad-img" src="" alt="">
+    <p class="mt-ad-title"></p>
+  </a>
+</div>
+  {{- end }}
+<div class="mt-grid-item">
+  {{ partial "article-link/grid-card.html" (dict "Page" $page "categoryColor" $colorSlot) }}
+</div>
+{{- end }}
+
+{{- if $pager.HasNext }}
+<div
+  data-sentinel
+  style="grid-column: 1 / -1; height: 0; overflow: hidden;"
+  hx-get="{{ $pager.Next.URL }}"
+  hx-trigger="preempt"
+  hx-target="this"
+  hx-swap="outerHTML">
+</div>
+{{- end }}

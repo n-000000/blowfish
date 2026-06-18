@@ -1,0 +1,45 @@
+{{- /*
+  list.grid-fragment.html — bare grid cells for the homepage HTMX article grid.
+  Output format: grid-fragment (URL: /posts/grid-fragment.html)
+  Consumed by home/hero.html via hx-get="/posts/grid-fragment.html" into #mt-article-grid.
+  No month headers. No mt-card-grid wrapper. Bare .mt-grid-item divs only.
+  Ad slot injected at position index 6 (0-based) on page 1 → layout row [2, col3].
+*/ -}}
+{{- $posts := where (where site.RegularPages "Section" "posts") ".Params.draft" "ne" true -}}
+{{- $posts  = $posts.ByDate.Reverse -}}
+{{- /* Skip the hero (first/latest post shown in the 2×2 hero cell) */ -}}
+{{- $hero  := index $posts 0 -}}
+{{- if $hero }}{{- $posts = where $posts "Permalink" "ne" $hero.Permalink -}}{{- end -}}
+{{- $pager := .Paginate $posts 12 -}}
+
+{{- range $i, $page := $pager.Pages }}
+  {{- /* Ad slot after article index 5 (zero-based) on page 1 only */ -}}
+  {{- if and (eq $pager.PageNumber 1) (eq $i 6) }}
+<div class="mt-grid-item mt-grid-ad" data-ad-inject hidden>
+  <p class="mt-ad-label">Publicidade</p>
+  <a class="mt-ad-card" href="" target="_blank" rel="noopener noreferrer">
+    <img class="mt-ad-img" src="" alt="">
+    <p class="mt-ad-title"></p>
+  </a>
+</div>
+  {{- end }}
+  {{- $color := "" -}}
+  {{- with index $page.Params.categories 0 -}}
+    {{- $catPage := site.GetPage (printf "/categories/%s" (. | urlize)) -}}
+    {{- if $catPage -}}{{- $color = $catPage.Params.color | default "primary-500" -}}{{- end -}}
+  {{- end -}}
+<div class="mt-grid-item">
+  {{ partial "article-link/grid-card.html" (dict "Page" $page "categoryColor" $color) }}
+</div>
+{{- end }}
+
+{{- if $pager.HasNext }}
+<div
+  data-sentinel
+  style="grid-column: 1 / -1; height: 0; overflow: hidden;"
+  hx-get="{{ $pager.Next.URL }}"
+  hx-trigger="preempt"
+  hx-target="this"
+  hx-swap="outerHTML">
+</div>
+{{- end }}
