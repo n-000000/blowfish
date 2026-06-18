@@ -55,12 +55,12 @@
           alt="">
       {{- end }}
       <div class="mt-grid-overlay"></div>
-      <div class="mt-grid-content">
+      <div class="mt-hero-content">
         {{- if $latest }}
           {{ partial "category-badge.html" $latest }}
-          <h1 class="mt-grid-title">{{ $latest.Title }}</h1>
+          <h1 class="mt-hero-title">{{ $latest.Title }}</h1>
         {{- else }}
-          <h1 class="mt-grid-title">{{ site.Title }}</h1>
+          <h1 class="mt-hero-title">{{ site.Title }}</h1>
         {{- end }}
       </div>
     {{- if $latest }}</a>{{- else }}</div>{{- end }}

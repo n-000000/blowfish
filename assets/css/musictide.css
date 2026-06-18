@@ -254,8 +254,40 @@ html {
   pointer-events: none;
 }
 
-/* ── Card text content ───────────────────────────────────── */
-.mt-grid-content {
+/* ── Hero cell text content ──────────────────────────────── */
+.mt-hero-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .mt-hero-content { padding: 1.75rem; }
+}
+
+.mt-hero-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: white;
+  margin: 0;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.7);
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .mt-hero-title { font-size: 1.5rem; }
+}
+
+/* ── Article card text content ───────────────────────────── */
+.mt-article-content {
   position: absolute;
   inset: 0;
   display: flex;
@@ -265,20 +297,10 @@ html {
   padding: 0.6rem 0.75rem;
 }
 
-.mt-grid-title {
-  font-size: 1.1rem;
-  font-weight: 700;
-  line-height: 1.25;
-  color: white;
-  margin: 0;
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.7);
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+@media (min-width: 768px) {
+  .mt-article-content { padding: 0.75rem 1rem; }
 }
 
-/* Article grid card title — fixed size, independent of hero-cell overrides */
 .mt-article-title {
   font-size: 1rem;
   font-weight: 700;
@@ -290,23 +312,6 @@ html {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
-}
-
-@media (min-width: 768px) {
-  .mt-grid-title   { font-size: 1.5rem; }
-  .mt-grid-content { padding: 0.75rem 1rem; }
-}
-
-/* Hero cell text (larger) */
-.mt-hero-cell .mt-grid-content { padding: 1.25rem; }
-.mt-hero-cell .mt-grid-title   {
-  font-size: 1.1rem;
-  -webkit-line-clamp: 4;
-}
-
-@media (min-width: 768px) {
-  .mt-hero-cell .mt-grid-content { padding: 1.75rem; }
-  .mt-hero-cell .mt-grid-title   { font-size: 1.5rem; }
 }
 
 /* ── HTMX category filter transitions ─────────────────────── */
