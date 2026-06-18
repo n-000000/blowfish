@@ -4,6 +4,7 @@
 
 /* ── Layout tokens ───────────────────────────────────────── */
 :root {
+  --container-7xl: 80vw;
   --mt-max-width: max(90vw, 1600px);
   --mt-gutter: 30px;
   --mt-cat-bg-opacity: 0.90;
