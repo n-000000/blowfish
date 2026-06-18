@@ -265,6 +265,20 @@ html {
 }
 
 .mt-grid-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: white;
+  margin: 0;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.7);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Article grid card title — fixed size, independent of hero-cell overrides */
+.mt-article-title {
   font-size: 1rem;
   font-weight: 700;
   line-height: 1.25;
