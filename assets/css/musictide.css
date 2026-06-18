@@ -8,8 +8,8 @@
   --mt-max-width: max(90vw, 1600px);
   --mt-gutter: 30px;
   --mt-cat-bg-opacity: 0.90;
-  --mt-banner-h: 12svh;
-  --mt-nav-h: 3svh;
+  --mt-banner-h: max(12svh, 4rem);
+  --mt-nav-h: max(3svh, 2.5rem);
   --mt-header-h: calc(var(--mt-banner-h) + var(--mt-nav-h));
   --mt-card-padding-x: 0.75rem;
 }
