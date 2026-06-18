@@ -77,6 +77,7 @@
 /* ── Header spacer — prevents content hiding under fixed header ── */
 .mt-header-spacer {
   height: var(--mt-header-h);
+  flex-shrink: 0;
 }
 
 @media (max-width: 767px) {
@@ -257,7 +258,7 @@ html {
 }
 
 .mt-grid-title {
-  font-size: 0.75rem;
+  font-size: 1.1rem;
   font-weight: 700;
   line-height: 1.25;
   color: white;
@@ -270,7 +271,7 @@ html {
 }
 
 @media (min-width: 768px) {
-  .mt-grid-title   { font-size: 0.875rem; }
+  .mt-grid-title   { font-size: 1.5rem; }
   .mt-grid-content { padding: 0.75rem 1rem; }
 }
 
