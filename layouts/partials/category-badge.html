@@ -9,10 +9,10 @@
   Applied via a static CSS class (cat-bg--<slot>) defined in musictide.css.
 */ -}}
 {{- $page := . -}}
-{{- $badgeClass := "hero-badge" -}}
+{{- $badgeClass := "mt-hero-badge" -}}
 {{- if reflect.IsMap . -}}
   {{- $page = .page -}}
-  {{- $badgeClass = .badgeClass | default "hero-badge" -}}
+  {{- $badgeClass = .badgeClass | default "mt-hero-badge" -}}
 {{- end -}}
 {{- $cats := $page.Params.categories -}}
 {{- if $cats -}}

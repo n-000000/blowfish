@@ -156,7 +156,7 @@ html {
   padding: 2rem;
 }
 
-.hero-badge {
+.mt-hero-badge {
   display: inline-block;
   font-size: 0.875rem;
   font-weight: 700;
@@ -302,6 +302,7 @@ html {
 }
 
 .mt-article-title {
+  font-family: inherit;
   font-size: 1rem;
   font-weight: 700;
   line-height: 1.25;
