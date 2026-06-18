@@ -1,15 +1,21 @@
 {{- /*
   category-badge.html — renders a colored badge for the article's first category.
 
-  Usage: {{ partial "category-badge.html" . }}
-  Context: a Page (article).
+  Usage (hero/default):   {{ partial "category-badge.html" . }}
+  Usage (article cards):  {{ partial "category-badge.html" (dict "page" . "badgeClass" "mt-article-badge") }}
 
+  Context: a Page, or a dict with keys "page" and "badgeClass".
   Color comes from the category's _index.md `color` param (e.g. "primary-500").
   Applied via a static CSS class (cat-bg--<slot>) defined in musictide.css.
 */ -}}
-{{- $cats := .Params.categories -}}
+{{- $page := . -}}
+{{- $badgeClass := "hero-badge" -}}
+{{- if reflect.IsMap . -}}
+  {{- $page = .page -}}
+  {{- $badgeClass = .badgeClass | default "hero-badge" -}}
+{{- end -}}
+{{- $cats := $page.Params.categories -}}
 {{- if $cats -}}
-  {{- /* Handle both string ("Cultura") and array (["Cultura"]) formats */ -}}
   {{- $first := cond (reflect.IsSlice $cats) (index $cats 0) $cats -}}
   {{- $slug := $first | urlize -}}
   {{- $catPage := site.GetPage (printf "/categories/%s" $slug) -}}
@@ -17,5 +23,5 @@
   {{- if $catPage -}}
     {{- $colorSlot = $catPage.Params.color | default "primary-500" -}}
   {{- end -}}
-<span class="cat-bg--{{ $colorSlot }} text-neutral-100 hero-badge">{{ $first }}</span>
+<span class="cat-bg--{{ $colorSlot }} text-neutral-100 {{ $badgeClass }}">{{ $first }}</span>
 {{- end -}}

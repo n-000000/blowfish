@@ -38,7 +38,7 @@
   {{- end }}
   <div class="mt-grid-overlay"></div>
   <div class="mt-grid-content">
-    {{ partial "category-badge.html" $page }}
+    {{ partial "category-badge.html" (dict "page" $page "badgeClass" "mt-article-badge") }}
     <h2 class="mt-grid-title">{{ $page.Title | emojify }}</h2>
   </div>
 </a>
