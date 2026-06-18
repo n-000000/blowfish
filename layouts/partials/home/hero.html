@@ -1,121 +1,119 @@
 {{- /*
-  home/hero.html — musictide homepage layout.
+  home/hero.html — musictide homepage grid layout.
 
-  Two distinct images:
-    1. Hero (foreground)  — latest article's featureimage, clickable.
-    2. Page bg (fixed)    — homepage_image from data/style.yaml.
+  Desktop layout (4-column CSS grid):
+    Col:  1       2       3       4
+    Row1: HERO    HERO    Art1    Art2
+    Row2: HERO    HERO    Art3    Art4
+    Row3: Art5    Art6    Ad      Art7
+    Row4: Art8    Art9    Art10   Art11
+    ...
 
-  Cards grid below the hero, excluding the featured article.
+  Mobile layout (2-column CSS grid):
+    Row1: HERO (full width, col-span-2)
+    Row2: Art1    Art2
+    Row3: Art3    Art4
+    ...
+
+  Hero: always the latest post overall (no category filter).
+  #mt-article-grid: HTMX-replaceable; initially loads via sentinel from /posts/grid-fragment.html.
+  Category filter: JS intercepts nav link clicks → htmx.ajax() swaps #mt-article-grid innerHTML.
+  display:contents on #mt-article-grid lets children participate in parent grid.
 */ -}}
-{{- $siteStyle   := hugo.Data.style -}}
-{{- $isWide     := $siteStyle.wide_layout    | default false -}}
-{{- $isCards    := ne ($siteStyle.card_layout | default "cards") "list" -}}
-{{- $alignment  := $siteStyle.card_alignment | default "left" -}}
 
-{{- /* Latest non-draft post */ -}}
+{{- /* Latest non-draft post → hero */ -}}
 {{- $posts  := where (where site.RegularPages "Section" "posts") ".Params.draft" "ne" true -}}
 {{- $posts   = $posts.ByDate.Reverse -}}
 {{- $latest := index $posts 0 -}}
 
-{{- /* Resolve hero image via shared partial */ -}}
+{{- /* Hero image */ -}}
 {{- $heroURL := "" -}}
 {{- if $latest -}}
   {{- $img := partial "resolve-feature-image.html" (dict
     "Page"  $latest
     "Globs" (slice "*feature*" "*cover*" "*thumbnail*")
   ) -}}
-  {{- $heroURL = $img.URL -}}
+  {{- with $img -}}{{- $heroURL = .URL -}}{{- end -}}
 {{- end -}}
 
-{{- $pageBgURL := $siteStyle.homepage_image | default "" -}}
+<div class="mt-homepage-container">
+  <div class="mt-homepage-grid">
 
-{{- /* ── Fixed page background ───────────────────────────────── */ -}}
-{{- if $pageBgURL }}
-<div class="fixed inset-x-0 top-0 -z-10">
-  <img
-    id="background-image"
-    class="nozoom mt-img-flush h-[1000px] w-full object-cover"
-    src="{{ $pageBgURL }}"
-    role="presentation">
-  <div
-    class="from-neutral absolute inset-0 h-[1000px] bg-gradient-to-t to-transparent mix-blend-normal dark:from-neutral-800"></div>
-  <div
-    class="from-neutral absolute inset-0 h-[1000px] bg-gradient-to-t to-neutral-100 opacity-60 mix-blend-normal dark:from-neutral-800 dark:to-neutral-800"></div>
-</div>
-{{- end }}
-
-{{- /* ── Hero — latest article featureimage ───────────────────── */ -}}
-<article class="max-w-full">
-  <div class="relative">
-{{- if $isWide }}
-    <div class="mt-wide mt-breakout">
+    {{- /* ── Hero cell (spans 2×2 on desktop, full-width on mobile) ─ */ -}}
+    {{- if $latest }}
+    <a href="{{ $latest.Permalink }}" class="mt-hero-cell no-underline">
     {{- else }}
-    <div>
+    <div class="mt-hero-cell">
     {{- end }}
-
-      {{- if $latest }}
-      <a href="{{ $latest.Permalink }}" class="mt-hero-frame block relative no-underline shadow-xl">
-      {{- else }}
-      <div class="mt-hero-frame block relative shadow-xl">
+      {{- if $heroURL }}
+        <img
+          class="nozoom absolute inset-0 w-full h-full object-cover"
+          src="{{ $heroURL }}"
+          loading="eager"
+          decoding="async"
+          role="presentation"
+          alt="">
       {{- end }}
-
-        {{- if $heroURL }}
-        <div class="absolute inset-0">
-          <img
-            class="nozoom mt-img-flush h-full w-full object-cover"
-            src="{{ $heroURL }}"
-            role="presentation">
-        </div>
-        <div class="mt-hero-grad absolute inset-0"></div>
-        <div class="mt-hero-vignette absolute inset-0"></div>
+      <div class="mt-grid-overlay"></div>
+      <div class="mt-grid-content">
+        {{- if $latest }}
+          {{ partial "category-badge.html" $latest }}
+          <h1 class="mt-grid-title">{{ $latest.Title }}</h1>
+        {{- else }}
+          <h1 class="mt-grid-title">{{ site.Title }}</h1>
         {{- end }}
+      </div>
+    {{- if $latest }}</a>{{- else }}</div>{{- end }}
 
-        <div class="hero-content">
-          {{- if $latest }}
-            {{ partial "category-badge.html" $latest }}
-            <h1 class="hero-title text-neutral-100">
-              {{ $latest.Title }}
-            </h1>
-          {{- else }}
-            <h1 class="hero-title text-neutral-100">
-              {{ site.Title }}
-            </h1>
-          {{- end }}
-        </div>
-
-      {{- if $latest }}</a>{{- else }}</div>{{- end }}
+    {{- /* ── Article grid: HTMX-loaded, category-filterable ──────── */ -}}
+    <div
+      id="mt-article-grid"
+      style="display: contents;"
+      hx-target="this"
+      hx-swap="innerHTML transition:true">
+      {{- /* Initial sentinel: fires on load, loads first page of posts */ -}}
+      <div
+        data-sentinel
+        style="grid-column: 1 / -1; height: 0; overflow: hidden;"
+        hx-get="/posts/grid-fragment.html"
+        hx-trigger="load"
+        hx-target="this"
+        hx-swap="outerHTML">
+      </div>
     </div>
-  </div>
-</article>
 
-  {{ partial "ad-slot.html" . }}
+  </div>{{- /* .mt-homepage-grid */ -}}
+</div>{{- /* .mt-homepage-container */ -}}
 
-  {{- /* ── Infinite scroll feed ────────────────────────────────── */ -}}
-{{- /*
-  Initial sentinel — fires immediately on load (hx-trigger="load").
-  The fragment at /posts/fragment/ replaces this div via outerHTML swap.
-  Each subsequent fragment page injects its own sentinel (hx-trigger="preempt")
-  watched by the IntersectionObserver defined in extend-head.html.
-*/ -}}
-<div
-  data-sentinel
-  hx-get="/posts/fragment.html"
-  hx-trigger="load"
-  hx-target="this"
-  hx-swap="outerHTML">
-</div>
+{{- /* ── Category filter: intercept nav clicks on homepage ──── */ -}}
+<script>
+(function () {
+  function initCategoryFilter() {
+    var grid = document.getElementById('mt-article-grid');
+    if (!grid) return;
 
-{{- /* ── Background blur overlay ─────────────────────────────── */ -}}
-{{ if .Site.Params.homepage.layoutBackgroundBlur | default false }}
-  <div
-    id="background-blur"
-    class="fixed opacity-0 inset-x-0 top-0 h-full single_hero_background nozoom backdrop-blur-xl bg-neutral-100/75 dark:bg-neutral-800/60 -z-1"></div>
-  {{ $backgroundBlur := resources.Get "js/background-blur.js" }}
-  {{ $backgroundBlur = $backgroundBlur | resources.Minify | resources.Fingerprint (.Site.Params.fingerprintAlgorithm | default "sha512") }}
-  <script
-    type="text/javascript"
-    src="{{ $backgroundBlur.RelPermalink }}"
-    integrity="{{ $backgroundBlur.Data.Integrity }}"
-    data-blur-id="background-blur"
-    data-image-id="background-image"></script>
-{{ end }}
+    document.querySelectorAll('nav a[href*="/categories/"]').forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        if (!document.getElementById('mt-article-grid')) return;
+        e.preventDefault();
+        var href = link.getAttribute('href').replace(/\/?$/, '');
+        var fragUrl = href + '/grid-fragment.html';
+        htmx.ajax('GET', fragUrl, {
+          target: '#mt-article-grid',
+          swap: 'innerHTML transition:true'
+        });
+      });
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', initCategoryFilter);
+  document.addEventListener('htmx:afterSettle', initCategoryFilter);
+})();
+</script>
+
+{{- /* ── Prefetch: next grid pages + all category grid fragments ─── */ -}}
+<link rel="prefetch" href="/posts/grid-fragment.html" fetchpriority="high">
+{{- range site.Taxonomies.categories }}
+  {{- $termSlug := .Page.RelPermalink | strings.TrimSuffix "/" -}}
+  <link rel="prefetch" href="{{ $termSlug }}/grid-fragment.html" fetchpriority="low">
+{{- end }}
