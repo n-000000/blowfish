@@ -32,7 +32,6 @@
 .mt-banner-logo-link {
   display: flex;
   align-items: center;
-  justify-content: center;
   height: 75%;
   text-decoration: none;
 }
@@ -45,14 +44,16 @@
 }
 
 .mt-banner-mobile-controls {
-  position: absolute;
-  right: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
   display: flex;
   align-items: center;
   gap: 0.75rem;
   font-size: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .mt-banner-mobile-controls {
+    display: none;
+  }
 }
 
 /* ── Nav strip (desktop, 5svh) ───────────────────────────── */
@@ -251,6 +252,7 @@ html {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  align-items: flex-start;
   padding: 0.6rem 0.75rem;
 }
 
@@ -525,8 +527,6 @@ body::after {
   z-index: 50;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 1.5rem;
   backdrop-filter: blur(24px) saturate(2);
   -webkit-backdrop-filter: blur(24px) saturate(2);
   background-color: rgba(0, 0, 0, 0.45);

@@ -2,7 +2,7 @@
   Overrides Blowfish's desktop-menu.html.
   Adds category color to menu item text when the item links to a category page.
 */ -}}
-<nav class="flex items-center gap-x-5 h-12">
+<nav class="flex items-center gap-x-5">
   {{ if .Site.Menus.main }}
     {{ range .Site.Menus.main }}
       {{ template "DesktopMenu" . }}

@@ -6,16 +6,18 @@
 */ -}}
 
 <footer class="mt-fixed-footer print:hidden" role="contentinfo">
-  <p class="mt-footer-legal text-xs text-white/60">
-    &copy; {{ now.Format "2006" }} Espinho Magazine &mdash; Todos os direitos reservados
-  </p>
+  <div class="mx-auto max-w-7xl px-6 sm:px-14 md:px-24 lg:px-32 w-full flex items-center justify-between h-full">
+    <p class="mt-footer-legal text-xs text-white/60">
+      &copy; {{ now.Format "2006" }} Espinho Magazine &mdash; Todos os direitos reservados
+    </p>
 
-  <button
-    onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
-    aria-label="Voltar ao topo"
-    class="mt-footer-top-btn text-white/60 hover:text-white transition-colors">
-    {{ partial "icon.html" "chevron-down" }}
-  </button>
+    <button
+      onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+      aria-label="Voltar ao topo"
+      class="mt-footer-top-btn text-white/60 hover:text-white transition-colors">
+      {{ partial "icon.html" "chevron-down" }}
+    </button>
+  </div>
 </footer>
 
 {{- /* Extend footer */ -}}
