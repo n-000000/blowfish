@@ -179,12 +179,8 @@ html {
    HOMEPAGE GRID — 4-column, hero 2×2, mini-hero cards
    ═══════════════════════════════════════════════════════════ */
 
-/* Full-viewport-width breakout from constrained body */
 .mt-homepage-container {
-  width: 100vw;
-  position: relative;
-  left: 50%;
-  transform: translateX(-50%);
+  width: 100%;
 }
 
 /* ── Homepage grid: 2 cols mobile → 4 cols desktop ──────── */
