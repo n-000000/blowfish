@@ -1,0 +1,26 @@
+{{- /*
+  video-gallery.html — dedicated video playlist gallery.
+  Context: a dict with keys "videos" (slice of video URLs) and "site" (the Site,
+  passed in because .Site is unavailable inside a dict context).
+  Renders a native <video controls> main player; if >1 video, a thumbnail rail
+  (first-frame posters + ▶ overlay) swaps the main source on click.
+*/ -}}
+{{- $videos := .videos -}}
+{{- $site := .site -}}
+{{- with $videos -}}
+{{- $first := index . 0 -}}
+{{- $alg := $site.Params.fingerprintAlgorithm | default "sha512" -}}
+<div class="mt-video-gallery">
+  <video class="mt-video-main" controls preload="metadata" src="{{ $first }}"></video>
+  {{- if gt (len .) 1 }}
+  <div class="mt-video-rail">
+    {{- range $i, $v := . }}
+    <button type="button" class="mt-video-thumb{{ if eq $i 0 }} is-active{{ end }}" data-src="{{ $v }}" aria-label="Vídeo {{ add $i 1 }}">
+      <video muted preload="metadata" src="{{ $v }}#t=0.1"></video>
+    </button>
+    {{- end }}
+  </div>
+  {{- end }}
+</div>
+<script src="{{ (resources.Get "js/video-gallery.js" | resources.Minify | resources.Fingerprint $alg).RelPermalink }}"></script>
+{{- end -}}
