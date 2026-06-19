@@ -101,16 +101,12 @@
       </div>
     </div>
   {{ else }}
+    {{- /* Plain link: on the homepage the category-filter script intercepts these
+           (same as the hamburger menu) to filter the grid; elsewhere they navigate. */ -}}
     <a
       href="{{ .URL }}"
       {{ if or (strings.HasPrefix .URL "http:" ) (strings.HasPrefix .URL "https:" ) }}
         target="_blank"
-      {{ else }}
-        hx-get="{{ .URL }}"
-        hx-select="#main-content"
-        hx-target="#main-content"
-        hx-swap="outerHTML"
-        hx-push-url="true"
       {{ end }}
       class="flex items-center bf-icon-color-hover"
       {{ with or .Name .Pre }}aria-label="{{ . }}"{{ end }}

@@ -9,19 +9,8 @@
   .Site.Menus.subnavigation
   .Site.Params.enableA11y
 -}}
-{{ if .Site.Params.footer.showAppearanceSwitcher | default false }}
-<div class="hidden peer-checked:flex fixed inset-x-0 top-0 z-40 items-start justify-end px-4 pointer-events-none" style="padding-top: var(--mt-banner-h);">
-  <button
-    id="appearance-switcher-mobile"
-    type="button"
-    aria-label="Dark mode switcher"
-    class="pointer-events-auto mt-2 flex items-center justify-center text-neutral-900 hover:text-primary-600 dark:text-neutral-200 dark:hover:text-primary-400">
-    <div class="dark:hidden">{{ partial "icon.html" "moon" }}</div>
-    <div class="hidden dark:block">{{ partial "icon.html" "sun" }}</div>
-  </button>
-</div>
-{{ end }}
-
+{{- /* Appearance switcher lives in the banner mobile-controls (always visible);
+       no duplicate here — a second one (same id) popped up under the banner on open. */ -}}
 <nav
   class="hidden peer-checked:block fixed inset-x-0 z-40 overflow-y-auto"
   style="top: var(--mt-header-h); max-height: calc(100svh - var(--mt-header-h));"

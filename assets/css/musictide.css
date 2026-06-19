@@ -4,7 +4,7 @@
 
 /* ── Layout tokens ───────────────────────────────────────── */
 :root {
-  --container-7xl: 80vw;
+  --container-7xl: 100vw;  /* phone: body fills viewport */
   --mt-max-width: max(90vw, 1600px);
   --mt-gutter: 30px;
   --mt-cat-bg-opacity: 0.90;
@@ -12,14 +12,31 @@
   --mt-nav-h: max(3svh, 2.5rem);
   --mt-header-h: calc(var(--mt-banner-h) + var(--mt-nav-h));
   --mt-card-padding-x: 0.75rem;
+
+  /* Homepage grid thumbnail geometry — fixed on tablet+desktop, only the
+     phone single column resizes. article = 1 column; hero = 2 columns.
+     With gap 0, hero width is exactly 2 × col and every tile is exactly 3/2.
+     Set --mt-grid-gap to 2px for visible separation (hero becomes 2×col + gap). */
+  --mt-col-w: 292px;
+  --mt-grid-gap: 0px;
+  --mt-phone-card-w: 584px;   /* phone single column = hero width (2 × col) */
 }
 
-@media (min-width: 768px) {
-  :root { --mt-card-padding-x: 1rem; }
-}
+/* Non-home pages: keep content width modest (does not touch the homepage grid) */
+@media (min-width: 768px)  { :root { --container-7xl: 768px; } }
+@media (min-width: 1024px) { :root { --container-7xl: 1024px; } }
+@media (min-width: 1200px) { :root { --mt-card-padding-x: 1rem; } }
+
+/* Homepage: body width = the fixed-column grid's natural width, so grid,
+   header, and footer all share the same edges and margins absorb the rest.
+   tablet = 3 cols (876px @ gap 0); desktop = 4 cols (1168px @ gap 0).
+   Breakpoints sit just above content width to avoid desktop-scrollbar overflow. */
+.mt-home { --container-7xl: 100vw; }
+@media (min-width: 900px)  { .mt-home { --container-7xl: calc(3 * var(--mt-col-w) + 2 * var(--mt-grid-gap)); } }
+@media (min-width: 1200px) { .mt-home { --container-7xl: calc(4 * var(--mt-col-w) + 3 * var(--mt-grid-gap)); } }
 
 /* ═══════════════════════════════════════════════════════════
-   SITE BANNER — animated logo strip (15svh, full width)
+   SITE BANNER — animated logo strip
    ═══════════════════════════════════════════════════════════ */
 
 .mt-site-banner {
@@ -36,6 +53,9 @@
 }
 
 .mt-banner-logo-link {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
   display: flex;
   align-items: center;
   height: 75%;
@@ -45,24 +65,24 @@
 .mt-banner-logo {
   height: 100%;
   width: auto;
-  max-width: 80vw;
+  max-width: 100%;
   object-fit: contain;
 }
 
 .mt-banner-mobile-controls {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   gap: 0.75rem;
   font-size: 1.25rem;
 }
 
-@media (min-width: 768px) {
-  .mt-banner-mobile-controls {
-    display: none;
-  }
+/* Tablet+: hide banner controls (hamburger) — nav strip takes over */
+@media (min-width: 900px) {
+  .mt-banner-mobile-controls { display: none; }
 }
 
-/* ── Nav strip (desktop, 5svh) ───────────────────────────── */
+/* ── Nav strip (desktop only) ────────────────────────────── */
 .mt-nav-strip {
   height: var(--mt-nav-h);
   min-height: 2.5rem;
@@ -74,22 +94,32 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-@media (max-width: 767px) {
-  .mt-nav-strip {
-    display: none;
+/* Phone only: hide nav (tablet + desktop show the nav strip) */
+@media (max-width: 899px) {
+  .mt-nav-strip { display: none; }
+}
+
+/* ── Phone: align header/footer inner content with the centered grid ── */
+/* On phone the grid is capped at --mt-phone-card-w and centered; the   */
+/* fixed header/footer must match that same max-width + centering.       */
+@media (max-width: 899px) {
+  .mt-header-inner,
+  .mt-footer-inner {
+    max-width: var(--mt-phone-card-w);
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 
-/* ── Header spacer — prevents content hiding under fixed header ── */
+/* ── Header spacer ───────────────────────────────────────── */
 .mt-header-spacer {
   height: var(--mt-header-h);
   flex-shrink: 0;
 }
 
-@media (max-width: 767px) {
-  .mt-header-spacer {
-    height: var(--mt-banner-h);
-  }
+/* Phone only: no nav, spacer only needs banner height */
+@media (max-width: 899px) {
+  .mt-header-spacer { height: var(--mt-banner-h); }
 }
 
 /* ── Global zero border-radius ───────────────────────────── */
@@ -115,10 +145,9 @@ html {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   HERO — shared between homepage and article
+   HERO — article page hero (big.html)
    ═══════════════════════════════════════════════════════════ */
 
-/* ── Hero frame (homepage: clickable card, 16:9) ─────────── */
 .mt-hero-frame {
   aspect-ratio: 16 / 9;
   overflow: hidden;
@@ -131,7 +160,6 @@ html {
   }
 }
 
-/* ── Hero overlays ───────────────────────────────────────── */
 .mt-hero-grad {
   background: linear-gradient(
     to top,
@@ -150,7 +178,6 @@ html {
   );
 }
 
-/* ── Hero text content ───────────────────────────────────── */
 .hero-content {
   position: absolute;
   inset: 0;
@@ -159,17 +186,6 @@ html {
   justify-content: flex-end;
   align-items: flex-start;
   padding: 2rem;
-}
-
-.mt-hero-badge {
-  display: inline-block;
-  font-size: 0.875rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  padding: 0.25rem 0.75rem;
-  margin-bottom: 0.5rem;
-  text-shadow: none;
 }
 
 .hero-title {
@@ -181,49 +197,64 @@ html {
                0 0 60px rgba(0, 0, 0, 0.3);
 }
 
-.mt-article-badge {
-  display: inline-block;
-  font-size: 0.65rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  padding: 0.15rem 0.5rem;
-  margin-bottom: 0.25rem;
-  text-shadow: none;
+@media (min-width: 640px) {
+  .hero-content { padding: 3rem; }
+  .hero-title   { font-size: 3.75rem; }
+}
+@media (min-width: 1024px) {
+  .hero-content { padding: 4rem; }
+  .hero-title   { font-size: 4.5rem; }
 }
 
 /* ═══════════════════════════════════════════════════════════
-   HOMEPAGE GRID — 4-column, hero 2×2, mini-hero cards
+   HOMEPAGE GRID — phone 1-col → tablet 3-col → desktop 4-col
    ═══════════════════════════════════════════════════════════ */
 
+/* Phone: centered single column, hero-card width */
 .mt-homepage-container {
   width: 100%;
+  max-width: var(--mt-phone-card-w);
+  margin: 0 auto;
 }
 
-/* ── Homepage grid: 2 cols mobile → 4 cols desktop ──────── */
-.mt-homepage-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2px;
-}
-
-@media (min-width: 768px) {
-  .mt-homepage-grid {
-    grid-template-columns: repeat(4, 1fr);
+/* Tablet+: fill the body (which is now sized to the fixed-column grid) */
+@media (min-width: 900px) {
+  .mt-homepage-container {
+    max-width: 100%;
+    margin: 0;
   }
 }
 
-/* ── Hero cell: full-width on mobile, 2×2 on desktop ───── */
+/* Grid column count — phone single column fills the 584-capped container;
+   tablet/desktop use fixed 292px columns so thumbnails never resize. */
+.mt-homepage-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--mt-grid-gap);
+}
+
+@media (min-width: 900px) {
+  .mt-homepage-grid { grid-template-columns: repeat(3, var(--mt-col-w)); }
+}
+
+@media (min-width: 1200px) {
+  .mt-homepage-grid { grid-template-columns: repeat(4, var(--mt-col-w)); }
+}
+
+/* ── Hero cell ───────────────────────────────────────────── */
+
+/* Phone: full-width card, same aspect ratio as articles */
 .mt-hero-cell {
   display: block;
   position: relative;
   overflow: hidden;
   text-decoration: none;
   aspect-ratio: 3 / 2;
-  grid-column: 1 / 3;
+  grid-column: 1 / -1;
 }
 
-@media (min-width: 768px) {
+/* Tablet+: 2-col × 2-row span, height from grid rows (→ exactly 3/2) */
+@media (min-width: 900px) {
   .mt-hero-cell {
     grid-column: 1 / 3;
     grid-row: 1 / 3;
@@ -231,7 +262,7 @@ html {
   }
 }
 
-/* ── Grid article cell (1×1) ─────────────────────────────── */
+/* ── Grid article cell ───────────────────────────────────── */
 .mt-grid-item {
   position: relative;
   overflow: hidden;
@@ -246,7 +277,7 @@ html {
   background: rgba(var(--color-neutral-800), 0.6);
 }
 
-/* ── Gradient overlay (shared by hero-cell + grid-item) ──── */
+/* ── Gradient overlay ────────────────────────────────────── */
 .mt-grid-overlay {
   position: absolute;
   inset: 0;
@@ -259,7 +290,7 @@ html {
   pointer-events: none;
 }
 
-/* ── Hero cell text content ──────────────────────────────── */
+/* ── Homepage hero cell text ─────────────────────────────── */
 .mt-hero-content {
   position: absolute;
   inset: 0;
@@ -270,12 +301,23 @@ html {
   padding: 1.25rem var(--mt-card-padding-x);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 900px) {
   .mt-hero-content { padding: 1.75rem var(--mt-card-padding-x); }
 }
 
+.mt-hero-badge {
+  display: inline-block;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0.25rem 0.75rem;
+  margin-bottom: 0.5rem;
+  text-shadow: none;
+}
+
 .mt-hero-title {
-  font-size: 1.1rem;
+  font-size: 1.75rem;
   font-weight: 700;
   line-height: 1.25;
   color: white;
@@ -287,11 +329,13 @@ html {
   overflow: hidden;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 900px) {
   .mt-hero-title { font-size: 1.5rem; }
 }
 
-/* ── Article card text content ───────────────────────────── */
+/* ── Article card text ───────────────────────────────────── */
+
+/* Phone default: hero-sized treatment — articles look exactly like the hero */
 .mt-article-content {
   position: absolute;
   inset: 0;
@@ -299,29 +343,56 @@ html {
   flex-direction: column;
   justify-content: flex-end;
   align-items: flex-start;
-  padding: 0.6rem var(--mt-card-padding-x);
+  padding: 1.25rem var(--mt-card-padding-x);
 }
 
-@media (min-width: 768px) {
-  .mt-article-content { padding: 0.75rem var(--mt-card-padding-x); }
+.mt-article-badge {
+  display: inline-block;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0.25rem 0.75rem;
+  margin-bottom: 0.5rem;
+  text-shadow: none;
 }
 
 .mt-article-title {
-  font-family: inherit;
-  font-size: 1rem;
+  font-size: 1.75rem;
   font-weight: 700;
   line-height: 1.25;
-  height: 2.5rem;
+  height: auto;
   color: white;
   margin: 0;
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.7);
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-/* ── HTMX category filter transitions ─────────────────────── */
+/* Tablet+: restore compact article styles */
+@media (min-width: 900px) {
+  .mt-article-content { padding: 0.6rem var(--mt-card-padding-x); }
+  .mt-article-badge {
+    font-size: 0.65rem;
+    padding: 0.15rem 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+  .mt-article-title {
+    font-family: inherit;
+    font-size: 1rem;
+    height: 2.5rem;
+    -webkit-line-clamp: 2;
+  }
+}
+
+/* Desktop: slightly more padding */
+@media (min-width: 1200px) {
+  .mt-article-content { padding: 0.75rem var(--mt-card-padding-x); }
+}
+
+/* ── HTMX transitions ────────────────────────────────────── */
 .htmx-swapping .mt-grid-item,
 .htmx-swapping .mt-hero-cell {
   opacity: 0;
@@ -354,10 +425,6 @@ html {
   display: block;
 }
 
-/* ── Zoom centering fix ──────────────────────────────────── */
-/* medium-zoom adds this class during the open transition.
-   We must release the forced aspect-ratio and cover-crop so the
-   library can position the full image centered in the viewport. */
 .mt-hero-article.medium-zoom-image--opened {
   aspect-ratio: auto;
   object-fit: contain;
@@ -366,36 +433,50 @@ html {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   CARD GRID
-   Flexbox-based so justify-content affects partial last rows.
-   Cards stay at fixed fractional widths — never stretch to fill.
+   ARTICLE HEADER (single post) — centered title/byline, 3/2 cover
+   ═══════════════════════════════════════════════════════════ */
+.mt-article-header {
+  text-align: center;
+}
+
+/* Feature image as a plain cover (was the 16/9 zoomable hero) */
+.mt-article-cover {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  margin: 0.5rem 0 1rem;
+}
+
+/* article-meta/basic renders the date inside a flex row; center it */
+.mt-article-date {
+  display: flex;
+  justify-content: center;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CARD GRID (list/category pages)
    ═══════════════════════════════════════════════════════════ */
 .mt-card-grid {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
 }
-/* Mobile: 1 col */
 .mt-card-grid > * { flex: 0 0 100%; }
 
-/* sm: 2 cols */
 @media (min-width: 640px) {
   .mt-card-grid > * { flex: 0 0 calc(50% - 0.5rem); }
 }
-/* md: 3 cols */
 @media (min-width: 768px) {
   .mt-card-grid > * { flex: 0 0 calc(33.333% - 0.667rem); }
 }
-/* xl: 4 cols (wide only) */
 @media (min-width: 1280px) {
   .mt-card-grid--wide > * { flex: 0 0 calc(25% - 0.75rem); }
 }
-/* 2xl: 5 cols (wide only) */
 @media (min-width: 1536px) {
   .mt-card-grid--wide > * { flex: 0 0 calc(20% - 0.8rem); }
 }
 
-/* Partial last-row alignment */
 .mt-cards--left   { justify-content: flex-start; }
 .mt-cards--center { justify-content: center; }
 .mt-cards--right  { justify-content: flex-end; }
@@ -425,14 +506,13 @@ html {
   filter: brightness(1.08) contrast(1.05);
 }
 
-/* Tag pills — tighter spacing */
 .article-link--card a[href^="/tags/"] span {
   font-size: 0.65rem;
   padding: 0.15rem 0.45rem;
 }
 
 /* ═══════════════════════════════════════════════════════════
-   ARTICLE GALLERY (masonry grid)
+   ARTICLE GALLERY (masonry)
    ═══════════════════════════════════════════════════════════ */
 .mt-gallery {
   columns: 1;
@@ -444,8 +524,11 @@ html {
   margin-bottom: 0.5rem;
 }
 
+@media (min-width: 640px) { .mt-gallery { columns: 2; } }
+@media (min-width: 1024px) { .mt-gallery { columns: 3; } }
+
 /* ═══════════════════════════════════════════════════════════
-   FILM GRAIN OVERLAY — SVG noise, pure CSS
+   FILM GRAIN OVERLAY
    ═══════════════════════════════════════════════════════════ */
 body::after {
   content: '';
@@ -458,21 +541,6 @@ body::after {
   background-repeat: repeat;
   background-size: 300px 300px;
   mix-blend-mode: overlay;
-}
-
-/* ═══════════════════════════════════════════════════════════
-   RESPONSIVE DESIGN - handlres
-   ═══════════════════════════════════════════════════════════ */
-
-@media (min-width: 640px) {
-  .hero-content { padding: 3rem; }
-  .hero-title   { font-size: 3.75rem; }
-  .mt-gallery   { columns: 2; }
-}
-@media (min-width: 1024px) {
-  .hero-content { padding: 4rem; }
-  .hero-title   { font-size: 4.5rem; }
-  .mt-gallery   { columns: 3; }
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -494,7 +562,7 @@ body::after {
 .cat-text--secondary-700{color:rgb(var(--color-secondary-700))}
 
 /* ═══════════════════════════════════════════════════════════
-   AD SLOTS — destaque (below-hero) and feed (after scroll batch)
+   AD SLOTS
    ═══════════════════════════════════════════════════════════ */
 .mt-ad-slot {
   max-width: 320px;
@@ -522,9 +590,7 @@ body::after {
   background: rgb(var(--color-neutral-800));
 }
 
-.mt-ad-card:hover {
-  opacity: 0.85;
-}
+.mt-ad-card:hover { opacity: 0.85; }
 
 .mt-ad-img {
   display: block;
@@ -545,7 +611,7 @@ body::after {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   FIXED FOOTER — 5svh, glass, max blur
+   FIXED FOOTER
    ═══════════════════════════════════════════════════════════ */
 
 :root {
@@ -583,7 +649,6 @@ body::after {
   height: 1.25rem;
 }
 
-/* Body padding so content clears the fixed footer */
 body {
   padding-bottom: max(var(--mt-footer-h), 2.25rem);
 }
