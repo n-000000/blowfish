@@ -1,26 +1,38 @@
 {{- /*
-  article-gallery.html — renders the gallery frontmatter field.
-  Called from layouts/_default/single.html after .Content.
-
-  Expects .Params.gallery to be a list of image or video URLs.
-  Renders a responsive masonry-style grid using CSS columns.
-  Videos (mp4, webm, mov) get a <video> tag; everything else gets <img>.
+  article-gallery.html — renders the sveltia `gallery:` frontmatter array.
+  Splits by file extension: videos -> dedicated video-gallery partial;
+  images -> responsive grid whose anchors GLightbox opens fullscreen.
+  Each sub-gallery renders only when it has >=1 item.
 */ -}}
 {{- with .Params.gallery -}}
-<div class="mt-10 mb-4">
-  <div class="mt-gallery">
-    {{- range . -}}
+  {{- $images := slice -}}
+  {{- $videos := slice -}}
+  {{- range . -}}
     {{- $ext := lower (path.Ext .) -}}
-    {{- if or (eq $ext ".mp4") (eq $ext ".webm") (eq $ext ".mov") -}}
-    <div>
-      <video src="{{ . }}" controls preload="metadata" class="w-full rounded"></video>
-    </div>
+    {{- if in (slice ".mp4" ".webm" ".mov") $ext -}}
+      {{- $videos = $videos | append . -}}
     {{- else -}}
-    <div>
-      <img src="{{ . }}" alt="" loading="lazy" class="w-full rounded">
+      {{- $images = $images | append . -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- /* ── Photo gallery: grid + GLightbox ── */ -}}
+  {{- with $images -}}
+    {{- $alg := $.Site.Params.fingerprintAlgorithm | default "sha512" -}}
+    <link rel="stylesheet" href="{{ (resources.Get "lib/glightbox/glightbox.min.css" | resources.Fingerprint $alg).RelPermalink }}">
+    <div class="mt-gallery-grid">
+      {{- range . }}
+      <a href="{{ . }}" class="mt-glightbox" data-gallery="article-gallery">
+        <img src="{{ . }}" alt="" loading="lazy" decoding="async">
+      </a>
+      {{- end }}
     </div>
-    {{- end -}}
-    {{- end -}}
-  </div>
-</div>
+    <script src="{{ (resources.Get "lib/glightbox/glightbox.min.js" | resources.Fingerprint $alg).RelPermalink }}"></script>
+    <script src="{{ (resources.Get "js/gallery.js" | resources.Minify | resources.Fingerprint $alg).RelPermalink }}"></script>
+  {{- end -}}
+
+  {{- /* ── Video gallery (dedicated, conditional) ── */ -}}
+  {{- with $videos -}}
+    {{- partial "video-gallery.html" (dict "videos" . "site" $.Site) -}}
+  {{- end -}}
 {{- end -}}
