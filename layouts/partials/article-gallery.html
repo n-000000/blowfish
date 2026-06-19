@@ -16,6 +16,11 @@
     {{- end -}}
   {{- end -}}
 
+  {{- /* ── Video gallery (dedicated, conditional) — above the photos ── */ -}}
+  {{- with $videos -}}
+    {{- partial "video-gallery.html" (dict "videos" . "site" $.Site) -}}
+  {{- end -}}
+
   {{- /* ── Photo gallery: grid + GLightbox ── */ -}}
   {{- with $images -}}
     {{- $alg := $.Site.Params.fingerprintAlgorithm | default "sha512" -}}
@@ -29,10 +34,5 @@
     </div>
     <script src="{{ (resources.Get "lib/glightbox/glightbox.min.js" | resources.Fingerprint $alg).RelPermalink }}"></script>
     <script src="{{ (resources.Get "js/gallery.js" | resources.Minify | resources.Fingerprint $alg).RelPermalink }}"></script>
-  {{- end -}}
-
-  {{- /* ── Video gallery (dedicated, conditional) ── */ -}}
-  {{- with $videos -}}
-    {{- partial "video-gallery.html" (dict "videos" . "site" $.Site) -}}
   {{- end -}}
 {{- end -}}
