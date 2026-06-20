@@ -18,7 +18,7 @@
 {{- /* ── Nav strip (desktop) + mobile drawer ─────────────────── */ -}}
 <div class="fixed inset-x-0 z-49" style="top: var(--mt-banner-h);">
   <div class="mt-nav-strip">
-    <div class="mt-header-inner relative m-auto w-full leading-7 max-w-7xl{{ if not .IsHome }} px-6 sm:px-14 md:px-24 lg:px-32{{ end }}">
+    <div class="mt-header-inner relative w-full leading-7">
       {{ partial "header/basic.html" . }}
     </div>
   </div>

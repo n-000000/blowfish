@@ -13,6 +13,15 @@
   --mt-header-h: calc(var(--mt-banner-h) + var(--mt-nav-h));
   --mt-card-padding-x: 0.75rem;
 
+  /* ── Layout tokens (Phase 1) ── */
+  --gutter: clamp(1rem, 0.6rem + 1.5vw, 2rem);  /* edge breathing room: 16px → ~32px */
+  --mt-frame: calc(4 * var(--mt-col-w) + 3 * var(--mt-grid-gap));  /* widest content (4-col grid); the shell centers within this fixed width */
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-6: 1.5rem;
+  --sp-8: 2rem;
+
   /* Homepage grid thumbnail geometry — fixed on tablet+desktop, only the
      phone single column resizes. article = 1 column; hero = 2 columns.
      With gap 0, hero width is exactly 2 × col and every tile is exactly 3/2.
@@ -99,16 +108,16 @@
   .mt-nav-strip { display: none; }
 }
 
-/* ── Phone: align header/footer inner content with the centered grid ── */
-/* On phone the grid is capped at --mt-phone-card-w and centered; the   */
-/* fixed header/footer must match that same max-width + centering.       */
-@media (max-width: 899px) {
-  .mt-header-inner,
-  .mt-footer-inner {
-    max-width: var(--mt-phone-card-w);
-    margin-left: auto;
-    margin-right: auto;
-  }
+/* ── Shell inner: its OWN fixed frame (the 4-col grid width), centered, with
+   margins that shrink as the viewport narrows — decoupled from the grid's
+   *changing* --container-7xl so it never wrong-jumps at the column breakpoints.
+   Lines up with the grid at full width; stays steady as the grid re-columns. */
+.mt-header-inner,
+.mt-footer-inner {
+  width: 100%;
+  max-width: var(--mt-frame);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
 }
 
 /* ── Header spacer ───────────────────────────────────────── */
@@ -706,4 +715,9 @@ body::after {
 
 body {
   padding-bottom: max(var(--mt-footer-h), 2.25rem);
+}
+
+/* ── Content vertical rhythm — gap below the fixed header / above the fixed footer ── */
+.mt-content-rhythm {
+  padding-block: var(--sp-8);
 }
