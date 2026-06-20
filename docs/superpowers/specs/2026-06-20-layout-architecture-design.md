@@ -83,3 +83,22 @@ Wrap the fork's site CSS in an explicit `@layer` so it no longer silently beats 
 
 - Article **text measure** (876px 3-cell vs a narrower ~65–70ch reading column) — decide from the rendered result.
 - Exact `clamp()` floors/ceilings for display type — tuned visually during implementation.
+
+---
+
+## Update (2026-06-20) — grid foundation, alignment, and phasing
+
+Refined during implementation. **This supersedes the "Breakpoints" and `.mt-home-grid` parts above.**
+
+### Phase 1 — shell (DONE, committed locally this session, NOT deployed)
+- Shell inners (`.mt-header-inner`, `.mt-footer-inner`) get their **own fixed frame** `--mt-frame = calc(4*--mt-col-w + 3*--mt-grid-gap)` (the 4-col grid width), centered, `padding-inline: var(--gutter)` — **decoupled from the grid's stepping `--container-7xl`**. Result: no "wrong-jump" at the column breakpoints (verified: logo holds at the gutter across 1201/1199 and 901/899; only the grid re-columns, which is expected). Consistent across home/article.
+- Added tokens: `--gutter` (clamp for now → **make fixed in Phase 2** for clean alignment math), spacing scale `--sp-2…--sp-8`.
+- Vertical rhythm: `.mt-content-rhythm { padding-block: var(--sp-8) }` on `<main>` (gap off the fixed header/footer).
+- Residual at full width: the logo sits ~one gutter *inside* the grid's first column (indented). Made flush in Phase 2 via the gutter-alignment below.
+
+### Phase 2 — grid REBUILD (replace, not patch) + the rest
+- **Intrinsic grid** replaces the hand-tuned breakpoints: `grid-template-columns: repeat(auto-fill, var(--cell))`, capped at 4 cells via `max-width`, centered (`justify-content: center` + `margin-inline: auto`), `padding-inline: var(--gutter)`. The column count is self-determined by available space → **eliminates the 900/1200 geometry breakpoints** and the scrollbar-sensitive magic numbers. Adding a gutter just fits one fewer cell.
+- **`scrollbar-gutter: stable`** on `html` → kills the "100vw includes the scrollbar → overflow at the boundary" fragility at the source.
+- **One** real breakpoint remains: phone vs. not (the hero's 2-column span can't be expressed against a free column count) — and it coincides with the hamburger↔nav switch. So: from a brittle *pair* of geometry breakpoints down to one UX breakpoint + a self-sizing grid.
+- **Gutter alignment (user's idea, geometrically correct):** grow the shell frame AND the grid frame by the padding so cells don't shrink and the shell content lines up pixel-for-pixel with the grid's first column. With the intrinsic grid there's no breakpoint arithmetic left to knock over, so it lands cleanly.
+- Also Phase 2: full container-hierarchy rename (`.mt-app/.mt-header/.mt-banner/.mt-navbar/.mt-content/.mt-home-grid/.mt-article/.mt-footer`), fluid `clamp()` display type (scaling model C), `@theme` token migration, cascade-layer wrap, and the article **876 "3-cell measure" unified column** (cover+text+gallery — prototyped this session, liked, then discarded for a clean base).
