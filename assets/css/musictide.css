@@ -710,3 +710,16 @@ body {
 .mt-content-rhythm {
   padding-block: var(--sp-8);
 }
+
+/* ── Article page body: full-viewport width so the article column can self-center ── */
+.mt-article-page {
+  --container-7xl: 100vw;
+}
+
+/* ── Article column: 3-cell measure (876px), centered, gutter padding ── */
+.mt-article-column {
+  max-width: calc(3 * var(--mt-col-w));  /* 876px = 3-col grid width */
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  width: 100%;
+}

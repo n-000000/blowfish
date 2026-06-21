@@ -1,5 +1,6 @@
 {{ define "main" }}
   {{ .Scratch.Set "scope" "single" }}
+  <div class="mt-article-column">
   <article>
 
     {{/* ── Header: title (centered) → credits → 3/2 cover → date ── */}}
@@ -106,4 +107,5 @@
       {{ end }}
     </footer>
   </article>
+  </div>{{- /* .mt-article-column */ -}}
 {{ end }}
