@@ -14,8 +14,8 @@
   --mt-card-padding-x: 0.75rem;
 
   /* ── Layout tokens (Phase 1) ── */
-  --gutter: clamp(1rem, 0.6rem + 1.5vw, 2rem);  /* edge breathing room: 16px → ~32px */
-  --mt-frame: calc(4 * var(--mt-col-w) + 3 * var(--mt-grid-gap));  /* widest content (4-col grid); the shell centers within this fixed width */
+  --gutter: 2rem;  /* pinned: shared by shell + grid → clean alignment math */
+  --mt-frame: calc(4 * var(--mt-col-w) + 3 * var(--mt-grid-gap) + 2 * var(--gutter));  /* outer frame = 4 cells + gaps + both gutters; shell and grid share this max-width */
   --sp-2: 0.5rem;
   --sp-3: 0.75rem;
   --sp-4: 1rem;
@@ -146,6 +146,7 @@
 /* ── Smooth scroll ───────────────────────────────────────── */
 html {
   scroll-behavior: smooth;
+  scrollbar-gutter: stable;
 }
 
 /* ── View Transitions ────────────────────────────────────── */
