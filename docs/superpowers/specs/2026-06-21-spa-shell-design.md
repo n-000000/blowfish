@@ -9,7 +9,12 @@
 
 ## Goal
 
-Convert musictide to an app-shell SPA. Banner, nav strip, and footer become a persistent shell; `#main-content` is the universal future swap target. In this phase, **category filtering** is the only in-place interaction — clicking a category nav link swaps the article grid without a full page load. Article-swap is deferred to a later phase.
+Convert musictide to an app-shell SPA. Banner, nav strip, and footer become a persistent shell; `#main-content` is the universal swap target. Two in-place interactions ship in this phase:
+
+1. **Category filtering** — clicking a category nav link swaps the article feed without a full page load
+2. **Article-swap** — clicking an article card loads the article into `#main-content` without a full page load
+
+The article-page rework is complete, so article-swap is built once against the final article structure.
 
 ---
 
@@ -28,7 +33,7 @@ body
                       └── .mt-grid-item × N
 ```
 
-`display:contents` nests correctly — grid children at any depth participate in `.mt-homepage-grid` as direct children. `#main-content` is the reserved universal swap target for article-swap (later phase, no rework needed when it lands).
+`display:contents` nests correctly — grid children at any depth participate in `.mt-homepage-grid` as direct children. `#main-content` is the swap target for article-swap; category filtering swaps the inner `#mt-feed-region` only. Both coexist without conflict — one is a subset of the other.
 
 ---
 
@@ -126,6 +131,34 @@ Each category color lives as a CSS custom property on the `<a>` element, set via
 
 ---
 
+## Article-swap
+
+### Behavior
+
+Click any article card in the grid → JS:
+1. Intercepts the `<a>` click on `.mt-grid-item a` (and in-article links to other posts)
+2. Fetches `/posts/{slug}/fragment.html`
+3. Swaps `#main-content` innerHTML (htmx, `transition:true`)
+4. `pushState` to the article URL
+5. Updates `document.title` to the article title
+6. Scrolls `#main-content` to top
+
+### Back / forward
+
+`hx-history-elt="#main-content"` is set on `<main>` (or its container). htmx history snapshots the entire `#main-content` state — both the homepage feed and article views are captured. Back restores the previous `#main-content` from snapshot; no re-fetch.
+
+### Article fragment
+
+`layouts/_default/single.fragment.html` — returns the content of `{{ define "main" }}` only (the `.mt-article-column` div and everything inside it). No `<html>`, no shell. HTMX re-processes the returned HTML, so any `hx-*` attributes in the article body (e.g., gallery sentinels) are live immediately.
+
+Article-specific JS (gallery, lightbox) that currently initialises on `DOMContentLoaded` must also listen for `htmx:afterSettle` so it re-runs after a swap.
+
+### Direct loads
+
+Full `single.html` continues to render at all article URLs. Direct loads, Google results, and refreshes all work as before. The fragment URL (`/posts/{slug}/fragment.html`) is only consumed by the JS router.
+
+---
+
 ## Taxonomy cleanup
 
 - Remove `tags`, `authors`, `series` from `taxonomies:` in musictide's `hugo.yaml` — no generated pages for these
@@ -143,26 +176,32 @@ Each category color lives as a CSS custom property on the `<a>` element, set via
 | `feed-fragment` (new) | `/categories/{term}/feed-fragment.html` | JS on category activate |
 | `grid-fragment` (existing) | `/posts/grid-fragment.html` | Infinite scroll sentinels |
 | `grid-fragment` (existing) | `/categories/{term}/grid-fragment.html` | Infinite scroll sentinels within filtered feed |
+| `fragment` (new for singles) | `/posts/{slug}/fragment.html` | JS on article card click |
 
-`feed-fragment` returns: hero cell HTML + new `#mt-article-grid` div (with htmx attrs intact) + first page of grid items. HTMX re-processes the returned HTML automatically, so the new `#mt-article-grid`'s `hx-*` attributes are live immediately after swap.
+`feed-fragment` returns: hero cell HTML + new `#mt-article-grid` div (with htmx attrs intact) + first page of grid items. HTMX re-processes returned HTML automatically, so `hx-*` attributes are live immediately after swap.
+
+`fragment` for singles returns: the `.mt-article-column` content only (the `{{ define "main" }}` block). No shell markup.
 
 ---
 
 ## Build order
 
-1. `data/dimensions.yaml` + color scheme update (Palette B)
+1. `data/dimensions.yaml` + color scheme update (Palette B — category frontmatter + CSS)
 2. `#mt-feed-region` wrapper + `feed-fragment` output format + templates
 3. Category filter JS rewrite (target `#mt-feed-region`, pushState, toggle, active class)
 4. `categories/term.html` → filtered home layout
-5. Taxonomy cleanup (hugo.yaml + template de-linking)
-6. Dead JS removal (`background-blur.js`)
-7. Verification: filter, back/forward, direct loads, dark+light mode
+5. Article-swap: `fragment` output format for singles + `single.fragment.html` template
+6. Article-swap JS router (intercept grid card clicks, `#main-content` swap, pushState, title update, scroll-to-top)
+7. `htmx:afterSettle` re-init for article-specific JS (gallery, lightbox)
+8. Taxonomy cleanup (hugo.yaml + template de-linking)
+9. Dead JS removal (`background-blur.js`)
+10. Verification: filter, article-swap, back/forward, direct loads, dark+light mode
 
 ---
 
 ## Out of scope
 
-- Article-swap (deferred: build after article-page rework)
 - Events dimension (deferred: flip registry switch + model content)
 - Filter composition (event AND category) — deferred until events enabled
 - Ads content model
+- Image `srcset` / HiDPI optimisation
