@@ -22,13 +22,12 @@
   --sp-6: 1.5rem;
   --sp-8: 2rem;
 
-  /* Homepage grid thumbnail geometry — fixed on tablet+desktop, only the
-     phone single column resizes. article = 1 column; hero = 2 columns.
+  /* Homepage grid thumbnail geometry — fixed column width; auto-fill determines count.
+     article = 1 column; hero = 2 columns.
      With gap 0, hero width is exactly 2 × col and every tile is exactly 3/2.
      Set --mt-grid-gap to 2px for visible separation (hero becomes 2×col + gap). */
   --mt-col-w: 292px;
   --mt-grid-gap: 0px;
-  --mt-phone-card-w: 584px;   /* phone single column = hero width (2 × col) */
 }
 
 /* Non-home pages: keep content width modest (does not touch the homepage grid) */
@@ -36,13 +35,9 @@
 @media (min-width: 1024px) { :root { --container-7xl: 1024px; } }
 @media (min-width: 1200px) { :root { --mt-card-padding-x: 1rem; } }
 
-/* Homepage: body width = the fixed-column grid's natural width, so grid,
-   header, and footer all share the same edges and margins absorb the rest.
-   tablet = 3 cols (876px @ gap 0); desktop = 4 cols (1168px @ gap 0).
-   Breakpoints sit just above content width to avoid desktop-scrollbar overflow. */
+/* Homepage: body is full-width — the grid centers itself via max-width: var(--mt-frame).
+   The old body-cap approach (tracking col count × col-w) is replaced by the intrinsic grid. */
 .mt-home { --container-7xl: 100vw; }
-@media (min-width: 900px)  { .mt-home { --container-7xl: calc(3 * var(--mt-col-w) + 2 * var(--mt-grid-gap)); } }
-@media (min-width: 1200px) { .mt-home { --container-7xl: calc(4 * var(--mt-col-w) + 3 * var(--mt-grid-gap)); } }
 
 /* ═══════════════════════════════════════════════════════════
    SITE BANNER — animated logo strip
@@ -220,35 +215,28 @@ html {
    HOMEPAGE GRID — phone 1-col → tablet 3-col → desktop 4-col
    ═══════════════════════════════════════════════════════════ */
 
-/* Phone: centered single column, hero-card width */
+/* Phone: full-viewport width; grid is one fluid column with gutter breathing room */
 .mt-homepage-container {
   width: 100%;
-  max-width: var(--mt-phone-card-w);
-  margin: 0 auto;
 }
 
-/* Tablet+: fill the body (which is now sized to the fixed-column grid) */
-@media (min-width: 900px) {
-  .mt-homepage-container {
-    max-width: 100%;
-    margin: 0;
-  }
-}
-
-/* Grid column count — phone single column fills the 584-capped container;
-   tablet/desktop use fixed 292px columns so thumbnails never resize. */
+/* Grid: phone = 1 fluid column; not-phone = intrinsic auto-fill capped at 4-cell frame.
+   One geometry breakpoint survives (phone vs. not, 900px), coinciding with the hamburger switch.
+   The explicit 900px/1200px column breakpoints are eliminated. */
 .mt-homepage-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--mt-grid-gap);
+  padding-inline: var(--gutter);
 }
 
 @media (min-width: 900px) {
-  .mt-homepage-grid { grid-template-columns: repeat(3, var(--mt-col-w)); }
-}
-
-@media (min-width: 1200px) {
-  .mt-homepage-grid { grid-template-columns: repeat(4, var(--mt-col-w)); }
+  .mt-homepage-grid {
+    grid-template-columns: repeat(auto-fill, var(--mt-col-w));
+    max-width: var(--mt-frame);
+    margin-inline: auto;
+    justify-content: center;
+  }
 }
 
 /* ── Hero cell ───────────────────────────────────────────── */
