@@ -115,10 +115,10 @@
   padding-inline: var(--gutter);
 }
 
-@media (min-width: 960px) {
+@media (min-width: 1248px) {
   .mt-header-inner,
   .mt-footer-inner {
-    max-width: var(--mt-frame);
+    max-width: var(--mt-frame);  /* 4-col zone: shell grows with the grid */
   }
 }
 
@@ -243,7 +243,13 @@ html {
 @media (min-width: 960px) {
   .mt-homepage-grid {
     grid-template-columns: repeat(auto-fill, var(--mt-col-w));
-    max-width: var(--mt-frame);
+    max-width: var(--mt-frame-3);  /* 3-col frame: auto-fill fills exactly 3 cols, zero leftover */
+  }
+}
+
+@media (min-width: 1248px) {
+  .mt-homepage-grid {
+    max-width: var(--mt-frame);  /* 4-col frame: auto-fill fills exactly 4 cols */
   }
 }
 
