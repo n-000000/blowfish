@@ -212,7 +212,7 @@ html {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   HOMEPAGE GRID — phone 1-col → tablet 3-col → desktop 4-col
+   HOMEPAGE GRID — phone 1-col → tablet+ auto-fill (292px cols, capped at 4)
    ═══════════════════════════════════════════════════════════ */
 
 /* Phone: full-viewport width; grid is one fluid column with gutter breathing room */
