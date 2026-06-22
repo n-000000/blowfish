@@ -23,5 +23,5 @@
   {{- if $catPage -}}
     {{- $colorSlot = $catPage.Params.color | default "primary-500" -}}
   {{- end -}}
-<span class="cat-bg--{{ $colorSlot }} text-neutral-100 {{ $badgeClass }}">{{ $first }}</span>
+<span class="cat-bg--{{ $slug }} text-neutral-100 {{ $badgeClass }}">{{ $first }}</span>
 {{- end -}}

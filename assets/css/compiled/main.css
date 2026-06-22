@@ -1079,6 +1079,10 @@
     width: calc(var(--spacing) * 1);
     height: calc(var(--spacing) * 1);
   }
+  .size-5 {
+    width: calc(var(--spacing) * 5);
+    height: calc(var(--spacing) * 5);
+  }
   .\!h-px {
     height: 1px !important;
   }

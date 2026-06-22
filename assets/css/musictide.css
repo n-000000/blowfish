@@ -614,19 +614,22 @@ body::after {
    CATEGORY PALETTE SLOTS
    ═══════════════════════════════════════════════════════════ */
 
-.cat-bg--primary-300{background-color:rgba(var(--color-primary-300),var(--mt-cat-bg-opacity))}
-.cat-bg--primary-500{background-color:rgba(var(--color-primary-500),var(--mt-cat-bg-opacity))}
-.cat-bg--primary-700{background-color:rgba(var(--color-primary-700),var(--mt-cat-bg-opacity))}
-.cat-bg--secondary-300{background-color:rgba(var(--color-secondary-300),var(--mt-cat-bg-opacity))}
-.cat-bg--secondary-500{background-color:rgba(var(--color-secondary-500),var(--mt-cat-bg-opacity))}
-.cat-bg--secondary-700{background-color:rgba(var(--color-secondary-700),var(--mt-cat-bg-opacity))}
+/* Palette B — slug-keyed, fixed hex so colors are theme-independent */
+.cat-bg--espinho   { background-color: rgba(59,130,246,var(--mt-cat-bg-opacity)); }
+.cat-bg--nacional  { background-color: rgba(8,145,178,var(--mt-cat-bg-opacity)); }
+.cat-bg--cultura   { background-color: rgba(217,119,6,var(--mt-cat-bg-opacity)); }
+.cat-bg--desporto  { background-color: rgba(22,163,74,var(--mt-cat-bg-opacity)); }
+.cat-bg--lifestyle { background-color: rgba(147,51,234,var(--mt-cat-bg-opacity)); }
+.cat-bg--agenda    { background-color: rgba(220,38,38,var(--mt-cat-bg-opacity)); }
 
-.cat-text--primary-300{color:rgb(var(--color-primary-300))}
-.cat-text--primary-500{color:rgb(var(--color-primary-500))}
-.cat-text--primary-700{color:rgb(var(--color-primary-700))}
-.cat-text--secondary-300{color:rgb(var(--color-secondary-300))}
-.cat-text--secondary-500{color:rgb(var(--color-secondary-500))}
-.cat-text--secondary-700{color:rgb(var(--color-secondary-700))}
+/* Nav active state — muted by default, full contrast + colored underline when active */
+[data-category-link] { color: rgb(var(--color-neutral-500)); }
+[data-category-link].mt-nav-active {
+  color: rgb(var(--color-neutral-900));
+  box-shadow: inset 0 -3px 0 0 var(--cat-color);
+}
+.dark [data-category-link] { color: rgb(var(--color-neutral-400)); }
+.dark [data-category-link].mt-nav-active { color: rgb(var(--color-neutral-50)); }
 
 /* ═══════════════════════════════════════════════════════════
    AD SLOTS
