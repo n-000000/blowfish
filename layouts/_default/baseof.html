@@ -9,7 +9,7 @@
   {{- partialCached "init.html" . -}}
 
   {{ $bodyLayout := "flex flex-col min-h-screen m-auto leading-7 max-w-7xl" }}
-  {{ if .IsHome }}
+  {{ if or .IsHome (eq .Kind "term") }}
     {{ $bodyLayout = printf "%s mt-home" $bodyLayout }}
   {{ else if .IsPage }}
     {{ $bodyLayout = printf "%s mt-article-page" $bodyLayout }}
