@@ -44,8 +44,9 @@
 {{ define "DesktopMenu" }}
   {{- $pagePath   := strings.TrimPrefix "/" (strings.TrimSuffix "/" .URL) -}}
   {{- $catPage    := site.GetPage $pagePath -}}
-  {{- $colorClass := "" -}}
-  {{- if $catPage }}{{- with $catPage.Params.color }}{{- $colorClass = printf "cat-text--%s" . -}}{{- end }}{{- end -}}
+  {{- $colorClass := "" -}}{{- /* kept: the nested-menu branch below still references it; Hugo errors on an undefined var even in an unexecuted branch */ -}}
+  {{- $hex        := "" -}}
+  {{- if $catPage }}{{- with $catPage.Params.color }}{{- $hex = . -}}{{- end }}{{- end -}}
 
   {{ if .HasChildren }}
     <div class="nested-menu">
@@ -108,7 +109,7 @@
       {{ if or (strings.HasPrefix .URL "http:" ) (strings.HasPrefix .URL "https:" ) }}
         target="_blank"
       {{ end }}
-      class="flex items-center bf-icon-color-hover"
+      class="flex items-center bf-icon-color-hover"{{ with $hex }} style="--cat-color:{{ . }}" data-category-link{{ end }}
       {{ with or .Name .Pre }}aria-label="{{ . }}"{{ end }}
       title="{{ .Title }}">
       {{ if .Pre }}
@@ -117,7 +118,7 @@
         </span>
       {{ end }}
       {{ if .Name }}
-        <span class="text-base font-medium break-normal {{ $colorClass }}">
+        <span class="text-base font-medium break-normal">
           {{ .Name | markdownify }}
         </span>
       {{ end }}

@@ -21,12 +21,12 @@
         {{ range .Site.Menus.main }}
           {{- $pagePath   := strings.TrimPrefix "/" (strings.TrimSuffix "/" .URL) -}}
           {{- $catPage    := site.GetPage $pagePath -}}
-          {{- $colorClass := "" -}}
-          {{- if $catPage }}{{- with $catPage.Params.color }}{{- $colorClass = printf "cat-text--%s" . -}}{{- end }}{{- end -}}
+          {{- $hex        := "" -}}
+          {{- if $catPage }}{{- with $catPage.Params.color }}{{- $hex = . -}}{{- end }}{{- end -}}
           <li>
             <a
               href="{{ .URL }}"
-              class="flex items-center py-2 text-base font-semibold text-neutral-100 hover:text-white{{- with $colorClass }} {{ . }}{{- end }}">
+              class="flex items-center py-2 text-base font-semibold text-neutral-100 hover:text-white"{{ with $hex }} style="--cat-color:{{ . }}" data-category-link{{ end }}>
               {{ if .Pre }}
                 <span class="mr-2">{{ partial "icon.html" .Pre }}</span>
               {{ end }}
