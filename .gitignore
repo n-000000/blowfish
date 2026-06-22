@@ -42,3 +42,8 @@ ga-pageviews.csv
 .Ulysses-Group.plist
 .Ulysses-Settings.plist
 .watchfire/
+
+# Validation scratch — not deliverables (untracked screenshots, Playwright MCP snapshots, tooling state)
+/*.png
+.playwright-mcp/
+.superpowers/
