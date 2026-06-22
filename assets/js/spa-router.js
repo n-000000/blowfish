@@ -26,6 +26,13 @@
   function feedFragUrl(u){ return u === '/' ? '/posts/feed-fragment.html' : u + 'feed-fragment.html'; }
   function artFragUrl(p) { return p.replace(/\/?$/, '/') + 'fragment.html'; }
   function hrefPath(a)   { try { return new URL(a.href, location.origin).pathname; } catch (e) { return a.getAttribute('href') || ''; } }
+  function feedTitle(feedUrl) {
+    var slug = catSlug(feedUrl || '');
+    if (!slug) return window.__mtSite || document.title;
+    var link = null;
+    document.querySelectorAll('[data-category-link]').forEach(function (a) { if (catSlug(hrefPath(a)) === slug) link = a; });
+    return (link ? link.textContent.trim() : slug) + ' · ' + (window.__mtSite || '');
+  }
 
   // --- View toggles ---
   function setLayout(w) { var b = document.body.classList; b.toggle('mt-home', w === 'home'); b.toggle('mt-article-page', w === 'article'); }
@@ -62,6 +69,7 @@
     loadedFeedUrl = feedUrl;
     showFeed();
     applyNavActive(feedUrl);
+    document.title = feedTitle(feedUrl);
     closeMenu();
     window.scrollTo(0, 0);
     if (push) history.pushState({ view: 'feed', feedUrl: feedUrl }, '', feedUrl);
@@ -101,6 +109,7 @@
       // article-excursion back: reveal the preserved feed, restore scroll
       showFeed();
       applyNavActive(feedUrl);
+      document.title = feedTitle(feedUrl);
       window.scrollTo(0, (e.state && e.state.scrollY) || 0);
     } else {
       renderFeed(feedUrl, false);
