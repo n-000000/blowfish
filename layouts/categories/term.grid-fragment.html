@@ -7,8 +7,17 @@
 */ -}}
 {{- $colorSlot := .Params.color | default "primary-500" -}}
 
-{{- $posts := where .Pages ".Params.draft" "ne" true -}}
-{{- $posts  = $posts.ByDate.Reverse -}}
+{{- /* Exclude the same hero the feed uses (overall latest, or category latest if
+       heroFollowsFilter) so page 2+ tiles with the inline first page and the hero
+       is never duplicated as the first grid card. */ -}}
+{{- $all := (where (where site.RegularPages "Section" "posts") ".Params.draft" "ne" true).ByDate.Reverse -}}
+{{- $cat := (where .Pages ".Params.draft" "ne" true).ByDate.Reverse -}}
+{{- $follows := (hugo.Data.dimensions).heroFollowsFilter | default false -}}
+{{- $heroSrc := cond $follows $cat $all -}}
+{{- $hero := "" -}}
+{{- if gt (len $heroSrc) 0 }}{{- $hero = index $heroSrc 0 -}}{{- end -}}
+{{- $posts := $cat -}}
+{{- if $hero }}{{- $posts = where $cat "Permalink" "ne" $hero.Permalink -}}{{- end -}}
 {{- $pager := .Paginate $posts 12 -}}
 
 {{- range $i, $page := $pager.Pages }}

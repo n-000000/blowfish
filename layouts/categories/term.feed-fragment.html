@@ -1,0 +1,15 @@
+{{- /*
+  term.feed-fragment.html — category feed inner HTML for #mt-feed-view swap
+  (URL: /categories/{term}/feed-fragment.html). Hero = overall latest (or
+  category latest if heroFollowsFilter); grid = category posts minus the hero.
+  Same params as categories/term.html → byte-identical parity.
+*/ -}}
+{{- $all := (where (where site.RegularPages "Section" "posts") ".Params.draft" "ne" true).ByDate.Reverse -}}
+{{- $cat := (where .Pages ".Params.draft" "ne" true).ByDate.Reverse -}}
+{{- $follows := (hugo.Data.dimensions).heroFollowsFilter | default false -}}
+{{- $heroSrc := cond $follows $cat $all -}}
+{{- $hero := "" -}}
+{{- if gt (len $heroSrc) 0 }}{{- $hero = index $heroSrc 0 -}}{{- end -}}
+{{- $grid := $cat -}}
+{{- if $hero }}{{- $grid = where $cat "Permalink" "ne" $hero.Permalink -}}{{- end -}}
+{{ partial "home/hero.html" (dict "heroPost" $hero "gridPosts" $grid "sentinelBase" .RelPermalink) }}

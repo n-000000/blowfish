@@ -1,0 +1,11 @@
+{{- /*
+  list.feed-fragment.html — all-posts feed inner HTML for #mt-feed-view swap
+  (URL: /posts/feed-fragment.html). Same params as index.html; renders via the
+  shared home/hero.html partial so direct-load and in-app feed are identical.
+*/ -}}
+{{- $posts := (where (where site.RegularPages "Section" "posts") ".Params.draft" "ne" true).ByDate.Reverse -}}
+{{- $hero := "" -}}
+{{- if gt (len $posts) 0 }}{{- $hero = index $posts 0 -}}{{- end -}}
+{{- $grid := $posts -}}
+{{- if $hero }}{{- $grid = where $posts "Permalink" "ne" $hero.Permalink -}}{{- end -}}
+{{ partial "home/hero.html" (dict "heroPost" $hero "gridPosts" $grid "sentinelBase" "/posts/") }}
