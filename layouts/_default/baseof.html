@@ -45,6 +45,7 @@
         {{- partial "search.html" . -}}
       {{ end }}
     </div>
+    {{- partial "spa-router.html" . -}}
   </body>
   {{ if site.Params.buymeacoffee.globalWidget | default false }}
     <script

@@ -1,0 +1,10 @@
+{{- /* spa-router.html — loads the SPA router + prefetch hints for feed fragments */ -}}
+{{ $js := resources.Get "js/spa-router.js" | resources.Minify | resources.Fingerprint (.Site.Params.fingerprintAlgorithm | default "sha512") }}
+<script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
+<link rel="prefetch" href="/posts/feed-fragment.html" fetchpriority="high">
+<link rel="prefetch" href="/posts/grid-fragment.html" fetchpriority="high">
+{{- range site.Taxonomies.categories }}
+  {{- $t := .Page.RelPermalink | strings.TrimSuffix "/" -}}
+  <link rel="prefetch" href="{{ $t }}/feed-fragment.html" fetchpriority="low">
+  <link rel="prefetch" href="{{ $t }}/grid-fragment.html" fetchpriority="low">
+{{- end }}
