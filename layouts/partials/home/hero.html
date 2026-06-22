@@ -1,47 +1,33 @@
 {{- /*
-  home/hero.html — musictide homepage grid layout.
+  home/hero.html — shared feed structure: hero cell + first page of grid cards.
 
-  Desktop layout (4-column CSS grid):
-    Col:  1       2       3       4
-    Row1: HERO    HERO    Art1    Art2
-    Row2: HERO    HERO    Art3    Art4
-    Row3: Art5    Art6    Ad      Art7
-    Row4: Art8    Art9    Art10   Art11
-    ...
+  Parameterized so index.html, categories/term.html, and both feed-fragment
+  templates render byte-identical #mt-feed-view content from ONE source (the
+  direct-load ↔ fragment parity invariant). Renders the first page of cards
+  INLINE (no empty-grid → second-fetch flash); the sentinel resumes at page 2.
 
-  Mobile layout (2-column CSS grid):
-    Row1: HERO (full width, col-span-2)
-    Row2: Art1    Art2
-    Row3: Art3    Art4
-    ...
-
-  Hero: always the latest post overall (no category filter).
-  #mt-article-grid: HTMX-replaceable; initially loads via sentinel from /posts/grid-fragment.html.
-  Category filter: JS intercepts nav link clicks → htmx.ajax() swaps #mt-article-grid innerHTML.
-  display:contents on #mt-article-grid lets children participate in parent grid.
+  Context (dict):
+    .heroPost     — Page for the 2×2 hero (always the overall latest); may be empty
+    .gridPosts    — date-desc Pages for the grid, ALREADY hero-excluded by caller
+    .sentinelBase — RelPermalink base for pagination ("/posts/" or "/categories/x/")
 */ -}}
-
-{{- /* Latest non-draft post → hero */ -}}
-{{- $posts  := where (where site.RegularPages "Section" "posts") ".Params.draft" "ne" true -}}
-{{- $posts   = $posts.ByDate.Reverse -}}
-{{- $latest := index $posts 0 -}}
+{{- $hero := .heroPost -}}
+{{- $grid := .gridPosts -}}
+{{- $base := .sentinelBase -}}
 
 {{- /* Hero image */ -}}
 {{- $heroURL := "" -}}
-{{- if $latest -}}
-  {{- $img := partial "resolve-feature-image.html" (dict
-    "Page"  $latest
-    "Globs" (slice "*feature*" "*cover*" "*thumbnail*")
-  ) -}}
+{{- with $hero -}}
+  {{- $img := partial "resolve-feature-image.html" (dict "Page" . "Globs" (slice "*feature*" "*cover*" "*thumbnail*")) -}}
   {{- with $img -}}{{- $heroURL = .URL -}}{{- end -}}
 {{- end -}}
 
 <div class="mt-homepage-container">
   <div class="mt-homepage-grid">
 
-    {{- /* ── Hero cell (spans 2×2 on desktop, full-width on mobile) ─ */ -}}
-    {{- if $latest }}
-    <a href="{{ $latest.Permalink }}" class="mt-hero-cell no-underline">
+    {{- /* ── Hero cell (2×2 desktop, full-width mobile) ── */ -}}
+    {{- if $hero }}
+    <a href="{{ $hero.Permalink }}" class="mt-hero-cell no-underline">
     {{- else }}
     <div class="mt-hero-cell">
     {{- end }}
@@ -56,64 +42,46 @@
       {{- end }}
       <div class="mt-grid-overlay"></div>
       <div class="mt-hero-content">
-        {{- if $latest }}
-          {{ partial "category-badge.html" $latest }}
-          <h1 class="mt-hero-title">{{ $latest.Title }}</h1>
+        {{- if $hero }}
+          {{ partial "category-badge.html" $hero }}
+          <h1 class="mt-hero-title">{{ $hero.Title }}</h1>
         {{- else }}
           <h1 class="mt-hero-title">{{ site.Title }}</h1>
         {{- end }}
       </div>
-    {{- if $latest }}</a>{{- else }}</div>{{- end }}
+    {{- if $hero }}</a>{{- else }}</div>{{- end }}
 
-    {{- /* ── Article grid: HTMX-loaded, category-filterable ──────── */ -}}
+    {{- /* ── Article grid: first page inline; sentinel resumes at grid-fragment page 2.
+           display:contents lets .mt-grid-item children participate in the parent grid. ── */ -}}
     <div
       id="mt-article-grid"
       style="display: contents;"
       hx-target="this"
       hx-swap="innerHTML transition:true">
-      {{- /* Initial sentinel: fires on load, loads first page of posts */ -}}
+      {{- range $i, $page := first 12 $grid }}
+        {{- /* Ad slot after card index 5 (renders as the 7th grid item) */ -}}
+        {{- if eq $i 6 }}
+      <div class="mt-grid-item mt-grid-ad" data-ad-inject hidden>
+        <p class="mt-ad-label">Publicidade</p>
+        <a class="mt-ad-card" href="" target="_blank" rel="noopener noreferrer">
+          <img class="mt-ad-img" src="" alt="">
+          <p class="mt-ad-title"></p>
+        </a>
+      </div>
+        {{- end }}
+      <div class="mt-grid-item">{{ partial "article-link/grid-card.html" (dict "Page" $page) }}</div>
+      {{- end }}
+      {{- if gt (len $grid) 12 }}
       <div
         data-sentinel
         style="grid-column: 1 / -1; height: 0; overflow: hidden;"
-        hx-get="/posts/grid-fragment.html"
-        hx-trigger="load"
+        hx-get="{{ $base }}page/2/grid-fragment.html"
+        hx-trigger="preempt"
         hx-target="this"
         hx-swap="outerHTML">
       </div>
+      {{- end }}
     </div>
 
   </div>{{- /* .mt-homepage-grid */ -}}
 </div>{{- /* .mt-homepage-container */ -}}
-
-{{- /* ── Category filter: intercept nav clicks on homepage ──── */ -}}
-<script>
-(function () {
-  function initCategoryFilter() {
-    var grid = document.getElementById('mt-article-grid');
-    if (!grid) return;
-
-    document.querySelectorAll('nav a[href*="/categories/"]').forEach(function (link) {
-      link.addEventListener('click', function (e) {
-        if (!document.getElementById('mt-article-grid')) return;
-        e.preventDefault();
-        var href = link.getAttribute('href').replace(/\/?$/, '');
-        var fragUrl = href + '/grid-fragment.html';
-        htmx.ajax('GET', fragUrl, {
-          target: '#mt-article-grid',
-          swap: 'innerHTML transition:true'
-        });
-      });
-    });
-  }
-
-  document.addEventListener('DOMContentLoaded', initCategoryFilter);
-  document.addEventListener('htmx:afterSettle', initCategoryFilter);
-})();
-</script>
-
-{{- /* ── Prefetch: next grid pages + all category grid fragments ─── */ -}}
-<link rel="prefetch" href="/posts/grid-fragment.html" fetchpriority="high">
-{{- range site.Taxonomies.categories }}
-  {{- $termSlug := .Page.RelPermalink | strings.TrimSuffix "/" -}}
-  <link rel="prefetch" href="{{ $termSlug }}/grid-fragment.html" fetchpriority="low">
-{{- end }}

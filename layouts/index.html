@@ -1,10 +1,9 @@
 {{ define "main" }}
-  {{- $style := hugo.Data.style -}}
-  {{- $layout := $style.homepage_layout | default (.Site.Params.homepage.layout | default "page") -}}
-  {{- $partial := print "home/" $layout ".html" -}}
-  {{- if templates.Exists (printf "partials/%s" $partial) -}}
-    {{ partial $partial . }}
-  {{- else -}}
-    {{ partial "home/profile.html" . }}
-  {{- end -}}
+  {{- $posts := (where (where site.RegularPages "Section" "posts") ".Params.draft" "ne" true).ByDate.Reverse -}}
+  {{- $hero := "" -}}
+  {{- if gt (len $posts) 0 }}{{- $hero = index $posts 0 -}}{{- end -}}
+  {{- $grid := $posts -}}
+  {{- if $hero }}{{- $grid = where $posts "Permalink" "ne" $hero.Permalink -}}{{- end -}}
+  <div id="mt-feed-view">{{ partial "home/hero.html" (dict "heroPost" $hero "gridPosts" $grid "sentinelBase" "/posts/") }}</div>
+  <div id="mt-article-view" hidden inert></div>
 {{ end }}

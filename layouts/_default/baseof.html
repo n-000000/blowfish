@@ -35,10 +35,11 @@
     <div class="relative flex flex-col grow">
       <main id="main-content" class="grow mt-content-rhythm">
         {{ block "main" . }}{{ end }}
-        {{ if and (site.Params.footer.showScrollToTop | default true) }}
-          {{- partial "scroll-to-top.html" . -}}
-        {{ end }}
       </main>
+      {{- /* scroll-to-top lives OUTSIDE <main> so SPA region swaps don't wipe it */ -}}
+      {{ if and (site.Params.footer.showScrollToTop | default true) }}
+        {{- partial "scroll-to-top.html" . -}}
+      {{ end }}
       {{- partial "footer.html" . -}}
       {{ if site.Params.enableSearch | default false }}
         {{- partial "search.html" . -}}
