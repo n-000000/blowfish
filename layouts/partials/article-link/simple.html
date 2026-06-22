@@ -46,7 +46,7 @@
   {{- $featuredURL = $img.URL -}}
 {{- end -}}
 
-<article class="article-link--simple {{ $cardClasses }}{{- with $categoryColor }} cat-bg--{{ . }}{{- end }}">
+<article class="article-link--simple {{ $cardClasses }}">
   {{ with $featuredURL }}
     <div class="flex-none relative overflow-hidden {{ $imgWrapperClasses }} thumbnail">
       <img

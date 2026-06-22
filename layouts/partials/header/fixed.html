@@ -23,12 +23,3 @@
     </div>
   </div>
 </div>
-
-{{- /* ── Background blur overlay (for article hero scroll effect) ─ */ -}}
-{{ $backgroundBlur := resources.Get "js/background-blur.js" }}
-{{ $backgroundBlur = $backgroundBlur | resources.Minify | resources.Fingerprint (.Site.Params.fingerprintAlgorithm | default "sha512") }}
-<script
-  type="text/javascript"
-  src="{{ $backgroundBlur.RelPermalink }}"
-  integrity="{{ $backgroundBlur.Data.Integrity }}"
-  data-blur-id="menu-blur"></script>
