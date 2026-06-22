@@ -47,3 +47,7 @@ ga-pageviews.csv
 /*.png
 .playwright-mcp/
 .superpowers/
+
+# Superpowers planning docs + image scratch — destined for a private repo, not the fork
+docs/superpowers/
+docs/images/
