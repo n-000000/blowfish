@@ -1,12 +1,11 @@
 {{- /*
-  category-badge.html — renders a colored badge for the article's first category.
+  category-badge.html — renders a colored badge for every category on the page.
 
   Usage (hero/default):   {{ partial "category-badge.html" . }}
   Usage (article cards):  {{ partial "category-badge.html" (dict "page" . "badgeClass" "mt-article-badge") }}
 
   Context: a Page, or a dict with keys "page" and "badgeClass".
-  Color comes from the category's _index.md `color` param (e.g. "primary-500").
-  Applied via a static CSS class (cat-bg--<slot>) defined in musictide.css.
+  Each badge is colored via a static CSS class (cat-bg--<slug>) in musictide.css.
 */ -}}
 {{- $page := . -}}
 {{- $badgeClass := "mt-hero-badge" -}}
@@ -16,12 +15,10 @@
 {{- end -}}
 {{- $cats := $page.Params.categories -}}
 {{- if $cats -}}
-  {{- $first := cond (reflect.IsSlice $cats) (index $cats 0) $cats -}}
-  {{- $slug := $first | urlize -}}
-  {{- $catPage := site.GetPage (printf "/categories/%s" $slug) -}}
-  {{- $colorSlot := "primary-500" -}}
-  {{- if $catPage -}}
-    {{- $colorSlot = $catPage.Params.color | default "primary-500" -}}
+  {{- $list := cond (reflect.IsSlice $cats) $cats (slice $cats) -}}
+<span class="mt-badge-row">
+  {{- range $list -}}
+<span class="cat-bg--{{ . | urlize }} text-neutral-100 {{ $badgeClass }}">{{ . }}</span>
   {{- end -}}
-<span class="cat-bg--{{ $slug }} text-neutral-100 {{ $badgeClass }}">{{ $first }}</span>
+</span>
 {{- end -}}

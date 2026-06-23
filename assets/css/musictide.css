@@ -104,6 +104,8 @@
    its gutter for grid alignment. */
 @media (max-width: 959px) {
   .mt-banner-mobile-controls { margin-inline-end: calc(1rem - var(--gutter)); }
+  /* Keep the animated logo from touching the first control — same gap as between controls. */
+  .mt-banner-logo-link { padding-inline-end: 0.75rem; }
 }
 
 /* ── Nav strip (desktop only) ────────────────────────────── */
@@ -336,6 +338,13 @@ html {
   .mt-hero-content { padding: 1.75rem var(--mt-card-padding-x); }
 }
 
+/* Row wrapper so multiple badges sit inline (their parent is a flex column,
+   which would otherwise stack them). Collapses to nothing when badges hide. */
+.mt-badge-row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 .mt-hero-badge {
   display: inline-block;
   font-size: 0.875rem;
@@ -344,6 +353,7 @@ html {
   letter-spacing: 0.1em;
   padding: 0.25rem 0.75rem;
   margin-bottom: 0.5rem;
+  margin-inline-end: 0.4rem; /* gap between multiple badges */
   text-shadow: none;
 }
 
@@ -385,6 +395,7 @@ html {
   letter-spacing: 0.1em;
   padding: 0.25rem 0.75rem;
   margin-bottom: 0.5rem;
+  margin-inline-end: 0.4rem; /* gap between multiple badges */
   text-shadow: none;
 }
 
@@ -674,15 +685,13 @@ body::after {
 .mt-nav-strip [data-category-link]:hover { color: color-mix(in srgb, var(--cat-color), white 55%); }
 .mt-nav-strip [data-category-link]:hover::after { transform: scaleX(1); }
 
-/* Active = the category badge (mirrors .mt-hero-badge / .mt-article-badge). */
+/* Active = the category badge: the colored pill is the affordance; keep the
+   resting typography (same size/case/weight) so the text doesn't jump. */
 .mt-nav-strip [data-category-link].mt-nav-active {
   background: var(--cat-color);
   color: #fff;
   text-shadow: none;
   padding: 0.12rem 0.6rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
   box-shadow: none;
 }
 .mt-nav-strip [data-category-link].mt-nav-active::after { transform: scaleX(0); }
