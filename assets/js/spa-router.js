@@ -154,6 +154,7 @@
       if (l._spaWired) return; l._spaWired = true;
       l.addEventListener('click', function (e) {
         if (!feedView()) return;          // cold-loaded article → real link to "/"
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;  // let open-in-new-tab work
         e.preventDefault();
         history.back();                   // popstate reveals feed + restores scrollY
       });
