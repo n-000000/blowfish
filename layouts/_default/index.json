@@ -4,7 +4,12 @@
 {{ $pages = $pages | lang.Merge .Site.Pages }}
 {{ end }}
 {{- range $pages -}}
-  {{- if not .Params.excludeFromSearch -}}
+  {{- /* musictide: search surface is articles + category terms only. Excludes
+       home, section nodes (posts/events), the taxonomy list, tag/author/ad
+       pages, and events. Add a section here if it should become searchable. */ -}}
+  {{- $isArticle := and (eq .Kind "page") (eq .Section "posts") -}}
+  {{- $isCategory := and (eq .Kind "term") (eq .Type "categories") -}}
+  {{- if and (or $isArticle $isCategory) (not .Params.excludeFromSearch) -}}
     {{- $section := .Site.GetPage "section" .Section -}}
     {{- if .Date -}}
       {{- $index = $index | append (dict
