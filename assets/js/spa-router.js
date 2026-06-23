@@ -56,6 +56,8 @@
 
   function applyNavActive(feedUrl) {
     var active = catSlug(feedUrl || '');
+    // On a category feed, hide the now-redundant per-card badges (CSS).
+    document.body.classList.toggle('mt-cat-filtered', active !== null);
     document.querySelectorAll('[data-category-link]').forEach(function (l) {
       var s = catSlug(hrefPath(l));
       l.classList.toggle('mt-nav-active', s !== null && s === active);

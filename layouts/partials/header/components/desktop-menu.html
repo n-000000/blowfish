@@ -17,7 +17,7 @@
 
   {{- /* Back to feed — shown only on .mt-article-page (CSS); spa-router upgrades it to history.back() */ -}}
   <a href="{{ "" | relLangURL }}" data-back-to-feed
-    class="mt-banner-back text-base bf-icon-color-hover" aria-label="Voltar" title="Voltar">
+    class="mt-banner-back text-base" aria-label="Voltar" title="Voltar">
     {{ partial "icon.html" "arrow-left" }}
   </a>
 
@@ -25,7 +25,7 @@
     <button
       id="search-button"
       aria-label="Search"
-      class="text-base bf-icon-color-hover"
+      class="text-base"
       title="{{ i18n "search.open_button_title" }}">
       {{ partial "icon.html" "search" }}
     </button>
@@ -37,7 +37,7 @@
         id="appearance-switcher"
         aria-label="Dark mode switcher"
         type="button"
-        class="text-base bf-icon-color-hover">
+        class="text-base">
         <div class="flex items-center justify-center dark:hidden">
           {{ partial "icon.html" "moon" }}
         </div>
@@ -69,7 +69,7 @@
             tabindex="0"
           {{ end }}
           {{ with or .Name .Pre }}aria-label="{{ . }}"{{ end }}
-          class="flex items-center text-base font-medium bf-icon-color-hover"
+          class="flex items-center text-base font-medium"
           title="{{ .Title }}">
           {{ if .Pre }}
             <span {{ if and .Pre .Name }}class="mr-1"{{ end }}>
@@ -94,7 +94,7 @@
                   target="_blank"
                 {{ end }}
                 {{ with or .Name .Pre }}aria-label="{{ . }}"{{ end }}
-                class="flex items-center bf-icon-color-hover">
+                class="flex items-center">
                 {{ if .Pre }}
                   <span {{ if and .Pre .Name }}class="mr-1"{{ end }}>
                     {{ partial "icon.html" .Pre }}
@@ -117,7 +117,7 @@
       {{ if or (strings.HasPrefix .URL "http:" ) (strings.HasPrefix .URL "https:" ) }}
         target="_blank"
       {{ end }}
-      class="flex items-center bf-icon-color-hover"{{ with $hex }} style="--cat-color:{{ . }}" data-category-link{{ end }}
+      class="flex items-center"{{ with $hex }} style="--cat-color:{{ . }}" data-category-link{{ end }}
       {{ with or .Name .Pre }}aria-label="{{ . }}"{{ end }}
       title="{{ .Title }}">
       {{ if .Pre }}

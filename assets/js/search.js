@@ -185,17 +185,17 @@ function executeQuery(term) {
       resultsHTML =
         resultsHTML +
         `<li class="mb-2">
-          <a class="flex items-center px-3 py-2 rounded-md appearance-none bg-neutral-100 dark:bg-neutral-700 focus:bg-primary-100 hover:bg-primary-100 dark:hover:bg-primary-900 dark:focus:bg-primary-900 focus:outline-dotted focus:outline-transparent focus:outline-2" 
+          <a class="flex items-center px-3 py-2 appearance-none text-white bg-white/5 hover:bg-white/15 focus:bg-white/15 focus:outline-dotted focus:outline-transparent focus:outline-2"
           ${linkconfig} tabindex="0">
             <div class="grow">
               <div class="-mb-1 text-lg font-bold">
                 ${title}
               </div>
-              <div class="text-sm text-neutral-500 dark:text-neutral-400">${value.item.section}<span class="px-2 text-primary-500">&middot;</span>${value.item.date ? value.item.date : ""}</span></div>
+              <div class="text-sm text-white/60">${value.item.section}<span class="px-2 text-white/40">&middot;</span>${value.item.date ? value.item.date : ""}</span></div>
             </div>
             ${value.item.image ? `<img src="${value.item.image}" alt="" loading="lazy" class="ms-3 h-10 w-16 shrink-0 rounded object-cover">` : ""}
-            <div class="ml-2 ltr:block rtl:hidden text-neutral-500">&rarr;</div>
-            <div class="mr-2 ltr:hidden rtl:block text-neutral-500">&larr;</div>
+            <div class="ml-2 ltr:block rtl:hidden text-white/50">&rarr;</div>
+            <div class="mr-2 ltr:hidden rtl:block text-white/50">&larr;</div>
           </a>
         </li>`;
     });

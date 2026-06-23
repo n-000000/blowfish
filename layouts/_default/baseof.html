@@ -11,6 +11,7 @@
   {{ $bodyLayout := "flex flex-col min-h-screen m-auto leading-7 max-w-7xl" }}
   {{ if or .IsHome (eq .Kind "term") }}
     {{ $bodyLayout = printf "%s mt-home" $bodyLayout }}
+    {{ if eq .Kind "term" }}{{ $bodyLayout = printf "%s mt-cat-filtered" $bodyLayout }}{{ end }}
   {{ else if .IsPage }}
     {{ $bodyLayout = printf "%s mt-article-page" $bodyLayout }}
   {{ else }}

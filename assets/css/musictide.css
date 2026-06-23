@@ -13,6 +13,15 @@
   --mt-header-h: calc(var(--mt-banner-h) + var(--mt-nav-h));
   --mt-card-padding-x: 0.75rem;
 
+  /* ── Shell glass (banner, nav strip, footer, search modal) ──
+     One token set so the chrome is identical everywhere. Background is dark in
+     BOTH themes (the chrome is dark chrome) and dark enough that the white logo
+     and light/colored text stay legible over a light page in light mode. */
+  --mt-glass-blur: 18px;
+  --mt-glass-saturate: 1.8;
+  --mt-glass-bg: rgba(0, 0, 0, 0.78);  /* light mode: dark enough for white logo + colored text over a light page */
+  --mt-glass-border: rgba(255, 255, 255, 0.08);
+
   /* ── Layout tokens (Phase 1) ── */
   --gutter: 2rem;  /* pinned: shared by shell + grid → clean alignment math */
   --mt-frame: calc(4 * var(--mt-col-w) + 3 * var(--mt-grid-gap) + 2 * var(--gutter));  /* outer frame = 4 cells + gaps + both gutters; shell and grid share this max-width */
@@ -30,6 +39,9 @@
   --mt-col-w: 292px;
   --mt-grid-gap: 0px;
 }
+
+/* Dark mode: the page is already dark, so the chrome glass can be lighter/glassier. */
+.dark { --mt-glass-bg: rgba(0, 0, 0, 0.55); }
 
 /* Non-home pages: keep content width modest (does not touch the homepage grid) */
 @media (min-width: 768px)  { :root { --container-7xl: 768px; } }
@@ -51,10 +63,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(14px) saturate(1.6);
-  -webkit-backdrop-filter: blur(14px) saturate(1.6);
-  background-color: rgba(0, 0, 0, 0.30);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(var(--mt-glass-blur)) saturate(var(--mt-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--mt-glass-blur)) saturate(var(--mt-glass-saturate));
+  background-color: var(--mt-glass-bg);
+  border-bottom: 1px solid var(--mt-glass-border);
 }
 
 .mt-banner-logo-link {
@@ -87,16 +99,23 @@
   .mt-banner-mobile-controls { display: none; }
 }
 
+/* Phone: the controls are chrome, not content — pull them out of the content
+   gutter so the hamburger sits ~1rem from the edge (flush), while the logo keeps
+   its gutter for grid alignment. */
+@media (max-width: 959px) {
+  .mt-banner-mobile-controls { margin-inline-end: calc(1rem - var(--gutter)); }
+}
+
 /* ── Nav strip (desktop only) ────────────────────────────── */
 .mt-nav-strip {
   height: var(--mt-nav-h);
   min-height: 2.5rem;
   display: flex;
   align-items: center;
-  backdrop-filter: blur(14px) saturate(1.6);
-  -webkit-backdrop-filter: blur(14px) saturate(1.6);
-  background-color: rgba(0, 0, 0, 0.25);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(var(--mt-glass-blur)) saturate(var(--mt-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--mt-glass-blur)) saturate(var(--mt-glass-saturate));
+  background-color: var(--mt-glass-bg);
+  border-bottom: 1px solid var(--mt-glass-border);
 }
 
 /* Phone: hide nav strip (hamburger is in banner instead) */
@@ -622,14 +641,64 @@ body::after {
 .cat-bg--lifestyle { background-color: rgba(147,51,234,var(--mt-cat-bg-opacity)); }
 .cat-bg--agenda    { background-color: rgba(220,38,38,var(--mt-cat-bg-opacity)); }
 
-/* Nav active state. The colored underline works everywhere (incl. the always-dark
-   mobile drawer). The muted/full-contrast TEXT color is scoped to the desktop nav
-   strip so the mobile drawer keeps its own light text and stays legible. */
+/* ── Nav chrome (desktop nav strip) ──────────────────────────
+   The chrome glass is always dark, so all nav text/icons are light in both
+   themes. Non-category icons (search, theme, back) are white; category links
+   carry their own --cat-color. */
+.mt-nav-strip a,
+.mt-nav-strip button { color: rgba(255, 255, 255, 0.8); transition: color .2s; }
+.mt-nav-strip a:hover,
+.mt-nav-strip button:hover { color: #fff; }
+
+/* Mobile drawer: keep light text + a colored active underline. */
 [data-category-link].mt-nav-active { box-shadow: inset 0 -3px 0 0 var(--cat-color); }
-.mt-nav-strip [data-category-link] { color: rgb(var(--color-neutral-500)); }
-.mt-nav-strip [data-category-link].mt-nav-active { color: rgb(var(--color-neutral-900)); }
-.dark .mt-nav-strip [data-category-link] { color: rgb(var(--color-neutral-400)); }
-.dark .mt-nav-strip [data-category-link].mt-nav-active { color: rgb(var(--color-neutral-50)); }
+
+/* Category links: text in the category's own colour, lightened + haloed so it
+   reads (incl. for colour-blind readers) over the variable glass backdrop.
+   Hover = brighten + animated underline. Active = becomes the badge. */
+.mt-nav-strip [data-category-link] {
+  position: relative;
+  color: color-mix(in srgb, var(--cat-color), white 25%);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+  font-weight: 600;
+  padding: 0.1rem 0;
+  transition: color .2s, background-color .2s, padding .2s;
+}
+.mt-nav-strip [data-category-link]::after {
+  content: "";
+  position: absolute; left: 0; right: 0; bottom: -1px; height: 2px;
+  background: var(--cat-color);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform .2s ease;
+}
+.mt-nav-strip [data-category-link]:hover { color: color-mix(in srgb, var(--cat-color), white 55%); }
+.mt-nav-strip [data-category-link]:hover::after { transform: scaleX(1); }
+
+/* Active = the category badge (mirrors .mt-hero-badge / .mt-article-badge). */
+.mt-nav-strip [data-category-link].mt-nav-active {
+  background: var(--cat-color);
+  color: #fff;
+  text-shadow: none;
+  padding: 0.12rem 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  box-shadow: none;
+}
+.mt-nav-strip [data-category-link].mt-nav-active::after { transform: scaleX(0); }
+
+/* Filtered (category) feed: the active category is shown as a badge in the nav,
+   so the per-card category badges are redundant → hide them (the hero keeps its
+   badge). Toggled by spa-router (in-app) and baseof (cold load). */
+body.mt-cat-filtered .mt-grid-item .mt-article-badge { display: none; }
+
+/* Search modal: the same dark glass as the rest of the chrome (was a solid card). */
+.mt-search-modal {
+  backdrop-filter: blur(var(--mt-glass-blur)) saturate(var(--mt-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--mt-glass-blur)) saturate(var(--mt-glass-saturate));
+  background-color: var(--mt-glass-bg);
+  border: 1px solid var(--mt-glass-border);
+}
 
 /* ═══════════════════════════════════════════════════════════
    AD SLOTS
@@ -698,10 +767,10 @@ body::after {
   z-index: 50;
   display: flex;
   align-items: center;
-  backdrop-filter: blur(24px) saturate(2);
-  -webkit-backdrop-filter: blur(24px) saturate(2);
-  background-color: rgba(0, 0, 0, 0.45);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(var(--mt-glass-blur)) saturate(var(--mt-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--mt-glass-blur)) saturate(var(--mt-glass-saturate));
+  background-color: var(--mt-glass-bg);
+  border-top: 1px solid var(--mt-glass-border);
 }
 
 .mt-footer-legal {
