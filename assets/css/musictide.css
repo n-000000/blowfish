@@ -740,3 +740,17 @@ body {
   padding-inline: var(--gutter);
   width: 100%;
 }
+
+/* ── Article-mode header toggle ─────────────────────────────────────────
+   The header is persistent across SPA swaps, so feed-vs-article presentation
+   is driven by the body class (mt-home / mt-article-page) spa-router toggles
+   and baseof.html sets server-side. Specificity (body.x .y) beats the base
+   rule regardless of source order. */
+.mt-banner-back { display: none; align-items: center; }
+.mt-banner-back .icon { width: 1.75rem; height: 1.75rem; color: #fff; }
+
+body.mt-article-page .mt-banner-back { display: inline-flex; }
+body.mt-article-page .mt-banner-logo-link { display: none; }
+body.mt-article-page .mt-nav-categories { display: none; }
+body.mt-article-page .mt-banner-hamburger { display: none; }
+/* ───────────────────────────────────────────────────────────────────── */
