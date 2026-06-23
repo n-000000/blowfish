@@ -17,6 +17,23 @@ showButton ? showButton.addEventListener("click", displaySearch) : null;
 showButtonMobile ? showButtonMobile.addEventListener("click", displaySearch) : null;
 hideButton.addEventListener("click", hideSearch);
 wrapper.addEventListener("click", hideSearch);
+
+// SPA-route internal article results: close the modal and hand off to the
+// router (window.__mtOpenArticle) so the live feed is preserved and back
+// restores scroll. Falls through to normal navigation when the router is
+// absent (no htmx) or the result is external / opened in a new tab.
+output.addEventListener("click", function (event) {
+  if (!window.__mtOpenArticle) return;
+  if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
+  var a = event.target.closest("a[href]");
+  if (!a || a.target === "_blank") return;
+  var path;
+  try { path = new URL(a.href, location.origin).pathname; } catch (e) { return; }
+  if (!/^\/posts\/[^/]+\/?$/.test(path)) return; // articles only
+  event.preventDefault();
+  hideSearch();
+  window.__mtOpenArticle(path);
+});
 modal.addEventListener("click", function (event) {
   event.stopPropagation();
   event.stopImmediatePropagation();
@@ -87,6 +104,9 @@ input.onkeyup = function (event) {
 };
 
 function displaySearch() {
+  // Search is feed-only: opening it from an article (button hidden, but the
+  // "/" shortcut still fires) would full-reload on result click. Bail there.
+  if (document.body.classList.contains("mt-article-page")) return;
   if (!indexed) {
     buildIndex();
   }

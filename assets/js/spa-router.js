@@ -90,6 +90,12 @@
     if (push) history.pushState({ view: 'article', path: path }, '', path);
   }
 
+  // Bridge for search.js: open an article via the SPA (feed preserved). Only
+  // ever called from the feed (search is hidden/gated on articles), so this is
+  // the tested feed→article path. openArticle falls back to a full nav if no
+  // shell exists.
+  window.__mtOpenArticle = function (path) { openArticle(path, true); };
+
   // --- Back / forward ---
   window.addEventListener('popstate', function (e) {
     var path = location.pathname;

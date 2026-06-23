@@ -756,4 +756,9 @@ body.mt-article-page .mt-banner-back { display: inline-flex; }
    hamburger would open an empty drawer. Logo stays put (inert brand mark). */
 body.mt-article-page .mt-nav-categories { display: none; }
 body.mt-article-page .mt-banner-hamburger { display: none; }
+/* Search is a feed-only discovery tool: from an article it would full-reload
+   and break back/scroll-restore. Hidden here; the / shortcut is gated in
+   search.js, and result clicks are SPA-routed (spa-router.js). */
+body.mt-article-page #search-button,
+body.mt-article-page #search-button-mobile { display: none; }
 /* ───────────────────────────────────────────────────────────────────── */
