@@ -13,11 +13,16 @@
   {{- $isCategory := and (eq .Kind "term") (eq .Type "categories") -}}
   {{- if and (or $isArticle $isCategory) (not .Params.excludeFromSearch) -}}
     {{- $section := .Site.GetPage "section" .Section -}}
+    {{- /* Cover for the result thumbnail. Resize "600x" reuses the exact variant
+         the homepage grid (card.html) already generates → no new build-time image
+         work. Empty for category terms (no featureimage). */ -}}
+    {{- $image := (partial "resolve-feature-image.html" (dict "Page" . "Resize" "600x")).URL -}}
     {{- if .Date -}}
       {{- $index = $index | append (dict
       "date" (.Date | time.Format (.Site.Language.Params.dateFormat | default ":date_long"))
       "title" (.Title | emojify | safeJS)
       "section" ($section.Title | emojify | safeJS)
+      "image" $image
       "permalink" .RelPermalink
       "externalUrl" .Params.externalUrl
       "type" .Type
@@ -26,6 +31,7 @@
       {{- $index = $index | append (dict
       "title" (.Title | emojify | safeJS)
       "section" ($section.Title | emojify | safeJS)
+      "image" $image
       "permalink" .RelPermalink
       "externalUrl" .Params.externalUrl
       "type" .Type

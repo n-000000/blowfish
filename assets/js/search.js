@@ -193,6 +193,7 @@ function executeQuery(term) {
               </div>
               <div class="text-sm text-neutral-500 dark:text-neutral-400">${value.item.section}<span class="px-2 text-primary-500">&middot;</span>${value.item.date ? value.item.date : ""}</span></div>
             </div>
+            ${value.item.image ? `<img src="${value.item.image}" alt="" loading="lazy" class="ms-3 h-10 w-16 shrink-0 rounded object-cover">` : ""}
             <div class="ml-2 ltr:block rtl:hidden text-neutral-500">&rarr;</div>
             <div class="mr-2 ltr:hidden rtl:block text-neutral-500">&larr;</div>
           </a>
