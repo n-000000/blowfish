@@ -15,6 +15,12 @@
     {{ partial "header/components/a11y.html" (dict "prefix" "desktop-") }}
   {{ end }}
 
+  {{- /* Back to feed — shown only on .mt-article-page (CSS); spa-router upgrades it to history.back() */ -}}
+  <a href="{{ "" | relLangURL }}" data-back-to-feed
+    class="mt-banner-back text-base bf-icon-color-hover" aria-label="Voltar" title="Voltar">
+    {{ partial "icon.html" "arrow-left" }}
+  </a>
+
   {{ if .Site.Params.enableSearch | default false }}
     <button
       id="search-button"

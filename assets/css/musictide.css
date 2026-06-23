@@ -746,11 +746,14 @@ body {
    is driven by the body class (mt-home / mt-article-page) spa-router toggles
    and baseof.html sets server-side. Specificity (body.x .y) beats the base
    rule regardless of source order. */
+/* Back arrow lives among the action icons (desktop nav strip + phone banner
+   controls); inherits sibling size (.icon svg = 1em) and color (text-* class).
+   Hidden everywhere, revealed only on article pages. */
 .mt-banner-back { display: none; align-items: center; }
-.mt-banner-back .icon { width: 1.75rem; height: 1.75rem; color: #fff; }
-
 body.mt-article-page .mt-banner-back { display: inline-flex; }
-body.mt-article-page .mt-banner-logo-link { display: none; }
+
+/* Article pages: categories make no sense (can't filter an article); the
+   hamburger would open an empty drawer. Logo stays put (inert brand mark). */
 body.mt-article-page .mt-nav-categories { display: none; }
 body.mt-article-page .mt-banner-hamburger { display: none; }
 /* ───────────────────────────────────────────────────────────────────── */

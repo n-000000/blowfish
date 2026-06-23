@@ -23,37 +23,35 @@
 
 <div class="mt-site-banner">
   <div class="mt-header-inner w-full flex items-center justify-between h-full">
-    {{- /* Left slot: back arrow (articles) + logo (feed); one CSS toggles which shows */ -}}
-    <div class="mt-banner-left flex items-center">
-      {{- /* Back to feed — shown only on .mt-article-page (CSS). Plain link; spa-router upgrades it to history.back(). */ -}}
-      <a href="{{ "" | relLangURL }}" data-back-to-feed class="mt-banner-back" aria-label="Voltar">
+    {{- /* Logo — inert brand mark (non-interactive), left-aligned within container */ -}}
+    <span class="mt-banner-logo-link" aria-label="{{ .Site.Title }}">
+      {{- if $bannerLogo }}
+        <img
+          src="{{ $bannerLogo }}"
+          class="mt-banner-logo nozoom"
+          alt="{{ .Site.Title }}"
+          width="1000"
+          height="200">
+      {{- else }}
+        {{- $logo := resources.Get (.Site.Params.Logo | default "") -}}
+        {{- if $logo }}
+          <img
+            src="{{ $logo.RelPermalink }}"
+            class="mt-banner-logo nozoom"
+            alt="{{ .Site.Title }}">
+        {{- else }}
+          <span class="text-2xl font-black text-white">{{ .Site.Title }}</span>
+        {{- end }}
+      {{- end }}
+    </span>
+
+    {{- /* Mobile controls: back + search + day/night + hamburger (hidden on desktop via CSS) */ -}}
+    <div class="mt-banner-mobile-controls">
+      {{- /* Back to feed — shown only on .mt-article-page (CSS); spa-router upgrades it to history.back() */ -}}
+      <a href="{{ "" | relLangURL }}" data-back-to-feed
+        class="mt-banner-back text-white/80 hover:text-white" aria-label="Voltar">
         {{ partial "icon.html" "arrow-left" }}
       </a>
-      {{- /* Logo — inert brand mark, shown only on feed (CSS) */ -}}
-      <span class="mt-banner-logo-link" aria-label="{{ .Site.Title }}">
-        {{- if $bannerLogo }}
-          <img
-            src="{{ $bannerLogo }}"
-            class="mt-banner-logo nozoom"
-            alt="{{ .Site.Title }}"
-            width="1000"
-            height="200">
-        {{- else }}
-          {{- $logo := resources.Get (.Site.Params.Logo | default "") -}}
-          {{- if $logo }}
-            <img
-              src="{{ $logo.RelPermalink }}"
-              class="mt-banner-logo nozoom"
-              alt="{{ .Site.Title }}">
-          {{- else }}
-            <span class="text-2xl font-black text-white">{{ .Site.Title }}</span>
-          {{- end }}
-        {{- end }}
-      </span>
-    </div>
-
-    {{- /* Mobile controls: search + day/night + hamburger (hidden on desktop via CSS) */ -}}
-    <div class="mt-banner-mobile-controls">
       {{ if .Site.Params.enableSearch | default false }}
         <button
           id="search-button-mobile"
