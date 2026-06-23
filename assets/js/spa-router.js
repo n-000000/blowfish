@@ -149,10 +149,22 @@
     });
   }
 
+  function wireBack() {
+    document.querySelectorAll('[data-back-to-feed]').forEach(function (l) {
+      if (l._spaWired) return; l._spaWired = true;
+      l.addEventListener('click', function (e) {
+        if (!feedView()) return;          // cold-loaded article → real link to "/"
+        e.preventDefault();
+        history.back();                   // popstate reveals feed + restores scrollY
+      });
+    });
+  }
+
   // --- Post-swap: rewire new content + update title ---
   document.addEventListener('htmx:afterSettle', function (e) {
     wireNav();
     wireCards();
+    wireBack();
     if (e.detail && e.detail.target && e.detail.target.id === 'mt-article-view') {
       var h1 = document.querySelector('#mt-article-view h1');
       if (h1) document.title = h1.textContent.trim();
@@ -173,6 +185,7 @@
     history.replaceState({ view: currentView, feedUrl: loadedFeedUrl, path: path }, '', path + location.search);
     wireNav();
     wireCards();
+    wireBack();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
