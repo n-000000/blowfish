@@ -5,8 +5,10 @@
 {{ end }}
 {{- range $pages -}}
   {{- /* musictide: search surface is articles + category terms only. Excludes
-       home, section nodes (posts/events), the taxonomy list, tag/author/ad
-       pages, and events. Add a section here if it should become searchable. */ -}}
+       home, section nodes, the taxonomy list, and tag/author/ad/event pages.
+       Only the title is indexed (search.js matches title; for category terms
+       the title is the category name). To make events searchable once that
+       section is wired, add: (eq .Section "events") to $isArticle below. */ -}}
   {{- $isArticle := and (eq .Kind "page") (eq .Section "posts") -}}
   {{- $isCategory := and (eq .Kind "term") (eq .Type "categories") -}}
   {{- if and (or $isArticle $isCategory) (not .Params.excludeFromSearch) -}}
@@ -16,8 +18,6 @@
       "date" (.Date | time.Format (.Site.Language.Params.dateFormat | default ":date_long"))
       "title" (.Title | emojify | safeJS)
       "section" ($section.Title | emojify | safeJS)
-      "summary" (.Summary | plainify | htmlUnescape | safeJS)
-      "content" (.Plain | safeJS)
       "permalink" .RelPermalink
       "externalUrl" .Params.externalUrl
       "type" .Type
@@ -26,8 +26,6 @@
       {{- $index = $index | append (dict
       "title" (.Title | emojify | safeJS)
       "section" ($section.Title | emojify | safeJS)
-      "summary" (.Summary | plainify | htmlUnescape | safeJS)
-      "content" (.Plain | safeJS)
       "permalink" .RelPermalink
       "externalUrl" .Params.externalUrl
       "type" .Type

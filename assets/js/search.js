@@ -152,12 +152,9 @@ function buildIndex() {
       ignoreLocation: true,
       threshold: 0.0,
       includeMatches: true,
-      keys: [
-        { name: "title", weight: 0.8 },
-        { name: "section", weight: 0.2 },
-        { name: "summary", weight: 0.6 },
-        { name: "content", weight: 0.4 },
-      ],
+      // Match on title only — for articles this is the headline, for category
+      // terms it's the category name. Body/summary/section are not searched.
+      keys: ["title"],
     };
     /*var finalIndex = [];
     for (var i in data) {
@@ -176,10 +173,6 @@ function executeQuery(term) {
 
   if (results.length > 0) {
     results.forEach(function (value, key) {
-      var html = value.item.summary;
-      var div = document.createElement("div");
-      div.innerHTML = html;
-      value.item.summary = div.textContent || div.innerText || "";
       var title = value.item.externalUrl
         ? value.item.title +
           '<span class="text-xs ml-2 align-center cursor-default text-neutral-400 dark:text-neutral-500">' +
@@ -199,7 +192,6 @@ function executeQuery(term) {
                 ${title}
               </div>
               <div class="text-sm text-neutral-500 dark:text-neutral-400">${value.item.section}<span class="px-2 text-primary-500">&middot;</span>${value.item.date ? value.item.date : ""}</span></div>
-              <div class="text-sm italic">${value.item.summary}</div>
             </div>
             <div class="ml-2 ltr:block rtl:hidden text-neutral-500">&rarr;</div>
             <div class="mr-2 ltr:hidden rtl:block text-neutral-500">&larr;</div>
