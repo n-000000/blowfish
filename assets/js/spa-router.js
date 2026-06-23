@@ -71,7 +71,7 @@
     applyNavActive(feedUrl);
     document.title = feedTitle(feedUrl);
     closeMenu();
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
     if (push) history.pushState({ view: 'feed', feedUrl: feedUrl }, '', feedUrl);
   }
 
@@ -86,7 +86,7 @@
     showArticle();
     applyNavActive(null);
     closeMenu();
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
     if (push) history.pushState({ view: 'article', path: path }, '', path);
   }
 
@@ -100,7 +100,7 @@
       } else {
         showArticle();
         applyNavActive(null);
-        window.scrollTo(0, 0);
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
       }
       return;
     }
@@ -110,7 +110,7 @@
       showFeed();
       applyNavActive(feedUrl);
       document.title = feedTitle(feedUrl);
-      window.scrollTo(0, (e.state && e.state.scrollY) || 0);
+      window.scrollTo({ top: (e.state && e.state.scrollY) || 0, left: 0, behavior: 'instant' });
     } else {
       renderFeed(feedUrl, false);
     }
