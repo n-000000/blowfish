@@ -4,9 +4,11 @@
 */ -}}
 <nav class="flex items-center gap-x-5">
   {{ if .Site.Menus.main }}
-    {{ range .Site.Menus.main }}
-      {{ template "DesktopMenu" . }}
-    {{ end }}
+    <span class="mt-nav-categories flex items-center gap-x-5">
+      {{ range .Site.Menus.main }}
+        {{ template "DesktopMenu" . }}
+      {{ end }}
+    </span>
   {{ end }}
 
   {{ if .Site.Params.enableA11y | default false }}
