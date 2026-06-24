@@ -18,7 +18,7 @@
   {{- $list := cond (reflect.IsSlice $cats) $cats (slice $cats) -}}
 <span class="mt-badge-row">
   {{- range $list -}}
-<span class="cat-bg--{{ . | urlize }} text-neutral-100 {{ $badgeClass }}">{{ . }}</span>
+<span class="cat-bg--{{ . | urlize }} text-neutral-100 {{ $badgeClass }}" data-cat="{{ . | urlize }}">{{ . }}</span>
   {{- end -}}
 </span>
 {{- end -}}

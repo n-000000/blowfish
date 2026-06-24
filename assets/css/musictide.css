@@ -108,6 +108,22 @@
   .mt-banner-logo-link { padding-inline-end: 0.75rem; }
 }
 
+/* ── Mobile menu drawer ──────────────────────────────────────
+   Same dark glass as the rest of the chrome (was opaque near-black), and its
+   items align to the content frame so they line up under the banner logo. */
+.mt-mobile-menu-panel {
+  backdrop-filter: blur(var(--mt-glass-blur)) saturate(var(--mt-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--mt-glass-blur)) saturate(var(--mt-glass-saturate));
+  background-color: var(--mt-glass-bg);
+  border-bottom: 1px solid var(--mt-glass-border);
+}
+.mt-mobile-menu-inner {
+  max-width: var(--mt-frame-3);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  padding-block: 1rem;
+}
+
 /* ── Nav strip (desktop only) ────────────────────────────── */
 .mt-nav-strip {
   height: var(--mt-nav-h);
@@ -381,9 +397,7 @@ html {
   overflow: hidden;
 }
 
-@media (min-width: 960px) {
-  .mt-hero-title { font-size: 1.5rem; }
-}
+/* Hero title keeps the phone size (1.75rem) on desktop too — no shrink. */
 
 /* ── Article card text ───────────────────────────────────── */
 
@@ -709,10 +723,26 @@ body::after {
 }
 .mt-nav-strip [data-category-link].mt-nav-active::after { transform: scaleX(0); }
 
-/* Filtered (category) feed: the active category is shown as a badge in the nav,
-   so the per-card category badges are redundant → hide them (the hero keeps its
-   badge). Toggled by spa-router (in-app) and baseof (cold load). */
-body.mt-cat-filtered .mt-grid-item .mt-article-badge { display: none; }
+/* Filtered (category) feed: each GRID card shows ONLY the active category's
+   badge — sibling badges hide, so a multi-category article reads as the one you
+   filtered by, and the active category stays on-screen as a persistent
+   indicator (important on mobile, where the nav is behind the menu). Driven by
+   body[data-active-cat] (spa-router in-app, baseof on cold load).
+   The hero is the featured *site-wide latest* (heroFollowsFilter=false) and may
+   be a different category, so it keeps its own badge — not scoped here.
+   No active category (home feed) → all badges show. */
+body[data-active-cat] .mt-article-badge { display: none; }
+
+body[data-active-cat="espinho"]   .mt-article-badge.cat-bg--espinho,
+body[data-active-cat="nacional"]  .mt-article-badge.cat-bg--nacional,
+body[data-active-cat="cultura"]   .mt-article-badge.cat-bg--cultura,
+body[data-active-cat="desporto"]  .mt-article-badge.cat-bg--desporto,
+body[data-active-cat="lifestyle"] .mt-article-badge.cat-bg--lifestyle,
+body[data-active-cat="agenda"]    .mt-article-badge.cat-bg--agenda { display: inline-block; }
+
+/* Badges filter their category on click (spa-router) → show the affordance. */
+.mt-hero-badge,
+.mt-article-badge { cursor: pointer; }
 
 /* Search modal: the same dark glass as the rest of the chrome (was a solid card). */
 .mt-search-modal {
@@ -784,6 +814,10 @@ body.mt-cat-filtered .mt-grid-item .mt-article-badge { display: none; }
   bottom: 0;
   left: 0;
   right: 0;
+  /* Bar tracks the content frame (not the full viewport): fixed + left/right:0
+     + margin-inline:auto + max-width centers it to the home content width. */
+  margin-inline: auto;
+  max-width: var(--mt-frame-3);
   height: var(--mt-footer-h);
   min-height: 2.25rem;
   z-index: 50;
@@ -793,6 +827,10 @@ body.mt-cat-filtered .mt-grid-item .mt-article-badge { display: none; }
   -webkit-backdrop-filter: blur(var(--mt-glass-blur)) saturate(var(--mt-glass-saturate));
   background-color: var(--mt-glass-bg);
   border-top: 1px solid var(--mt-glass-border);
+}
+
+@media (min-width: 960px) {
+  .mt-fixed-footer { max-width: var(--mt-frame); } /* 4-col frame, matches the grid */
 }
 
 .mt-footer-legal {
@@ -812,6 +850,13 @@ body.mt-cat-filtered .mt-grid-item .mt-article-badge { display: none; }
 
 body {
   padding-bottom: max(var(--mt-footer-h), 2.25rem);
+}
+
+/* Light theme: a soft silver page backdrop instead of straight white (brand
+   nod to Espinho / argent). Higher specificity than the Tailwind bg-neutral
+   utility; dark mode (.dark) keeps its own background. */
+html:not(.dark) body {
+  background-color: #d9d9d6;
 }
 
 /* ── Content vertical rhythm — gap below the fixed header / above the fixed footer ── */

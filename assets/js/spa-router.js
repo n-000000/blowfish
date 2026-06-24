@@ -56,8 +56,10 @@
 
   function applyNavActive(feedUrl) {
     var active = catSlug(feedUrl || '');
-    // On a category feed, hide the now-redundant per-card badges (CSS).
-    document.body.classList.toggle('mt-cat-filtered', active !== null);
+    // Drive the "show only the active category's badge" CSS (works on hero +
+    // cards, on mobile too — no menu interaction needed).
+    if (active) document.body.setAttribute('data-active-cat', active);
+    else document.body.removeAttribute('data-active-cat');
     document.querySelectorAll('[data-category-link]').forEach(function (l) {
       var s = catSlug(hrefPath(l));
       l.classList.toggle('mt-nav-active', s !== null && s === active);
@@ -169,6 +171,27 @@
     });
   }
 
+  // Clicking a category badge (on a card or hero) filters by that category —
+  // same as the nav link, nav feedback included. Delegated in the capture phase
+  // so it beats the card's bubble-phase open handler; preventDefault stops the
+  // enclosing card <a> from navigating. Feed pages only (badges live there).
+  function wireBadgeFilter() {
+    if (document._spaBadgeWired) return; document._spaBadgeWired = true;
+    document.addEventListener('click', function (e) {
+      if (!feedView()) return;
+      var badge = e.target.closest('[data-cat]');
+      if (!badge) return;
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+      var slug = badge.getAttribute('data-cat');
+      if (!slug) return;
+      e.preventDefault();
+      e.stopPropagation();
+      var catUrl = '/categories/' + slug + '/';
+      if (currentView === 'feed' && catUrl === loadedFeedUrl) renderFeed('/', true); // toggle off
+      else renderFeed(catUrl, true);
+    }, true);
+  }
+
   // --- Post-swap: rewire new content + update title ---
   document.addEventListener('htmx:afterSettle', function (e) {
     wireNav();
@@ -195,6 +218,7 @@
     wireNav();
     wireCards();
     wireBack();
+    wireBadgeFilter();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

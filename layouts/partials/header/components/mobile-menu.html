@@ -12,10 +12,10 @@
 {{- /* Appearance switcher lives in the banner mobile-controls (always visible);
        no duplicate here — a second one (same id) popped up under the banner on open. */ -}}
 <nav
-  class="hidden peer-checked:block fixed inset-x-0 z-40 overflow-y-auto"
+  class="mt-mobile-menu-panel hidden peer-checked:block fixed inset-x-0 z-40 overflow-y-auto"
   style="top: var(--mt-header-h); max-height: calc(100svh - var(--mt-header-h));"
   aria-label="Mobile navigation">
-  <div class="backdrop-blur-xl bg-neutral-900/90 dark:bg-neutral-900/95 px-6 py-4">
+  <div class="mt-mobile-menu-inner">
     {{ if .Site.Menus.main }}
       <ul class="flex flex-col space-y-1">
         {{ range .Site.Menus.main }}
