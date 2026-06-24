@@ -4,7 +4,7 @@
 
 /* ── Layout tokens ───────────────────────────────────────── */
 :root {
-  --container-7xl: 100vw;  /* phone: body fills viewport */
+  --container-7xl: 100%;  /* phone: body fills viewport */
   --mt-max-width: max(90vw, 1600px);
   --mt-gutter: 30px;
   --mt-cat-bg-opacity: 0.90;
@@ -49,8 +49,11 @@
 @media (min-width: 1200px) { :root { --mt-card-padding-x: 1rem; } }
 
 /* Homepage: body is full-width — the grid centers itself via max-width: var(--mt-frame).
-   The old body-cap approach (tracking col count × col-w) is replaced by the intrinsic grid. */
-.mt-home { --container-7xl: 100vw; }
+   The old body-cap approach (tracking col count × col-w) is replaced by the intrinsic grid.
+   Use 100% (not 100vw): 100vw includes the scrollbar gutter in Firefox, so the grid
+   would center ~scrollbar/2 off from the layout-viewport-centered fixed footer. 100% =
+   clientWidth in every browser, so grid + footer share one centering reference. */
+.mt-home { --container-7xl: 100%; }
 
 /* ═══════════════════════════════════════════════════════════
    SITE BANNER — animated logo strip
@@ -866,7 +869,7 @@ html:not(.dark) body {
 
 /* ── Article page body: full-viewport width so the article column can self-center ── */
 .mt-article-page {
-  --container-7xl: 100vw;
+  --container-7xl: 100%;
 }
 
 /* ── Article column: 3-cell measure (876px), centered, gutter padding ── */
