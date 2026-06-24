@@ -147,8 +147,7 @@
 /* ── Shell inner: tracks the global content frame — 3-col on phone, 4-col on not-phone.
    Glass backgrounds bleed to viewport edges on the outer fixed containers; only the
    content (logo, nav, footer text) is constrained here. */
-.mt-header-inner,
-.mt-footer-inner {
+.mt-header-inner {
   width: 100%;
   max-width: var(--mt-frame-3);
   margin-inline: auto;
@@ -156,10 +155,16 @@
 }
 
 @media (min-width: 1248px) {
-  .mt-header-inner,
-  .mt-footer-inner {
+  .mt-header-inner {
     max-width: var(--mt-frame);  /* 4-col zone: shell grows with the grid */
   }
+}
+
+/* Footer content fills the cells-box bar; pad to the card content inset so the
+   legal text lines up with the article badges/titles (not the cell edge). */
+.mt-footer-inner {
+  width: 100%;
+  padding-inline: var(--mt-card-padding-x);
 }
 
 /* ── Header spacer ───────────────────────────────────────── */
@@ -379,9 +384,10 @@ html {
   display: inline-block;
   font-size: 0.875rem;
   font-weight: 700;
+  line-height: 1.4; /* match the article (mobile) badge: override inherited 28px → same compact pill on all layouts */
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  padding: 0.25rem 0.75rem;
+  padding: 0.2rem 0.75rem;
   margin-bottom: 0.5rem;
   margin-inline-end: 0.4rem; /* gap between multiple badges */
   text-shadow: none;
@@ -817,10 +823,12 @@ body[data-active-cat="agenda"]    .mt-article-badge.cat-bg--agenda { display: in
   bottom: 0;
   left: 0;
   right: 0;
-  /* Bar tracks the content frame (not the full viewport): fixed + left/right:0
-     + margin-inline:auto + max-width centers it to the home content width. */
+  /* The bar spans the grid's CELLS box — flush with the articles, not the frame.
+     = min(viewport, frame) − both gutters, centered. left/right:0 makes 100% =
+     layout viewport (no scrollbar) so it's cross-browser; margin auto centers.
+     Matches .mt-homepage-grid's content box at every width (frame-3 → frame @1248). */
+  width: min(calc(100% - 2 * var(--gutter)), calc(var(--mt-frame-3) - 2 * var(--gutter)));
   margin-inline: auto;
-  max-width: var(--mt-frame-3);
   height: var(--mt-footer-h);
   min-height: 2.25rem;
   z-index: 50;
@@ -832,8 +840,8 @@ body[data-active-cat="agenda"]    .mt-article-badge.cat-bg--agenda { display: in
   border-top: 1px solid var(--mt-glass-border);
 }
 
-@media (min-width: 960px) {
-  .mt-fixed-footer { max-width: var(--mt-frame); } /* 4-col frame, matches the grid */
+@media (min-width: 1248px) {
+  .mt-fixed-footer { width: min(calc(100% - 2 * var(--gutter)), calc(var(--mt-frame) - 2 * var(--gutter))); }
 }
 
 .mt-footer-legal {
