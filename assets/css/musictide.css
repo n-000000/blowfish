@@ -909,3 +909,21 @@ body.mt-article-page .mt-banner-hamburger { display: none; }
 body.mt-article-page #search-button,
 body.mt-article-page #search-button-mobile { display: none; }
 /* ───────────────────────────────────────────────────────────────────── */
+
+/* ═══════════════════════════════════════════════════════════
+   FIREFOX-ANDROID PERFORMANCE FALLBACK
+   Fenix (Firefox for Android) has no fast path for backdrop-filter blur or for a
+   fixed mix-blend-mode overlay, so both repaint the whole viewport every scroll
+   frame → severe jank. Chrome Android handles them fine, so this is scoped to
+   the .ff-mobile class set by the inline UA check in head.html (Fenix only).
+   Drop the blur (fall back to a more opaque solid glass so chrome stays legible)
+   and kill the grain. Higher specificity (html.ff-mobile) beats .dark's bg var. */
+html.ff-mobile { --mt-glass-bg: rgba(0, 0, 0, 0.85); }
+html.ff-mobile .mt-site-banner,
+html.ff-mobile .mt-nav-strip,
+html.ff-mobile .mt-fixed-footer,
+html.ff-mobile .mt-mobile-menu-panel {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+html.ff-mobile body::after { display: none; }

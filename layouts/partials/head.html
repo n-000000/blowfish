@@ -7,6 +7,14 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <meta name="theme-color">
 
+  {{/* musictide: tag Firefox-for-Android so CSS can drop backdrop-filter blur and
+       the fixed mix-blend grain there — both are severe scroll-jank on Fenix while
+       Chrome Android is fine. Inline + early so the glass never flashes blurred. */}}
+  <script>
+    if (/firefox/i.test(navigator.userAgent) && /android/i.test(navigator.userAgent))
+      document.documentElement.classList.add('ff-mobile');
+  </script>
+
   {{/* Title */}}
   {{ if .IsHome }}
     <title>{{ .Site.Title | emojify }}</title>
