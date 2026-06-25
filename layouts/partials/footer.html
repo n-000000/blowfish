@@ -5,6 +5,11 @@
   Contains: legal/institutional text (left) + scroll-to-top (right).
 */ -}}
 
+{{- $rodape := partial "ads.html" (dict "placement" "rodape") -}}
+{{- if gt (len $rodape) 0 }}
+<div class="mt-footer-ad-bar print:hidden">{{ partial "ad-card.html" (dict "ad" (index $rodape 0)) }}</div>
+{{- end }}
+
 <footer class="mt-fixed-footer print:hidden" role="contentinfo">
   <div class="mt-footer-inner w-full flex items-center justify-between h-full">
     <p class="mt-footer-legal text-xs text-white/60">

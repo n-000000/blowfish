@@ -779,24 +779,35 @@ body[data-active-cat="agenda"]    .mt-article-badge.cat-bg--agenda { display: in
 }
 
 .mt-ad-card {
+  position: relative;
   display: block;
-  background: rgb(var(--color-neutral-200));
+  width: 100%;
+  height: 100%;
   text-decoration: none;
-  opacity: 1;
-  transition: opacity 0.15s ease;
+  overflow: hidden;
+  background: rgb(var(--color-neutral-200));
 }
-
-.dark .mt-ad-card {
-  background: rgb(var(--color-neutral-800));
-}
-
-.mt-ad-card:hover { opacity: 0.85; }
+.dark .mt-ad-card { background: rgb(var(--color-neutral-800)); }
+.mt-ad-card:hover { opacity: 0.9; }
 
 .mt-ad-img {
   display: block;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  height: 100%;
   object-fit: cover;
+}
+
+.mt-ad-flag {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+  padding: 0.1rem 0.4rem;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(0, 0, 0, 0.55);
 }
 
 .mt-ad-title {
@@ -861,6 +872,30 @@ body[data-active-cat="agenda"]    .mt-article-badge.cat-bg--agenda { display: in
 
 body {
   padding-bottom: max(var(--mt-footer-h), 2.25rem);
+}
+
+/* ── Footer ad bar — fixed thin banner directly above the footer ── */
+:root { --mt-footer-ad-h: 90px; }
+@media (max-width: 959px) { :root { --mt-footer-ad-h: 50px; } }
+
+.mt-footer-ad-bar {
+  position: fixed;
+  bottom: var(--mt-footer-h);
+  left: 0;
+  right: 0;
+  width: min(calc(100% - 2 * var(--gutter)), calc(var(--mt-frame-3) - 2 * var(--gutter)));
+  margin-inline: auto;
+  height: var(--mt-footer-ad-h);
+  z-index: 50;
+  overflow: hidden;
+}
+@media (min-width: 1248px) {
+  .mt-footer-ad-bar { width: min(calc(100% - 2 * var(--gutter)), calc(var(--mt-frame) - 2 * var(--gutter))); }
+}
+
+/* Reserve space only when the bar is present, so content never hides behind it. */
+body:has(.mt-footer-ad-bar) {
+  padding-bottom: calc(max(var(--mt-footer-h), 2.25rem) + var(--mt-footer-ad-h));
 }
 
 /* Light theme: a soft silver page backdrop instead of straight white (brand
