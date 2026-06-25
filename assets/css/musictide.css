@@ -102,11 +102,10 @@
   .mt-banner-mobile-controls { display: none; }
 }
 
-/* Phone: the controls are chrome, not content — pull them out of the content
-   gutter so the hamburger sits ~1rem from the edge (flush), while the logo keeps
-   its gutter for grid alignment. */
+/* Phone: keep the controls inside the content gutter so the hamburger's right
+   edge lines up with the article grid's right edge (not pulled to the screen edge). */
 @media (max-width: 959px) {
-  .mt-banner-mobile-controls { margin-inline-end: calc(1rem - var(--gutter)); }
+  .mt-banner-mobile-controls { margin-inline-end: 0; }
   /* Keep the animated logo from touching the first control — same gap as between controls. */
   .mt-banner-logo-link { padding-inline-end: 0.75rem; }
 }
@@ -782,6 +781,11 @@ body[data-active-cat="agenda"]    .mt-article-badge.cat-bg--agenda { display: in
   height: 100%;
   object-fit: cover;
 }
+
+/* Banner creatives (wide, thin) must show in full — cover would crop the sides.
+   The 3:2 grid creative keeps cover (it fills its cell exactly). */
+.mt-footer-ad-bar .mt-ad-img,
+.mt-ad-banner .mt-ad-img { object-fit: contain; }
 
 .mt-ad-flag {
   position: absolute;
