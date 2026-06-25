@@ -764,20 +764,6 @@ body[data-active-cat="agenda"]    .mt-article-badge.cat-bg--agenda { display: in
 /* ═══════════════════════════════════════════════════════════
    AD SLOTS
    ═══════════════════════════════════════════════════════════ */
-.mt-ad-slot {
-  max-width: 320px;
-  margin: 1.5rem auto;
-}
-
-.mt-ad-label {
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: rgb(var(--color-neutral-500));
-  margin: 0 0 0.4rem;
-  text-align: center;
-}
-
 .mt-ad-card {
   position: relative;
   display: block;
@@ -822,17 +808,6 @@ body[data-active-cat="agenda"]    .mt-article-badge.cat-bg--agenda { display: in
 }
 @media (max-width: 959px) {
   .mt-ad-banner { height: 60px; }
-}
-
-.mt-ad-title {
-  padding: 0.5rem 0.75rem;
-  font-size: 0.8rem;
-  color: rgb(var(--color-neutral-800));
-  margin: 0;
-}
-
-.dark .mt-ad-title {
-  color: rgb(var(--color-neutral-100));
 }
 
 /* ═══════════════════════════════════════════════════════════
