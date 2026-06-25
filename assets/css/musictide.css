@@ -770,7 +770,9 @@ body[data-active-cat="agenda"]    .mt-article-badge.cat-bg--agenda { display: in
   height: 100%;
   text-decoration: none;
   overflow: hidden;
-  background: rgb(var(--color-neutral-200));
+  /* Match the page background so a contain-fit banner's letterbox is invisible.
+     Sourced from --mt-page-bg so it can never drift from the body background. */
+  background: var(--mt-page-bg);
 }
 .dark .mt-ad-card { background: rgb(var(--color-neutral-800)); }
 .mt-ad-card:hover { opacity: 0.9; }
@@ -782,10 +784,10 @@ body[data-active-cat="agenda"]    .mt-article-badge.cat-bg--agenda { display: in
   object-fit: cover;
 }
 
-/* Banner creatives (wide, thin) must show in full — cover would crop the sides.
-   The 3:2 grid creative keeps cover (it fills its cell exactly). */
-.mt-footer-ad-bar .mt-ad-img,
-.mt-ad-banner .mt-ad-img { object-fit: contain; }
+/* The wide footer banner (rodape) must show in full — cover would crop the
+   sides. Its letterbox uses the page-matched .mt-ad-card background so it
+   blends in. The 3:2 grid/content creative keeps cover (fills its cell). */
+.mt-footer-ad-bar .mt-ad-img { object-fit: contain; }
 
 .mt-ad-flag {
   position: absolute;
@@ -800,18 +802,16 @@ body[data-active-cat="agenda"]    .mt-article-badge.cat-bg--agenda { display: in
   background: rgba(0, 0, 0, 0.55);
 }
 
-/* ── Article banner (before/after the text) ── */
-.mt-ad-banner {
+/* ── In-content ad (Conteúdo): same 3:2 shape as a grid cell, so one creative
+   fits the feed grid and the top of an article's gallery with no letterbox. ── */
+.mt-ad-content {
   position: relative;
   width: 100%;
-  height: 90px;
-  overflow: hidden;
-}
-.mt-ad-banner--article {
+  max-width: 480px;       /* cap on wide screens so it doesn't dwarf the gallery; phone stays full-width */
   margin-block: 1.25rem;
-}
-@media (max-width: 959px) {
-  .mt-ad-banner { height: 60px; }
+  margin-inline: auto;    /* centre the capped ad in the article column */
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -893,9 +893,11 @@ body:has(.mt-footer-ad-bar) {
 
 /* Light theme: a soft silver page backdrop instead of straight white (brand
    nod to Espinho / argent). Higher specificity than the Tailwind bg-neutral
-   utility; dark mode (.dark) keeps its own background. */
+   utility; dark mode (.dark) keeps its own background. --mt-page-bg is the
+   single source of truth so ad-card letterboxes track it (see .mt-ad-card). */
+:root { --mt-page-bg: #d9d9d6; }
 html:not(.dark) body {
-  background-color: #d9d9d6;
+  background-color: var(--mt-page-bg);
 }
 
 /* ── Content vertical rhythm — gap below the fixed header / above the fixed footer ── */

@@ -58,7 +58,7 @@
       style="display: contents;"
       hx-target="this"
       hx-swap="innerHTML transition:true">
-      {{- $adPool := partial "ads.html" (dict "placement" "grelha") -}}
+      {{- $adPool := partial "ads.html" (dict "placement" "conteudo") -}}
       {{- range $i, $page := first 12 $grid }}
         {{ partial "ad-grid-cell.html" (dict "g" $i "pool" $adPool) }}
       <div class="mt-grid-item">{{ partial "article-link/grid-card.html" (dict "Page" $page) }}</div>

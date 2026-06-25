@@ -65,10 +65,7 @@
       {{ end }}
 
       <div class="min-w-0 min-h-0">
-        {{- $artigoAds := partial "ads.html" (dict "placement" "artigo") -}}
-        {{- if gt (len $artigoAds) 0 }}
-        <div class="mt-ad-banner mt-ad-banner--article print:hidden">{{ partial "ad-card.html" (dict "ad" (index $artigoAds 0)) }}</div>
-        {{- end }}
+        {{- $contentAds := partial "ads.html" (dict "placement" "conteudo") -}}
         {{ partial "series/series.html" . }}
         <div class="article-content mb-8">
           {{ .Content }}
@@ -92,9 +89,9 @@
             </strong>
           {{ end }}
         </div>
-        {{- if gt (len $artigoAds) 0 }}
-          {{- $after := index $artigoAds (mod 1 (len $artigoAds)) }}
-        <div class="mt-ad-banner mt-ad-banner--article print:hidden">{{ partial "ad-card.html" (dict "ad" $after) }}</div>
+        {{- /* One 3:2 Conteúdo ad anchored at the top of the media gallery. */ -}}
+        {{- if gt (len $contentAds) 0 }}
+        <div class="mt-ad-content print:hidden">{{ partial "ad-card.html" (dict "ad" (index $contentAds 0)) }}</div>
         {{- end }}
         {{ partial "article-gallery.html" . }}
         {{ partial "series/series-closed.html" . }}
