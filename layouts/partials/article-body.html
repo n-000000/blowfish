@@ -65,6 +65,10 @@
       {{ end }}
 
       <div class="min-w-0 min-h-0">
+        {{- $artigoAds := partial "ads.html" (dict "placement" "artigo") -}}
+        {{- if gt (len $artigoAds) 0 }}
+        <div class="mt-ad-banner mt-ad-banner--article print:hidden">{{ partial "ad-card.html" (dict "ad" (index $artigoAds 0)) }}</div>
+        {{- end }}
         {{ partial "series/series.html" . }}
         <div class="article-content mb-8">
           {{ .Content }}
@@ -88,6 +92,10 @@
             </strong>
           {{ end }}
         </div>
+        {{- if gt (len $artigoAds) 0 }}
+          {{- $after := index $artigoAds (mod 1 (len $artigoAds)) }}
+        <div class="mt-ad-banner mt-ad-banner--article print:hidden">{{ partial "ad-card.html" (dict "ad" $after) }}</div>
+        {{- end }}
         {{ partial "article-gallery.html" . }}
         {{ partial "series/series-closed.html" . }}
         {{ partial "sharing-links.html" . }}

@@ -810,6 +810,20 @@ body[data-active-cat="agenda"]    .mt-article-badge.cat-bg--agenda { display: in
   background: rgba(0, 0, 0, 0.55);
 }
 
+/* ── Article banner (before/after the text) ── */
+.mt-ad-banner {
+  position: relative;
+  width: 100%;
+  height: 90px;
+  overflow: hidden;
+}
+.mt-ad-banner--article {
+  margin-block: 1.25rem;
+}
+@media (max-width: 959px) {
+  .mt-ad-banner { height: 60px; }
+}
+
 .mt-ad-title {
   padding: 0.5rem 0.75rem;
   font-size: 0.8rem;
