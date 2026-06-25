@@ -20,16 +20,10 @@
 {{- if $hero }}{{- $posts = where $cat "Permalink" "ne" $hero.Permalink -}}{{- end -}}
 {{- $pager := .Paginate $posts 12 -}}
 
+{{- $adPool := partial "ads.html" (dict "placement" "grelha") -}}
 {{- range $i, $page := $pager.Pages }}
-  {{- if and (eq $pager.PageNumber 1) (eq $i 6) }}
-<div class="mt-grid-item mt-grid-ad" data-ad-inject hidden>
-  <p class="mt-ad-label">Publicidade</p>
-  <a class="mt-ad-card" href="" target="_blank" rel="noopener noreferrer">
-    <img class="mt-ad-img" src="" alt="">
-    <p class="mt-ad-title"></p>
-  </a>
-</div>
-  {{- end }}
+  {{- $g := add (mul (sub $pager.PageNumber 1) 12) $i -}}
+  {{ partial "ad-grid-cell.html" (dict "g" $g "pool" $adPool) }}
 <div class="mt-grid-item">
   {{ partial "article-link/grid-card.html" (dict "Page" $page "categoryColor" $colorSlot) }}
 </div>

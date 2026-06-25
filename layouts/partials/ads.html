@@ -1,0 +1,18 @@
+{{- /*
+  ads.html — returns the active ad pool for a placement, newest-first.
+  Usage: {{ $pool := partial "ads.html" (dict "placement" "grelha") }}
+  Active = non-draft, placement match, active_from ≤ now ≤ active_until
+  (each bound absent → open-ended). Date filtering happens at BUILD time.
+*/ -}}
+{{- $placement := .placement -}}
+{{- $now := now -}}
+{{- $pool := slice -}}
+{{- range (where (where site.RegularPages "Section" "ads") ".Params.draft" "ne" true).ByDate.Reverse -}}
+  {{- if eq (.Params.placement | default "grelha") $placement -}}
+    {{- $ok := true -}}
+    {{- with .Params.active_from }}{{- if $now.Before (time .) }}{{- $ok = false -}}{{- end }}{{- end -}}
+    {{- with .Params.active_until }}{{- if $now.After (time .) }}{{- $ok = false -}}{{- end }}{{- end -}}
+    {{- if $ok }}{{- $pool = $pool | append . -}}{{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- return $pool -}}

@@ -1,0 +1,13 @@
+{{- /*
+  ad-grid-cell.html — emits a 1×1 grid ad cell iff global article index g is an ad slot.
+  Cadence: g ∈ {6, 15, 24, …} = 6 + 9·i. Round-robin pick by ordinal (g-6)/9.
+  Pure function of g — no cross-page state. Usage:
+    {{ partial "ad-grid-cell.html" (dict "g" $g "pool" $pool) }}
+*/ -}}
+{{- $g := .g -}}
+{{- $pool := .pool -}}
+{{- if and (ge $g 6) (eq (mod (sub $g 6) 9) 0) (gt (len $pool) 0) -}}
+  {{- $ordinal := div (sub $g 6) 9 | int -}}
+  {{- $ad := index $pool (mod $ordinal (len $pool)) -}}
+<div class="mt-grid-item mt-grid-ad">{{ partial "ad-card.html" (dict "ad" $ad) }}</div>
+{{- end -}}

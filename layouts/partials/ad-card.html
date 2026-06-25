@@ -1,0 +1,14 @@
+{{- /*
+  ad-card.html — renders one ad's clickable creative. Shared by grid + banner slots.
+  Usage: {{ partial "ad-card.html" (dict "ad" $ad) }}
+  Title is internal-only (CMS hint: "não visível no site") → used as alt text, never shown.
+  Build-side guard: render nothing unless the click-through URL is http(s).
+*/ -}}
+{{- $ad := .ad -}}
+{{- $url := $ad.Params.click_through_url | default "" -}}
+{{- if or (hasPrefix $url "https://") (hasPrefix $url "http://") -}}
+<a class="mt-ad-card" href="{{ $url }}" target="_blank" rel="noopener noreferrer sponsored" data-ad>
+  <img class="mt-ad-img" src="{{ $ad.Params.creative_image }}" alt="{{ $ad.Title }}" loading="lazy" decoding="async">
+  <span class="mt-ad-flag">Publicidade</span>
+</a>
+{{- end -}}
