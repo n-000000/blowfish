@@ -335,6 +335,16 @@ html {
   background: rgba(var(--color-neutral-800), 0.6);
 }
 
+/* Both ad cadences are pre-rendered (see ad-grid-cell.html); show only the one
+   whose offset matches the active column count. Phone (<960, 1-col): hero is
+   one cell → narrow cadence (1+9n). ≥960 (3/4-col): hero spans 4 cells → wide
+   cadence (6+9n). The hidden cell's lazy image never loads. */
+.mt-grid-ad--narrow { display: none; }
+@media (max-width: 959px) {
+  .mt-grid-ad--wide   { display: none; }
+  .mt-grid-ad--narrow { display: flex; }
+}
+
 /* ── Gradient overlay ────────────────────────────────────── */
 .mt-grid-overlay {
   position: absolute;

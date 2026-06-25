@@ -1,13 +1,24 @@
 {{- /*
-  ad-grid-cell.html — emits a 1×1 grid ad cell iff global article index g is an ad slot.
-  Cadence: g ∈ {6, 15, 24, …} = 6 + 9·i. Round-robin pick by ordinal (g-6)/9.
-  Pure function of g — no cross-page state. Usage:
+  ad-grid-cell.html — emits a 1×1 grid ad cell iff global article index g is an
+  ad slot. Two cadences are pre-rendered and toggled by CSS (see musictide.css
+  .mt-grid-ad--wide/--narrow), because the hero spans a different number of cells
+  per layout, so "the row directly under the hero" sits at a different index:
+    • wide   (≥960px, 3/4-col): hero is 2×2 (4 cells) → g ∈ {6, 15, 24, …} = 6 + 9·i
+    • narrow (<960px, 1-col):   hero is 1 cell        → g ∈ {1, 10, 19, …} = 1 + 9·i
+  The cadence that doesn't match the active layout is display:none (its lazy
+  image never loads). The two are disjoint mod 9, so at most one renders per g.
+  Round-robin pick by ordinal. Pure function of g — no cross-page state. Usage:
     {{ partial "ad-grid-cell.html" (dict "g" $g "pool" $pool) }}
 */ -}}
 {{- $g := .g -}}
 {{- $pool := .pool -}}
-{{- if and (ge $g 6) (eq (mod (sub $g 6) 9) 0) (gt (len $pool) 0) -}}
-  {{- $ordinal := div (sub $g 6) 9 | int -}}
-  {{- $ad := index $pool (mod $ordinal (len $pool)) -}}
-<div class="mt-grid-item mt-grid-ad">{{ partial "ad-card.html" (dict "ad" $ad) }}</div>
+{{- if gt (len $pool) 0 -}}
+  {{- if and (ge $g 6) (eq (mod (sub $g 6) 9) 0) -}}
+    {{- $ad := index $pool (mod (div (sub $g 6) 9 | int) (len $pool)) -}}
+<div class="mt-grid-item mt-grid-ad mt-grid-ad--wide">{{ partial "ad-card.html" (dict "ad" $ad) }}</div>
+  {{- end -}}
+  {{- if and (ge $g 1) (eq (mod (sub $g 1) 9) 0) -}}
+    {{- $ad := index $pool (mod (div (sub $g 1) 9 | int) (len $pool)) -}}
+<div class="mt-grid-item mt-grid-ad mt-grid-ad--narrow">{{ partial "ad-card.html" (dict "ad" $ad) }}</div>
+  {{- end -}}
 {{- end -}}
