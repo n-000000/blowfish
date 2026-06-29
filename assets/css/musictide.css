@@ -802,16 +802,20 @@ body[data-active-cat="agenda"]    .mt-article-badge.cat-bg--agenda { display: in
   position: relative;
   display: block;
   width: 100%;
-  height: 100%;
   text-decoration: none;
   overflow: hidden;
 }
 
+/* Height follows the creative's intrinsic aspect at width:100% — NO percentage-
+   height chain and NO object-fit. A `height:100%` against the auto-height bar is
+   resolved differently by Firefox-mobile (too short), which made object-fit:contain
+   letterbox the leaderboard left/right so it stopped touching the page edges and
+   appeared to "oscillate" in/out of alignment on reflow. height:auto removes the
+   ambiguity entirely (identical in every engine). */
 .mt-ad-footer-img {
   display: block;
   width: 100%;
-  height: 100%;
-  object-fit: contain;
+  height: auto;
 }
 
 /* ── Shared flag badge (card + footer) ── */
