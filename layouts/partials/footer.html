@@ -5,23 +5,27 @@
   Contains: legal/institutional text (left) + scroll-to-top (right).
 */ -}}
 
-{{- $rodape := partial "ads.html" (dict "placement" "rodape") -}}
-{{- if gt (len $rodape) 0 }}
-<div class="mt-footer-ad-bar print:hidden">{{ partial "ad-card.html" (dict "ad" (index $rodape 0)) }}</div>
-{{- end }}
-
 <footer class="mt-fixed-footer print:hidden" role="contentinfo">
-  <div class="mt-footer-inner w-full flex items-center justify-between h-full">
-    <p class="mt-footer-legal text-xs text-white/60">
-      &copy; {{ now.Format "2006" }} Espinho Magazine &mdash; Todos os direitos reservados
-    </p>
+  {{- $footerAds := partial "ads.html" (dict "placement" "footer") -}}
+  {{- if gt (len $footerAds) 0 }}
+  <div class="mt-footer-ad-bar">
+    {{ partial "ad-card.html" (dict "ad" (index $footerAds 0) "placement" "footer") }}
+  </div>
+  
+  {{- end }}
+  <div class="mt-footer-infonav-bar">
+    <div class="mt-footer-inner w-full flex items-center justify-between">
+      <p class="mt-footer-legal text-xs text-white/60">
+        &copy; {{ now.Format "2006" }} Espinho Magazine &mdash; Todos os direitos reservados
+      </p>
 
-    <button
-      onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
-      aria-label="Voltar ao topo"
-      class="mt-footer-top-btn text-white/60 hover:text-white transition-colors">
-      {{ partial "icon.html" "chevron-down" }}
-    </button>
+      <button
+        onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+        aria-label="Voltar ao topo"
+        class="mt-footer-top-btn text-white/60 hover:text-white transition-colors">
+        {{ partial "icon.html" "chevron-down" }}
+      </button>
+    </div>
   </div>
 </footer>
 

@@ -20,7 +20,7 @@
 {{- if $hero }}{{- $posts = where $cat "Permalink" "ne" $hero.Permalink -}}{{- end -}}
 {{- $pager := .Paginate $posts 12 -}}
 
-{{- $adPool := partial "ads.html" (dict "placement" "conteudo") -}}
+{{- $adPool := partial "ads.html" (dict "placement" "content") -}}
 {{- range $i, $page := $pager.Pages }}
   {{- $g := add (mul (sub $pager.PageNumber 1) 12) $i -}}
   {{ partial "ad-grid-cell.html" (dict "g" $g "pool" $adPool) }}

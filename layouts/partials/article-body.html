@@ -65,7 +65,7 @@
       {{ end }}
 
       <div class="min-w-0 min-h-0">
-        {{- $contentAds := partial "ads.html" (dict "placement" "conteudo") -}}
+        {{- $contentAds := partial "ads.html" (dict "placement" "content") -}}
         {{ partial "series/series.html" . }}
         <div class="article-content mb-8">
           {{ .Content }}
@@ -89,9 +89,9 @@
             </strong>
           {{ end }}
         </div>
-        {{- /* One 3:2 Conteúdo ad anchored at the top of the media gallery. */ -}}
+        {{- /* One 3:2 Inline ad anchored at the top of the media gallery. */ -}}
         {{- if gt (len $contentAds) 0 }}
-        <div class="mt-ad-content print:hidden">{{ partial "ad-card.html" (dict "ad" (index $contentAds 0)) }}</div>
+        <div class="mt-ad-inline print:hidden">{{ partial "ad-card.html" (dict "ad" (index $contentAds 0) "placement" "card") }}</div>
         {{- end }}
         {{ partial "article-gallery.html" . }}
         {{ partial "series/series-closed.html" . }}

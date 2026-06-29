@@ -776,6 +776,8 @@ body[data-active-cat="agenda"]    .mt-article-badge.cat-bg--agenda { display: in
 /* ═══════════════════════════════════════════════════════════
    AD SLOTS
    ═══════════════════════════════════════════════════════════ */
+
+/* ── Card ad (grid + inline) ── */
 .mt-ad-card {
   position: relative;
   display: block;
@@ -783,26 +785,38 @@ body[data-active-cat="agenda"]    .mt-article-badge.cat-bg--agenda { display: in
   height: 100%;
   text-decoration: none;
   overflow: hidden;
-  /* Match the page background so a contain-fit banner's letterbox is invisible.
-     Sourced from --mt-page-bg so it can never drift from the body background. */
-  background: var(--mt-page-bg);
+  background: none;
 }
 .dark .mt-ad-card { background: rgb(var(--color-neutral-800)); }
 .mt-ad-card:hover { opacity: 0.9; }
 
-.mt-ad-img {
+.mt-ad-card-img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-/* The wide footer banner (rodape) must show in full — cover would crop the
-   sides. Its letterbox uses the page-matched .mt-ad-card background so it
-   blends in. The 3:2 grid/content creative keeps cover (fills its cell). */
-.mt-footer-ad-bar .mt-ad-img { object-fit: contain; }
+/* ── Footer banner ad ── */
+.mt-ad-footer {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  text-decoration: none;
+  overflow: hidden;
+}
 
-.mt-ad-flag {
+.mt-ad-footer-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* ── Shared flag badge (card + footer) ── */
+.mt-ad-card-flag,
+.mt-ad-footer-flag {
   position: absolute;
   top: 0;
   right: 0;
@@ -815,14 +829,13 @@ body[data-active-cat="agenda"]    .mt-article-badge.cat-bg--agenda { display: in
   background: rgba(0, 0, 0, 0.55);
 }
 
-/* ── In-content ad (Conteúdo): same 3:2 shape as a grid cell, so one creative
-   fits the feed grid and the top of an article's gallery with no letterbox. ── */
-.mt-ad-content {
+/* ── Inline ad wrapper: 3:2 aspect matches grid cell, fits feed and article gallery ── */
+.mt-ad-inline {
   position: relative;
   width: 100%;
-  max-width: 480px;       /* cap on wide screens so it doesn't dwarf the gallery; phone stays full-width */
+  max-width: 480px;
   margin-block: 1.25rem;
-  margin-inline: auto;    /* centre the capped ad in the article column */
+  margin-inline: auto;
   aspect-ratio: 3 / 2;
   overflow: hidden;
 }
@@ -835,30 +848,42 @@ body[data-active-cat="agenda"]    .mt-article-badge.cat-bg--agenda { display: in
   --mt-footer-h: 5svh;
 }
 
+/* Outer fixed shell — content-grid width, centered. */
 .mt-fixed-footer {
   position: fixed;
   bottom: 0;
-  left: 0;
-  right: 0;
-  /* The bar spans the grid's CELLS box — flush with the articles, not the frame.
-     = min(viewport, frame) − both gutters, centered. left/right:0 makes 100% =
-     layout viewport (no scrollbar) so it's cross-browser; margin auto centers.
-     Matches .mt-homepage-grid's content box at every width (frame-3 → frame @1300). */
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-self: center;
   width: min(calc(100% - 2 * var(--gutter)), calc(var(--mt-frame-3) - 2 * var(--gutter)));
-  margin-inline: auto;
+}
+@media (min-width: 1300px) {
+  .mt-fixed-footer { width: min(calc(100% - 2 * var(--gutter)), calc(var(--mt-frame) - 2 * var(--gutter))); }
+}
+
+/* ── Ad bar (maps to banner): transparent, creative height, centered ── */
+:root { --mt-footer-ad-h: 90px; }
+@media (max-width: 991px) { :root { --mt-footer-ad-h: 50px; } }
+
+.mt-footer-ad-bar {
+  width: 100%;
+  /* height: var(--mt-footer-ad-h); */
+  background: none;
+  overflow: hidden;
+}
+
+/* ── Infonav bar (maps to nav-strip, always visible on all breakpoints) ── */
+.mt-footer-infonav-bar {
+  width: 100%;
   height: var(--mt-footer-h);
   min-height: 2.25rem;
-  z-index: 50;
   display: flex;
   align-items: center;
   backdrop-filter: blur(var(--mt-glass-blur)) saturate(var(--mt-glass-saturate));
   -webkit-backdrop-filter: blur(var(--mt-glass-blur)) saturate(var(--mt-glass-saturate));
   background-color: var(--mt-glass-bg);
   border-top: 1px solid var(--mt-glass-border);
-}
-
-@media (min-width: 1300px) {
-  .mt-fixed-footer { width: min(calc(100% - 2 * var(--gutter)), calc(var(--mt-frame) - 2 * var(--gutter))); }
 }
 
 .mt-footer-legal {
@@ -877,31 +902,11 @@ body[data-active-cat="agenda"]    .mt-article-badge.cat-bg--agenda { display: in
 }
 
 body {
-  padding-bottom: max(var(--mt-footer-h), 2.25rem);
+  padding-bottom: calc(max(var(--mt-footer-h), 2.25rem) + var(--sp-8));
 }
 
-/* ── Footer ad bar — fixed thin banner directly above the footer ── */
-:root { --mt-footer-ad-h: 90px; }
-@media (max-width: 991px) { :root { --mt-footer-ad-h: 50px; } }
-
-.mt-footer-ad-bar {
-  position: fixed;
-  bottom: var(--mt-footer-h);
-  left: 0;
-  right: 0;
-  width: min(calc(100% - 2 * var(--gutter)), calc(var(--mt-frame-3) - 2 * var(--gutter)));
-  margin-inline: auto;
-  height: var(--mt-footer-ad-h);
-  z-index: 50;
-  overflow: hidden;
-}
-@media (min-width: 1300px) {
-  .mt-footer-ad-bar { width: min(calc(100% - 2 * var(--gutter)), calc(var(--mt-frame) - 2 * var(--gutter))); }
-}
-
-/* Reserve space only when the bar is present, so content never hides behind it. */
 body:has(.mt-footer-ad-bar) {
-  padding-bottom: calc(max(var(--mt-footer-h), 2.25rem) + var(--mt-footer-ad-h));
+  padding-bottom: calc(max(var(--mt-footer-h), 2.25rem) + var(--mt-footer-ad-h) + var(--sp-8));
 }
 
 /* Light theme: a soft silver page backdrop instead of straight white (brand
@@ -964,7 +969,7 @@ body.mt-article-page #search-button-mobile { display: none; }
 html.ff-mobile { --mt-glass-bg: rgba(0, 0, 0, 0.85); }
 html.ff-mobile .mt-site-banner,
 html.ff-mobile .mt-nav-strip,
-html.ff-mobile .mt-fixed-footer,
+html.ff-mobile .mt-footer-infonav-bar,
 html.ff-mobile .mt-mobile-menu-panel {
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
