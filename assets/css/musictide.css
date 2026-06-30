@@ -604,20 +604,27 @@ html {
 /* ═══════════════════════════════════════════════════════════
    ARTICLE PHOTO GALLERY — responsive grid + GLightbox
    ═══════════════════════════════════════════════════════════ */
+/* Masonry via CSS multi-column: same column width + gap, free height so
+   each photo keeps its natural aspect ratio (no crop), packed with no gaps.
+   Lightbox click order is unaffected (DOM order unchanged); only the visual
+   reading order becomes column-major. */
 .mt-gallery-grid {
-  display: grid;
-  grid-template-columns: 1fr;          /* vertical / phone: 1 column */
-  gap: 0.5rem;
+  columns: 1;                          /* vertical / phone: 1 column */
+  column-gap: 0.5rem;
   margin: 2.5rem 0;
 }
-@media (min-width: 900px)  { .mt-gallery-grid { grid-template-columns: repeat(3, 1fr); } }
-@media (min-width: 1200px) { .mt-gallery-grid { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 900px)  { .mt-gallery-grid { columns: 3; } }
+@media (min-width: 1200px) { .mt-gallery-grid { columns: 4; } }
 
-.mt-gallery-grid a { display: block; line-height: 0; }
+.mt-gallery-grid a {
+  display: block;
+  line-height: 0;
+  break-inside: avoid;                 /* never split a photo across columns */
+  margin: 0 0 0.5rem;                  /* vertical gap between stacked photos */
+}
 .mt-gallery-grid img {
   width: 100%;
-  aspect-ratio: 3 / 2;
-  object-fit: cover;
+  height: auto;                        /* natural proportions — no crop */
   display: block;
   margin: 0;                           /* immune to .prose img margins */
   cursor: zoom-in;
