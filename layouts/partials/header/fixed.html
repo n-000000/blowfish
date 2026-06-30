@@ -1,25 +1,15 @@
 {{- /*
   header/fixed.html — musictide fixed header.
-  Structure:
-    - Banner (15svh, full width, glass, animated logo) — fixed top:0
-    - Nav strip (5svh, full width, glass, menu links) — fixed top:15svh, desktop only
-  Mobile: banner includes hamburger; nav strip hidden.
-  Body spacer below prevents content from hiding under the header.
+  Single banner (full width, glass, animated logo) fixed at top:0. It carries the
+  category nav (desktop) / hamburger (phone); the old desktop nav strip is gone,
+  reclaiming its vertical space. The mobile drawer renders from banner.html.
+  Body spacer below prevents content from hiding under the banner.
 */ -}}
 
-{{- /* ── Body spacer: reserves space for the fixed header ── */ -}}
+{{- /* ── Body spacer: reserves space for the fixed banner ── */ -}}
 <div class="mt-header-spacer"></div>
 
-{{- /* ── Banner ─────────────────────────────────────────────── */ -}}
+{{- /* ── Banner (+ mobile drawer) ───────────────────────────── */ -}}
 <div class="fixed inset-x-0 top-0 z-50">
   {{ partial "header/banner.html" . }}
-</div>
-
-{{- /* ── Nav strip (desktop) + mobile drawer ─────────────────── */ -}}
-<div class="fixed inset-x-0 z-50" style="top: var(--mt-banner-h);">
-  <div class="mt-nav-strip">
-    <div class="mt-header-inner relative w-full leading-7">
-      {{ partial "header/basic.html" . }}
-    </div>
-  </div>
 </div>

@@ -2,31 +2,51 @@
   footer.html — musictide fixed glass footer.
   The <footer> IS the glass bar: fixed at bottom, content-grid width, definite
   height (--mt-footer-bar-h). It stacks two rows:
-    • ad row  — 1fr·auto·1fr grid: back arrow (left, phone+article only),
-                ad (centre), scroll-to-top (right). The ad is height-bounded
-                by the bar (--mt-footer-ad-cap), so it can't overflow on wide
-                desktop, and the equal 1fr flanks keep it truly centred.
+    • ad row  — 1fr·auto·1fr grid. Two slots flank the centred ad, each holding
+                a mutually-exclusive pair (CSS-driven, desktop + phone alike):
+                  col 1 — back arrow (article pages) XOR search (feed pages)
+                  col 3 — scroll-to-top (scrolled) XOR theme switcher (at top)
+                Equal 1fr flanks keep the ad truly centred; the ad is height-
+                bounded by the bar (--mt-footer-ad-cap) so it can't overflow.
     • legal   — centred, single compact line.
 */ -}}
 
 <footer class="mt-fixed-footer print:hidden" role="contentinfo">
   {{- $footerAds := partial "ads.html" (dict "placement" "footer") -}}
   <div class="mt-footer-adrow">
-    {{- /* Back to feed — phone + article pages only (CSS); spa-router upgrades to history.back() */ -}}
+    {{- /* col 1 — back (article) XOR search (feed). spa-router upgrades back to history.back(). */ -}}
     <a href="{{ "" | relLangURL }}" data-back-to-feed
       class="mt-footer-back text-white/60 hover:text-white transition-colors" aria-label="Voltar">
       {{ partial "icon.html" "arrow-left" }}
     </a>
+    {{ if .Site.Params.enableSearch | default false }}
+      <button
+        id="search-button"
+        aria-label="{{ i18n "search.open_button_title" }}"
+        title="{{ i18n "search.open_button_title" }}"
+        class="mt-footer-search text-white/60 hover:text-white transition-colors">
+        {{ partial "icon.html" "search" }}
+      </button>
+    {{ end }}
 
     {{- if gt (len $footerAds) 0 }}
     {{ partial "ad-card.html" (dict "ad" (index $footerAds 0) "placement" "footer") }}
     {{- end }}
 
+    {{- /* col 3 — scroll-to-top (scrolled) XOR theme switcher (at top). */ -}}
     <button
       onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
       aria-label="Voltar ao topo"
       class="mt-footer-top-btn text-white/60 hover:text-white transition-colors">
       {{ partial "icon.html" "chevron-down" }}
+    </button>
+    <button
+      id="appearance-switcher"
+      type="button"
+      aria-label="Dark mode switcher"
+      class="mt-footer-appearance text-white/60 hover:text-white transition-colors">
+      <div class="dark:hidden">{{ partial "icon.html" "moon" }}</div>
+      <div class="hidden dark:block">{{ partial "icon.html" "sun" }}</div>
     </button>
   </div>
 
@@ -34,6 +54,23 @@
     &copy; {{ now.Format "2006" }} Espinho Magazine &mdash; Todos os direitos reservados
   </p>
 </footer>
+
+{{- /* Footer slot state: toggle body.mt-scrolled so col 3 swaps theme↔scroll-top.
+       scroll-to-top.js isn't loaded (showScrollToTop:false), so this owns it. */ -}}
+<script>
+(function () {
+  var scrolled = null;
+  function update() {
+    var s = window.scrollY > 8;
+    if (s === scrolled) return;
+    scrolled = s;
+    document.body.classList.toggle('mt-scrolled', s);
+  }
+  window.addEventListener('scroll', update, { passive: true });
+  document.addEventListener('htmx:afterSettle', update);
+  update();
+})();
+</script>
 
 {{- /* Extend footer */ -}}
 {{ if templates.Exists "partials/extend-footer.html" }}

@@ -9,8 +9,8 @@
   .Site.Menus.subnavigation
   .Site.Params.enableA11y
 -}}
-{{- /* Appearance switcher lives in the banner mobile-controls (always visible);
-       no duplicate here — a second one (same id) popped up under the banner on open. */ -}}
+{{- /* No appearance switcher here — it lives in the footer (single instance,
+       id="appearance-switcher"); a duplicate id would break the wiring. */ -}}
 <nav
   class="mt-mobile-menu-panel hidden peer-checked:block fixed inset-x-0 z-40 overflow-y-auto"
   style="top: var(--mt-banner-h); max-height: calc(100svh - var(--mt-banner-h));"

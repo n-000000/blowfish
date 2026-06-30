@@ -1,53 +1,16 @@
 {{- /*
   Overrides Blowfish's desktop-menu.html.
-  Adds category color to menu item text when the item links to a category page.
+  Desktop horizontal category nav (lives in the banner controls; phone uses the
+  hamburger drawer instead). Adds the category's own colour to each link.
+  Back/search/theme controls moved to the footer.
 */ -}}
-<nav class="flex items-center gap-x-5">
-  {{ if .Site.Menus.main }}
-    <span class="mt-nav-categories flex items-center gap-x-5">
-      {{ range .Site.Menus.main }}
-        {{ template "DesktopMenu" . }}
-      {{ end }}
-    </span>
-  {{ end }}
-
-  {{ if .Site.Params.enableA11y | default false }}
-    {{ partial "header/components/a11y.html" (dict "prefix" "desktop-") }}
-  {{ end }}
-
-  {{- /* Back to feed — shown only on .mt-article-page (CSS); spa-router upgrades it to history.back() */ -}}
-  <a href="{{ "" | relLangURL }}" data-back-to-feed
-    class="mt-banner-back text-base" aria-label="Voltar" title="Voltar">
-    {{ partial "icon.html" "arrow-left" }}
-  </a>
-
-  {{ if .Site.Params.enableSearch | default false }}
-    <button
-      id="search-button"
-      aria-label="Search"
-      class="text-base"
-      title="{{ i18n "search.open_button_title" }}">
-      {{ partial "icon.html" "search" }}
-    </button>
-  {{ end }}
-
-  {{ if .Site.Params.footer.showAppearanceSwitcher | default false }}
-    <div class="flex items-center">
-      <button
-        id="appearance-switcher"
-        aria-label="Dark mode switcher"
-        type="button"
-        class="text-base">
-        <div class="flex items-center justify-center dark:hidden">
-          {{ partial "icon.html" "moon" }}
-        </div>
-        <div class="items-center justify-center hidden dark:flex">
-          {{ partial "icon.html" "sun" }}
-        </div>
-      </button>
-    </div>
-  {{ end }}
-</nav>
+{{ if .Site.Menus.main }}
+  <nav class="mt-nav-categories flex items-center gap-x-5" aria-label="Categorias">
+    {{ range .Site.Menus.main }}
+      {{ template "DesktopMenu" . }}
+    {{ end }}
+  </nav>
+{{ end }}
 
 {{ define "DesktopMenu" }}
   {{- $pagePath   := strings.TrimPrefix "/" (strings.TrimSuffix "/" .URL) -}}
