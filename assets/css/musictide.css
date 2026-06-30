@@ -162,13 +162,6 @@
   }
 }
 
-/* Footer content fills the cells-box bar; pad to the card content inset so the
-   legal text lines up with the article badges/titles (not the cell edge). */
-.mt-footer-inner {
-  width: 100%;
-  padding-inline: var(--mt-card-padding-x);
-}
-
 /* ── Header spacer ───────────────────────────────────────── */
 .mt-header-spacer {
   height: var(--mt-header-h);
@@ -808,21 +801,22 @@ body[data-active-cat="agenda"]    .mt-article-badge.cat-bg--agenda { display: in
 .mt-ad-footer {
   position: relative;
   display: block;
-  width: 100%;
   text-decoration: none;
   overflow: hidden;
 }
 
-/* Height follows the creative's intrinsic aspect at width:100% — NO percentage-
-   height chain and NO object-fit. A `height:100%` against the auto-height bar is
-   resolved differently by Firefox-mobile (too short), which made object-fit:contain
-   letterbox the leaderboard left/right so it stopped touching the page edges and
-   appeared to "oscillate" in/out of alignment on reflow. height:auto removes the
-   ambiguity entirely (identical in every engine). */
+/* Height-bounded by the footer bar via a DEFINITE px ceiling (--mt-footer-ad-cap),
+   width follows the creative's aspect. Using a real length (not height:100% against
+   an ancestor) keeps it identical across engines — sidesteps the Firefox
+   %-against-auto-height ambiguity that used to letterbox the leaderboard. On a
+   narrow phone slot, max-width caps the width instead and object-fit:contain keeps
+   the aspect (no crop, no distortion). */
 .mt-ad-footer-img {
   display: block;
-  width: 100%;
-  height: auto;
+  height: var(--mt-footer-ad-cap);
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
 }
 
 /* ── Shared flag badge (card + footer) ── */
@@ -855,69 +849,85 @@ body[data-active-cat="agenda"]    .mt-article-badge.cat-bg--agenda { display: in
    FIXED FOOTER
    ═══════════════════════════════════════════════════════════ */
 
+/* One glass bar (--mt-footer-bar-h) holds an ad row (scroll button + ad) over a
+   centered legal line. The bar's definite height bounds the ad (--mt-footer-ad-cap),
+   so the leaderboard can't grow taller than the footer on wide desktop. */
 :root {
-  --mt-footer-h: 5svh;
+  --mt-footer-bar-h: 92px;     /* total footer height (ad row + legal row) */
+  --mt-footer-ad-cap: 64px;    /* ad height ceiling — the bounded ad height */
+}
+@media (max-width: 991px) {
+  :root {
+    --mt-footer-bar-h: 80px;   /* phone: ~2× the old infonav height */
+    --mt-footer-ad-cap: 56px;
+  }
 }
 
-/* Outer fixed shell — content-grid width, centered. */
+/* The <footer> IS the glass bar: fixed, content-grid width (centred via its
+   static position inside the centred max-w-7xl body), definite height, and a
+   flex column stacking the ad row over the legal line. Padded to the card
+   content inset so the legal text lines up with the article badges/titles. */
 .mt-fixed-footer {
   position: fixed;
   bottom: 0;
   z-index: 50;
-  display: flex;
-  flex-direction: column;
   align-self: center;
   width: min(calc(100% - 2 * var(--gutter)), calc(var(--mt-frame-3) - 2 * var(--gutter)));
-}
-@media (min-width: 1300px) {
-  .mt-fixed-footer { width: min(calc(100% - 2 * var(--gutter)), calc(var(--mt-frame) - 2 * var(--gutter))); }
-}
-
-/* ── Ad bar (maps to banner): transparent, creative height, centered ── */
-:root { --mt-footer-ad-h: 90px; }
-@media (max-width: 991px) { :root { --mt-footer-ad-h: 50px; } }
-
-.mt-footer-ad-bar {
-  width: 100%;
-  /* height: var(--mt-footer-ad-h); */
-  background: none;
-  overflow: hidden;
-}
-
-/* ── Infonav bar (maps to nav-strip, always visible on all breakpoints) ── */
-.mt-footer-infonav-bar {
-  width: 100%;
-  height: var(--mt-footer-h);
-  min-height: 2.25rem;
+  height: var(--mt-footer-bar-h);
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  padding-inline: var(--mt-card-padding-x);
   backdrop-filter: blur(var(--mt-glass-blur)) saturate(var(--mt-glass-saturate));
   -webkit-backdrop-filter: blur(var(--mt-glass-blur)) saturate(var(--mt-glass-saturate));
   background-color: var(--mt-glass-bg);
   border-top: 1px solid var(--mt-glass-border);
 }
-
-.mt-footer-legal {
-  margin: 0;
-  line-height: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 80%;
+@media (min-width: 1300px) {
+  .mt-fixed-footer { width: min(calc(100% - 2 * var(--gutter)), calc(var(--mt-frame) - 2 * var(--gutter))); }
 }
 
+/* Ad row: 1fr·auto·1fr grid → back arrow (left), ad (centre), scroll-top
+   (right). Equal 1fr flanks keep the ad truly centred whether or not the
+   left arrow is present (it's phone+article only). */
+.mt-footer-adrow {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr minmax(0, auto) 1fr;
+  align-items: center;
+  gap: 0.75rem;
+}
+.mt-footer-adrow > .mt-ad-footer { grid-column: 2; justify-self: center; min-width: 0; }
+
+.mt-footer-top-btn { grid-column: 3; justify-self: end; }
 .mt-footer-top-btn svg {
   transform: rotate(180deg);
   width: 1.25rem;
   height: 1.25rem;
 }
 
-body {
-  padding-bottom: calc(max(var(--mt-footer-h), 2.25rem) + var(--sp-8));
+/* Back-to-feed: phone + article pages only, far left of the ad row. */
+.mt-footer-back { display: none; grid-column: 1; justify-self: start; align-items: center; }
+.mt-footer-back svg { width: 1.25rem; height: 1.25rem; }
+@media (max-width: 991px) {
+  body.mt-article-page .mt-footer-back { display: inline-flex; }
 }
 
-body:has(.mt-footer-ad-bar) {
-  padding-bottom: calc(max(var(--mt-footer-h), 2.25rem) + var(--mt-footer-ad-h) + var(--sp-8));
+/* Centered, single compact line so the ad row gets the vertical room. */
+.mt-footer-legal {
+  margin: 0;
+  flex: 0 0 auto;
+  text-align: center;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Content reserves the footer bar height so it never underlaps. */
+body {
+  padding-bottom: calc(var(--mt-footer-bar-h) + var(--sp-8));
 }
 
 /* Light theme: a soft silver page backdrop instead of straight white (brand
@@ -957,6 +967,9 @@ html:not(.dark) body {
    Hidden everywhere, revealed only on article pages. */
 .mt-banner-back { display: none; align-items: center; }
 body.mt-article-page .mt-banner-back { display: inline-flex; }
+/* Phone: the footer carries the back arrow (.mt-footer-back), so hide the
+   banner one to avoid two back arrows on screen at once. */
+@media (max-width: 991px) { body.mt-article-page .mt-banner-back { display: none; } }
 
 /* Article pages: categories make no sense (can't filter an article); the
    hamburger would open an empty drawer. Logo stays put (inert brand mark). */
@@ -980,7 +993,7 @@ body.mt-article-page #search-button-mobile { display: none; }
 html.ff-mobile { --mt-glass-bg: rgba(0, 0, 0, 0.85); }
 html.ff-mobile .mt-site-banner,
 html.ff-mobile .mt-nav-strip,
-html.ff-mobile .mt-footer-infonav-bar,
+html.ff-mobile .mt-fixed-footer,
 html.ff-mobile .mt-mobile-menu-panel {
   backdrop-filter: none;
   -webkit-backdrop-filter: none;

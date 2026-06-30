@@ -1,32 +1,38 @@
 {{- /*
   footer.html — musictide fixed glass footer.
-  Position: fixed at bottom of viewport, z-index 50, full width.
-  Height: 5svh (see CSS .mt-fixed-footer; var: --mt-footer-h).
-  Contains: legal/institutional text (left) + scroll-to-top (right).
+  The <footer> IS the glass bar: fixed at bottom, content-grid width, definite
+  height (--mt-footer-bar-h). It stacks two rows:
+    • ad row  — 1fr·auto·1fr grid: back arrow (left, phone+article only),
+                ad (centre), scroll-to-top (right). The ad is height-bounded
+                by the bar (--mt-footer-ad-cap), so it can't overflow on wide
+                desktop, and the equal 1fr flanks keep it truly centred.
+    • legal   — centred, single compact line.
 */ -}}
 
 <footer class="mt-fixed-footer print:hidden" role="contentinfo">
   {{- $footerAds := partial "ads.html" (dict "placement" "footer") -}}
-  {{- if gt (len $footerAds) 0 }}
-  <div class="mt-footer-ad-bar">
-    {{ partial "ad-card.html" (dict "ad" (index $footerAds 0) "placement" "footer") }}
-  </div>
-  
-  {{- end }}
-  <div class="mt-footer-infonav-bar">
-    <div class="mt-footer-inner w-full flex items-center justify-between">
-      <p class="mt-footer-legal text-xs text-white/60">
-        &copy; {{ now.Format "2006" }} Espinho Magazine &mdash; Todos os direitos reservados
-      </p>
+  <div class="mt-footer-adrow">
+    {{- /* Back to feed — phone + article pages only (CSS); spa-router upgrades to history.back() */ -}}
+    <a href="{{ "" | relLangURL }}" data-back-to-feed
+      class="mt-footer-back text-white/60 hover:text-white transition-colors" aria-label="Voltar">
+      {{ partial "icon.html" "arrow-left" }}
+    </a>
 
-      <button
-        onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
-        aria-label="Voltar ao topo"
-        class="mt-footer-top-btn text-white/60 hover:text-white transition-colors">
-        {{ partial "icon.html" "chevron-down" }}
-      </button>
-    </div>
+    {{- if gt (len $footerAds) 0 }}
+    {{ partial "ad-card.html" (dict "ad" (index $footerAds 0) "placement" "footer") }}
+    {{- end }}
+
+    <button
+      onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+      aria-label="Voltar ao topo"
+      class="mt-footer-top-btn text-white/60 hover:text-white transition-colors">
+      {{ partial "icon.html" "chevron-down" }}
+    </button>
   </div>
+
+  <p class="mt-footer-legal text-xs text-white/60">
+    &copy; {{ now.Format "2006" }} Espinho Magazine &mdash; Todos os direitos reservados
+  </p>
 </footer>
 
 {{- /* Extend footer */ -}}
