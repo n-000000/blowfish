@@ -4,9 +4,9 @@
 
 /* ── Layout tokens ───────────────────────────────────────── */
 :root {
-  --container-7xl: 100%;  /* phone: body fills viewport */
+  --container-7xl: 100%; /* phone: body fills viewport */
   --mt-max-width: max(90vw, 1600px);
-  --mt-cat-bg-opacity: 0.90;
+  --mt-cat-bg-opacity: 0.9;
   --mt-banner-h: max(12svh, 4rem);
   --mt-card-padding-x: 0.75rem;
 
@@ -16,13 +16,22 @@
      and light/colored text stay legible over a light page in light mode. */
   --mt-glass-blur: 18px;
   --mt-glass-saturate: 1.8;
-  --mt-glass-bg: rgba(0, 0, 0, 0.78);  /* light mode: dark enough for white logo + colored text over a light page */
+  --mt-glass-bg: rgba(
+    0,
+    0,
+    0,
+    0.78
+  ); /* light mode: dark enough for white logo + colored text over a light page */
   --mt-glass-border: rgba(255, 255, 255, 0.08);
 
   /* ── Layout tokens (Phase 1) ── */
-  --gutter: 2rem;  /* pinned: shared by shell + grid → clean alignment math */
-  --mt-frame: calc(4 * var(--mt-col-w) + 3 * var(--mt-grid-gap) + 2 * var(--gutter));  /* outer frame = 4 cells + gaps + both gutters; shell and grid share this max-width */
-  --mt-frame-3: calc(3 * var(--mt-col-w) + 2 * var(--mt-grid-gap) + 2 * var(--gutter));  /* 3-col outer frame (972px at gap 16); phone + sub-cap shell */
+  --gutter: 2rem; /* pinned: shared by shell + grid → clean alignment math */
+  --mt-frame: calc(
+    4 * var(--mt-col-w) + 3 * var(--mt-grid-gap) + 2 * var(--gutter)
+  ); /* outer frame = 4 cells + gaps + both gutters; shell and grid share this max-width */
+  --mt-frame-3: calc(
+    3 * var(--mt-col-w) + 2 * var(--mt-grid-gap) + 2 * var(--gutter)
+  ); /* 3-col outer frame (972px at gap 16); phone + sub-cap shell */
   --sp-2: 0.5rem;
   --sp-3: 0.75rem;
   --sp-4: 1rem;
@@ -36,25 +45,45 @@
      aligned automatically. The phone/desktop (992px) and 3→4-col (1300px) breakpoints are
      each tuned to (frame value + slack) at gap 16 — recompute BOTH if --mt-grid-gap changes. */
   --mt-col-w: 292px;
-  --mt-grid-gap: 32px;   /* phone (1-col); multi-col override below */
+  --mt-grid-gap: 32px; /* phone (1-col); multi-col override below */
 }
 
-@media (min-width: 992px) { :root { --mt-grid-gap: 16px; } }  /* multi-col gap */
+@media (min-width: 992px) {
+  :root {
+    --mt-grid-gap: 16px;
+  }
+} /* multi-col gap */
 
 /* Dark mode: the page is already dark, so the chrome glass can be lighter/glassier. */
-.dark { --mt-glass-bg: rgba(0, 0, 0, 0.55); }
+.dark {
+  --mt-glass-bg: rgba(0, 0, 0, 0.55);
+}
 
 /* Non-home pages: keep content width modest (does not touch the homepage grid) */
-@media (min-width: 768px)  { :root { --container-7xl: 768px; } }
-@media (min-width: 1024px) { :root { --container-7xl: 1024px; } }
-@media (min-width: 1200px) { :root { --mt-card-padding-x: 1rem; } }
+@media (min-width: 768px) {
+  :root {
+    --container-7xl: 768px;
+  }
+}
+@media (min-width: 1024px) {
+  :root {
+    --container-7xl: 1024px;
+  }
+}
+@media (min-width: 1200px) {
+  :root {
+    --mt-card-padding-x: 1rem;
+  }
+}
 
 /* Homepage: body is full-width — the grid centers itself via max-width: var(--mt-frame).
    The old body-cap approach (tracking col count × col-w) is replaced by the intrinsic grid.
    Use 100% (not 100vw): 100vw includes the scrollbar gutter in Firefox, so the grid
    would center ~scrollbar/2 off from the layout-viewport-centered fixed footer. 100% =
    clientWidth in every browser, so grid + footer share one centering reference. */
-.mt-home { --container-7xl: 100%; }
+.mt-home {
+  --container-7xl: 100%;
+}
 
 /* ═══════════════════════════════════════════════════════════
    SITE BANNER — animated logo strip
@@ -68,7 +97,8 @@
   align-items: center;
   justify-content: center;
   backdrop-filter: blur(var(--mt-glass-blur)) saturate(var(--mt-glass-saturate));
-  -webkit-backdrop-filter: blur(var(--mt-glass-blur)) saturate(var(--mt-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--mt-glass-blur))
+    saturate(var(--mt-glass-saturate));
   background-color: var(--mt-glass-bg);
   border-bottom: 1px solid var(--mt-glass-border);
 }
@@ -101,14 +131,20 @@
 /* Desktop: the horizontal category nav shows; the hamburger is hidden (drawer
    is phone-only). The old desktop nav strip is gone — categories live here now. */
 @media (min-width: 992px) {
-  .mt-banner-hamburger { display: none; }
+  .mt-banner-hamburger {
+    display: none;
+  }
 }
 
 /* Phone: hide the desktop category nav; the hamburger drawer takes over.
    Keep the animated logo off the first control (same gap as between controls). */
 @media (max-width: 991px) {
-  .mt-nav-categories { display: none; }
-  .mt-banner-logo-link { padding-inline-end: 0.75rem; }
+  .mt-nav-categories {
+    display: none;
+  }
+  .mt-banner-logo-link {
+    padding-inline-end: 0.75rem;
+  }
 }
 
 /* ── Mobile menu drawer ──────────────────────────────────────
@@ -116,7 +152,8 @@
    items align to the content frame so they line up under the banner logo. */
 .mt-mobile-menu-panel {
   backdrop-filter: blur(var(--mt-glass-blur)) saturate(var(--mt-glass-saturate));
-  -webkit-backdrop-filter: blur(var(--mt-glass-blur)) saturate(var(--mt-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--mt-glass-blur))
+    saturate(var(--mt-glass-saturate));
   background-color: var(--mt-glass-bg);
   border-bottom: 1px solid var(--mt-glass-border);
 }
@@ -139,7 +176,7 @@
 
 @media (min-width: 1300px) {
   .mt-header-inner {
-    max-width: var(--mt-frame);  /* 4-col zone: shell grows with the grid */
+    max-width: var(--mt-frame); /* 4-col zone: shell grows with the grid */
   }
 }
 
@@ -192,7 +229,7 @@ html {
   background: linear-gradient(
     to top,
     rgba(0, 0, 0, 0.88) 0%,
-    rgba(0, 0, 0, 0.50) 40%,
+    rgba(0, 0, 0, 0.5) 40%,
     rgba(0, 0, 0, 0.15) 70%,
     transparent 100%
   );
@@ -221,17 +258,26 @@ html {
   font-weight: 800;
   line-height: 1.1;
   margin: 0;
-  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.6),
-               0 0 60px rgba(0, 0, 0, 0.3);
+  text-shadow:
+    0 2px 20px rgba(0, 0, 0, 0.6),
+    0 0 60px rgba(0, 0, 0, 0.3);
 }
 
 @media (min-width: 640px) {
-  .hero-content { padding: 3rem; }
-  .hero-title   { font-size: 3.75rem; }
+  .hero-content {
+    padding: 3rem;
+  }
+  .hero-title {
+    font-size: 3.75rem;
+  }
 }
 @media (min-width: 1024px) {
-  .hero-content { padding: 4rem; }
-  .hero-title   { font-size: 4.5rem; }
+  .hero-content {
+    padding: 4rem;
+  }
+  .hero-title {
+    font-size: 4.5rem;
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -259,13 +305,17 @@ html {
 @media (min-width: 992px) {
   .mt-homepage-grid {
     grid-template-columns: repeat(auto-fill, var(--mt-col-w));
-    max-width: var(--mt-frame-3);  /* 3-col frame: auto-fill fills exactly 3 cols, zero leftover */
+    max-width: var(
+      --mt-frame-3
+    ); /* 3-col frame: auto-fill fills exactly 3 cols, zero leftover */
   }
 }
 
 @media (min-width: 1300px) {
   .mt-homepage-grid {
-    max-width: var(--mt-frame);  /* 4-col frame: auto-fill fills exactly 4 cols */
+    max-width: var(
+      --mt-frame
+    ); /* 4-col frame: auto-fill fills exactly 4 cols */
   }
 }
 
@@ -311,10 +361,16 @@ html {
    whose offset matches the active column count. Phone (<992, 1-col): hero is
    one cell → narrow cadence (1+9n). ≥992 (3/4-col): hero spans 4 cells → wide
    cadence (6+9n). The hidden cell's lazy image never loads. */
-.mt-grid-ad--narrow { display: none; }
+.mt-grid-ad--narrow {
+  display: none;
+}
 @media (max-width: 991px) {
-  .mt-grid-ad--wide   { display: none; }
-  .mt-grid-ad--narrow { display: flex; }
+  .mt-grid-ad--wide {
+    display: none;
+  }
+  .mt-grid-ad--narrow {
+    display: flex;
+  }
 }
 
 /* ── Gradient overlay ────────────────────────────────────── */
@@ -342,7 +398,9 @@ html {
 }
 
 @media (min-width: 992px) {
-  .mt-hero-content { padding: 1.75rem var(--mt-card-padding-x); }
+  .mt-hero-content {
+    padding: 1.75rem var(--mt-card-padding-x);
+  }
 }
 
 /* Row wrapper so multiple badges sit inline (their parent is a flex column,
@@ -431,7 +489,9 @@ html {
 
 /* Not-phone: compact article card styles */
 @media (min-width: 992px) {
-  .mt-article-content { padding: 0.6rem var(--mt-card-padding-x); }
+  .mt-article-content {
+    padding: 0.6rem var(--mt-card-padding-x);
+  }
   .mt-article-badge {
     font-size: 0.65rem;
     padding: 0.3rem 0.5rem;
@@ -447,7 +507,9 @@ html {
 
 /* Desktop: slightly more padding */
 @media (min-width: 1200px) {
-  .mt-article-content { padding: 0.75rem var(--mt-card-padding-x); }
+  .mt-article-content {
+    padding: 0.75rem var(--mt-card-padding-x);
+  }
 }
 
 /* ── HTMX transitions ────────────────────────────────────────
@@ -463,8 +525,12 @@ html {
 }
 
 @keyframes mt-img-fadein {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -521,40 +587,58 @@ html {
   flex-wrap: wrap;
   gap: 1rem;
 }
-.mt-card-grid > * { flex: 0 0 100%; }
+.mt-card-grid > * {
+  flex: 0 0 100%;
+}
 
 @media (min-width: 640px) {
-  .mt-card-grid > * { flex: 0 0 calc(50% - 0.5rem); }
+  .mt-card-grid > * {
+    flex: 0 0 calc(50% - 0.5rem);
+  }
 }
 @media (min-width: 768px) {
-  .mt-card-grid > * { flex: 0 0 calc(33.333% - 0.667rem); }
+  .mt-card-grid > * {
+    flex: 0 0 calc(33.333% - 0.667rem);
+  }
 }
 @media (min-width: 1280px) {
-  .mt-card-grid--wide > * { flex: 0 0 calc(25% - 0.75rem); }
+  .mt-card-grid--wide > * {
+    flex: 0 0 calc(25% - 0.75rem);
+  }
 }
 @media (min-width: 1536px) {
-  .mt-card-grid--wide > * { flex: 0 0 calc(20% - 0.8rem); }
+  .mt-card-grid--wide > * {
+    flex: 0 0 calc(20% - 0.8rem);
+  }
 }
 
-.mt-cards--left   { justify-content: flex-start; }
-.mt-cards--center { justify-content: center; }
-.mt-cards--right  { justify-content: flex-end; }
+.mt-cards--left {
+  justify-content: flex-start;
+}
+.mt-cards--center {
+  justify-content: center;
+}
+.mt-cards--right {
+  justify-content: flex-end;
+}
 
 /* ═══════════════════════════════════════════════════════════
    CARDS
    ═══════════════════════════════════════════════════════════ */
 .article-link--card {
   border-color: rgba(var(--color-neutral-600), 0.4) !important;
-  transition: transform 0.25s ease,
-              border-color 0.25s ease,
-              box-shadow 0.25s ease;
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .article-link--card:hover {
   transform: translateY(-3px);
   border-color: rgb(var(--color-primary-500)) !important;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3),
-              0 0 0 1px rgba(var(--color-primary-500), 0.2);
+  box-shadow:
+    0 8px 30px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(var(--color-primary-500), 0.2);
 }
 
 .article-link--card .thumbnail_card {
@@ -578,31 +662,41 @@ html {
    Lightbox click order is unaffected (DOM order unchanged); only the visual
    reading order becomes column-major. */
 .mt-gallery-grid {
-  columns: 1;                          /* vertical / phone: 1 column */
+  columns: 1; /* vertical / phone: 1 column */
   column-gap: 0.5rem;
   margin: 2.5rem 0;
 }
-@media (min-width: 900px)  { .mt-gallery-grid { columns: 3; } }
-@media (min-width: 1200px) { .mt-gallery-grid { columns: 4; } }
+@media (min-width: 900px) {
+  .mt-gallery-grid {
+    columns: 3;
+  }
+}
+@media (min-width: 1200px) {
+  .mt-gallery-grid {
+    columns: 4;
+  }
+}
 
 .mt-gallery-grid a {
   display: block;
   line-height: 0;
-  break-inside: avoid;                 /* never split a photo across columns */
-  margin: 0 0 0.5rem;                  /* vertical gap between stacked photos */
+  break-inside: avoid; /* never split a photo across columns */
+  margin: 0 0 0.5rem; /* vertical gap between stacked photos */
 }
 .mt-gallery-grid img {
   width: 100%;
-  height: auto;                        /* natural proportions — no crop */
+  height: auto; /* natural proportions — no crop */
   display: block;
-  margin: 0;                           /* immune to .prose img margins */
+  margin: 0; /* immune to .prose img margins */
   cursor: zoom-in;
 }
 
 /* ═══════════════════════════════════════════════════════════
    ARTICLE VIDEO GALLERY — main player + thumbnail rail
    ═══════════════════════════════════════════════════════════ */
-.mt-video-gallery { margin: 2.5rem 0; }
+.mt-video-gallery {
+  margin: 2.5rem 0;
+}
 .mt-video-main {
   width: 100%;
   aspect-ratio: 16 / 9;
@@ -646,13 +740,16 @@ html {
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
   pointer-events: none;
 }
-.mt-video-thumb.is-active { outline: 2px solid rgb(var(--color-primary-500)); outline-offset: -2px; }
+.mt-video-thumb.is-active {
+  outline: 2px solid rgb(var(--color-primary-500));
+  outline-offset: -2px;
+}
 
 /* ═══════════════════════════════════════════════════════════
    FILM GRAIN OVERLAY
    ═══════════════════════════════════════════════════════════ */
 body::after {
-  content: '';
+  content: "";
   position: fixed;
   inset: 0;
   z-index: 60;
@@ -669,21 +766,40 @@ body::after {
    ═══════════════════════════════════════════════════════════ */
 
 /* Palette B — slug-keyed, fixed hex so colors are theme-independent */
-.cat-bg--espinho   { background-color: rgba(59,130,246,var(--mt-cat-bg-opacity)); }
-.cat-bg--nacional  { background-color: rgba(8,145,178,var(--mt-cat-bg-opacity)); }
-.cat-bg--cultura   { background-color: rgba(217,119,6,var(--mt-cat-bg-opacity)); }
-.cat-bg--desporto  { background-color: rgba(22,163,74,var(--mt-cat-bg-opacity)); }
-.cat-bg--lifestyle { background-color: rgba(147,51,234,var(--mt-cat-bg-opacity)); }
-.cat-bg--agenda    { background-color: rgba(220,38,38,var(--mt-cat-bg-opacity)); }
+.cat-bg--espinho {
+  background-color: rgba(59, 130, 246, var(--mt-cat-bg-opacity));
+}
+.cat-bg--nacional {
+  background-color: rgba(8, 145, 178, var(--mt-cat-bg-opacity));
+}
+.cat-bg--cultura {
+  background-color: rgba(217, 119, 6, var(--mt-cat-bg-opacity));
+}
+.cat-bg--desporto {
+  background-color: rgba(22, 163, 74, var(--mt-cat-bg-opacity));
+}
+.cat-bg--lifestyle {
+  background-color: rgba(147, 51, 234, var(--mt-cat-bg-opacity));
+}
+.cat-bg--agenda {
+  background-color: rgba(220, 38, 38, var(--mt-cat-bg-opacity));
+}
 
 /* ── Nav chrome (desktop category nav, in the banner) ────────
    The chrome glass is always dark, so nav text/icons are light in both themes.
    Category links carry their own --cat-color; any non-category link stays white. */
-.mt-nav-categories a { color: rgba(255, 255, 255, 0.8); transition: color .2s; }
-.mt-nav-categories a:hover { color: #fff; }
+.mt-nav-categories a {
+  color: rgba(255, 255, 255, 0.8);
+  transition: color 0.2s;
+}
+.mt-nav-categories a:hover {
+  color: #fff;
+}
 
 /* Mobile drawer: keep light text + a colored active underline. */
-[data-category-link].mt-nav-active { box-shadow: inset 0 -3px 0 0 var(--cat-color); }
+[data-category-link].mt-nav-active {
+  box-shadow: inset 0 -3px 0 0 var(--cat-color);
+}
 
 /* Category links: text in the category's own colour, lightened + haloed so it
    reads (incl. for colour-blind readers) over the variable glass backdrop.
@@ -694,17 +810,29 @@ body::after {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
   font-weight: 600;
   padding: 0.1rem 0;
-  transition: color .2s, background-color .2s, padding .2s;
+  transition:
+    color 0.2s,
+    background-color 0.2s,
+    padding 0.2s;
 }
 .mt-nav-categories [data-category-link]::after {
   content: "";
-  position: absolute; left: 0; right: 0; bottom: -1px; height: 2px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
   background: var(--cat-color);
-  transform: scaleX(0); transform-origin: left;
-  transition: transform .2s ease;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.2s ease;
 }
-.mt-nav-categories [data-category-link]:hover { color: color-mix(in srgb, var(--cat-color), white 55%); }
-.mt-nav-categories [data-category-link]:hover::after { transform: scaleX(1); }
+.mt-nav-categories [data-category-link]:hover {
+  color: color-mix(in srgb, var(--cat-color), white 55%);
+}
+.mt-nav-categories [data-category-link]:hover::after {
+  transform: scaleX(1);
+}
 
 /* Active = the category badge: the colored pill is the affordance; keep the
    resting typography (same size/case/weight) so the text doesn't jump. */
@@ -715,7 +843,9 @@ body::after {
   padding: 0.12rem 0.6rem;
   box-shadow: none;
 }
-.mt-nav-categories [data-category-link].mt-nav-active::after { transform: scaleX(0); }
+.mt-nav-categories [data-category-link].mt-nav-active::after {
+  transform: scaleX(0);
+}
 
 /* Filtered (category) feed: each GRID card shows ONLY the active category's
    badge — sibling badges hide, so a multi-category article reads as the one you
@@ -725,23 +855,30 @@ body::after {
    The hero is the featured *site-wide latest* (heroFollowsFilter=false) and may
    be a different category, so it keeps its own badge — not scoped here.
    No active category (home feed) → all badges show. */
-body[data-active-cat] .mt-article-badge { display: none; }
+body[data-active-cat] .mt-article-badge {
+  display: none;
+}
 
-body[data-active-cat="espinho"]   .mt-article-badge.cat-bg--espinho,
-body[data-active-cat="nacional"]  .mt-article-badge.cat-bg--nacional,
-body[data-active-cat="cultura"]   .mt-article-badge.cat-bg--cultura,
-body[data-active-cat="desporto"]  .mt-article-badge.cat-bg--desporto,
+body[data-active-cat="espinho"] .mt-article-badge.cat-bg--espinho,
+body[data-active-cat="nacional"] .mt-article-badge.cat-bg--nacional,
+body[data-active-cat="cultura"] .mt-article-badge.cat-bg--cultura,
+body[data-active-cat="desporto"] .mt-article-badge.cat-bg--desporto,
 body[data-active-cat="lifestyle"] .mt-article-badge.cat-bg--lifestyle,
-body[data-active-cat="agenda"]    .mt-article-badge.cat-bg--agenda { display: inline-block; }
+body[data-active-cat="agenda"] .mt-article-badge.cat-bg--agenda {
+  display: inline-block;
+}
 
 /* Badges filter their category on click (spa-router) → show the affordance. */
 .mt-hero-badge,
-.mt-article-badge { cursor: pointer; }
+.mt-article-badge {
+  cursor: pointer;
+}
 
 /* Search modal: the same dark glass as the rest of the chrome (was a solid card). */
 .mt-search-modal {
   backdrop-filter: blur(var(--mt-glass-blur)) saturate(var(--mt-glass-saturate));
-  -webkit-backdrop-filter: blur(var(--mt-glass-blur)) saturate(var(--mt-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--mt-glass-blur))
+    saturate(var(--mt-glass-saturate));
   background-color: var(--mt-glass-bg);
   border: 1px solid var(--mt-glass-border);
 }
@@ -760,8 +897,12 @@ body[data-active-cat="agenda"]    .mt-article-badge.cat-bg--agenda { display: in
   overflow: hidden;
   background: none;
 }
-.dark .mt-ad-card { background: rgb(var(--color-neutral-800)); }
-.mt-ad-card:hover { opacity: 0.9; }
+.dark .mt-ad-card {
+  background: rgb(var(--color-neutral-800));
+}
+.mt-ad-card:hover {
+  opacity: 0.9;
+}
 
 .mt-ad-card-img {
   display: block;
@@ -826,12 +967,12 @@ body[data-active-cat="agenda"]    .mt-article-badge.cat-bg--agenda { display: in
    centered legal line. The bar's definite height bounds the ad (--mt-footer-ad-cap),
    so the leaderboard can't grow taller than the footer on wide desktop. */
 :root {
-  --mt-footer-bar-h: 92px;     /* total footer height (ad row + legal row) */
-  --mt-footer-ad-cap: 64px;    /* ad height ceiling — the bounded ad height */
+  --mt-footer-bar-h: 92px; /* total footer height (ad row + legal row) */
+  --mt-footer-ad-cap: 64px; /* ad height ceiling — the bounded ad height */
 }
 @media (max-width: 991px) {
   :root {
-    --mt-footer-bar-h: 80px;   /* phone: ~2× the old infonav height */
+    --mt-footer-bar-h: 80px; /* phone: ~2× the old infonav height */
     --mt-footer-ad-cap: 56px;
   }
 }
@@ -845,19 +986,28 @@ body[data-active-cat="agenda"]    .mt-article-badge.cat-bg--agenda { display: in
   bottom: 0;
   z-index: 50;
   align-self: center;
-  width: min(calc(100% - 2 * var(--gutter)), calc(var(--mt-frame-3) - 2 * var(--gutter)));
+  width: min(
+    calc(100% - 2 * var(--gutter)),
+    calc(var(--mt-frame-3) - 2 * var(--gutter))
+  );
   height: var(--mt-footer-bar-h);
   display: flex;
   flex-direction: column;
   justify-content: center;
   padding-inline: var(--mt-card-padding-x);
   backdrop-filter: blur(var(--mt-glass-blur)) saturate(var(--mt-glass-saturate));
-  -webkit-backdrop-filter: blur(var(--mt-glass-blur)) saturate(var(--mt-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--mt-glass-blur))
+    saturate(var(--mt-glass-saturate));
   background-color: var(--mt-glass-bg);
   border-top: 1px solid var(--mt-glass-border);
 }
 @media (min-width: 1300px) {
-  .mt-fixed-footer { width: min(calc(100% - 2 * var(--gutter)), calc(var(--mt-frame) - 2 * var(--gutter))); }
+  .mt-fixed-footer {
+    width: min(
+      calc(100% - 2 * var(--gutter)),
+      calc(var(--mt-frame) - 2 * var(--gutter))
+    );
+  }
 }
 
 /* Ad row: 1fr·auto·1fr grid. Equal 1fr flanks keep the ad truly centred no
@@ -873,32 +1023,65 @@ body[data-active-cat="agenda"]    .mt-article-badge.cat-bg--agenda { display: in
   align-items: center;
   gap: 0.75rem;
 }
-.mt-footer-adrow > .mt-ad-footer { grid-column: 2; justify-self: center; min-width: 0; }
+.mt-footer-adrow > .mt-ad-footer {
+  grid-column: 2;
+  justify-self: center;
+  min-width: 0;
+}
 
 /* col 1 — left flank: back (article) XOR search (feed), desktop + phone alike. */
 .mt-footer-back,
-.mt-footer-search { grid-column: 1; justify-self: start; align-items: center; }
+.mt-footer-search {
+  grid-column: 1;
+  justify-self: start;
+  align-items: center;
+}
 .mt-footer-back svg,
-.mt-footer-search svg { width: 1.25rem; height: 1.25rem; }
-.mt-footer-back   { display: none; }
-.mt-footer-search { display: inline-flex; }
-body.mt-article-page .mt-footer-back   { display: inline-flex; }
-body.mt-article-page .mt-footer-search { display: none; }
+.mt-footer-search svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+.mt-footer-back {
+  display: none;
+}
+.mt-footer-search {
+  display: inline-flex;
+}
+body.mt-article-page .mt-footer-back {
+  display: inline-flex;
+}
+body.mt-article-page .mt-footer-search {
+  display: none;
+}
 
 /* col 3 — right flank: theme switcher (at top) XOR scroll-to-top (scrolled).
    body.mt-scrolled is toggled by the footer's inline scroll listener. */
 .mt-footer-top-btn,
-.mt-footer-appearance { grid-column: 3; justify-self: end; }
+.mt-footer-appearance {
+  grid-column: 3;
+  justify-self: end;
+}
 .mt-footer-top-btn svg {
   transform: rotate(180deg);
   width: 1.25rem;
   height: 1.25rem;
 }
-.mt-footer-appearance svg { width: 1.25rem; height: 1.25rem; }
-.mt-footer-top-btn    { display: none; }
-.mt-footer-appearance { display: inline-flex; }
-body.mt-scrolled .mt-footer-top-btn    { display: inline-flex; }
-body.mt-scrolled .mt-footer-appearance { display: none; }
+.mt-footer-appearance svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+.mt-footer-top-btn {
+  display: none;
+}
+.mt-footer-appearance {
+  display: inline-flex;
+}
+body.mt-scrolled .mt-footer-top-btn {
+  display: inline-flex;
+}
+body.mt-scrolled .mt-footer-appearance {
+  display: none;
+}
 
 /* Centered, single compact line so the ad row gets the vertical room. */
 .mt-footer-legal {
@@ -920,7 +1103,9 @@ body {
    nod to Espinho / argent). Higher specificity than the Tailwind bg-neutral
    utility; dark mode (.dark) keeps its own background. --mt-page-bg is the
    single source of truth so ad-card letterboxes track it (see .mt-ad-card). */
-:root { --mt-page-bg: #d9d9d6; }
+:root {
+  --mt-page-bg: #d9d9d6;
+}
 html:not(.dark) body {
   background-color: var(--mt-page-bg);
 }
@@ -937,7 +1122,9 @@ html:not(.dark) body {
 
 /* ── Article column: 3-cell measure (876px), centered, gutter padding ── */
 .mt-article-column {
-  max-width: calc(3 * var(--mt-col-w) + 2 * var(--mt-grid-gap));  /* 3-col cells box (3 tiles + 2 gaps) — tracks the gap so it stays flush with the shell */
+  max-width: calc(
+    3 * var(--mt-col-w) + 2 * var(--mt-grid-gap)
+  ); /* 3-col cells box (3 tiles + 2 gaps) — tracks the gap so it stays flush with the shell */
   margin-inline: auto;
   padding-inline: var(--gutter);
   width: 100%;
@@ -952,8 +1139,12 @@ html:not(.dark) body {
 
 /* Article pages: categories make no sense (can't filter an article); the
    hamburger would open an empty drawer. Logo stays put (inert brand mark). */
-body.mt-article-page .mt-nav-categories { display: none; }
-body.mt-article-page .mt-banner-hamburger { display: none; }
+body.mt-article-page .mt-nav-categories {
+  display: none;
+}
+body.mt-article-page .mt-banner-hamburger {
+  display: none;
+}
 /* Search is a feed-only discovery tool: from an article it would full-reload
    and break back/scroll-restore. The footer hides .mt-footer-search on
    articles; the / shortcut is also gated in search.js. */
@@ -967,11 +1158,15 @@ body.mt-article-page .mt-banner-hamburger { display: none; }
    the .ff-mobile class set by the inline UA check in head.html (Fenix only).
    Drop the blur (fall back to a more opaque solid glass so chrome stays legible)
    and kill the grain. Higher specificity (html.ff-mobile) beats .dark's bg var. */
-html.ff-mobile { --mt-glass-bg: rgba(0, 0, 0, 0.85); }
+html.ff-mobile {
+  --mt-glass-bg: rgba(0, 0, 0, 0.85);
+}
 html.ff-mobile .mt-site-banner,
 html.ff-mobile .mt-fixed-footer,
 html.ff-mobile .mt-mobile-menu-panel {
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
-html.ff-mobile body::after { display: none; }
+html.ff-mobile body::after {
+  display: none;
+}
