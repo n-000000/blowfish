@@ -7,7 +7,7 @@
   --container-7xl: 100%; /* phone: body fills viewport */
   --mt-max-width: max(90vw, 1600px);
   --mt-cat-bg-opacity: 0.9;
-  --mt-banner-h: max(12svh, 4rem);
+  --mt-banner-h: 96px; /* fixed px — 12svh blew up to ~230px on tall/portrait viewports */
   --mt-card-padding-x: 0.75rem;
 
   /* ── Shell glass (banner, nav strip, footer, search modal) ──
@@ -53,6 +53,12 @@
     --mt-grid-gap: 16px;
   }
 } /* multi-col gap */
+
+@media (max-width: 991px) {
+  :root {
+    --mt-banner-h: 60px;
+  }
+}
 
 /* Dark mode: the page is already dark, so the chrome glass can be lighter/glassier. */
 .dark {

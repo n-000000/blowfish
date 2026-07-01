@@ -4,12 +4,13 @@
   category nav (desktop) / hamburger (phone); the old desktop nav strip is gone,
   reclaiming its vertical space. The mobile drawer renders from banner.html.
   Body spacer below prevents content from hiding under the banner.
-*/ -}}
+  */
+-}}
 
 {{- /* ── Body spacer: reserves space for the fixed banner ── */ -}}
 <div class="mt-header-spacer"></div>
 
 {{- /* ── Banner (+ mobile drawer) ───────────────────────────── */ -}}
-<div class="fixed inset-x-0 top-0 z-50">
+<header class="mt-header fixed inset-x-0 top-0 z-50">
   {{ partial "header/banner.html" . }}
-</div>
+</header>
