@@ -965,6 +965,79 @@ body[data-active-cat="agenda"] .mt-article-badge.cat-bg--agenda {
 }
 
 /* ═══════════════════════════════════════════════════════════
+   SHELL CONTROLS — fixed glass corner buttons (FABs)
+   Two slots mirror the banner's frame+gutter inset, so a FAB's outer edge
+   lines up with the logo and the grid cells. Only one button per slot is
+   ever visible (mutually exclusive via body classes), so the slot width is
+   one button. The container ignores pointer events; the buttons re-enable.
+   ═══════════════════════════════════════════════════════════ */
+.mt-shell-controls {
+  position: fixed;
+  bottom: calc(var(--mt-footer-bar-h) + var(--sp-2));
+  inset-inline: 0;
+  margin-inline: auto;
+  width: 100%;
+  max-width: var(--mt-shell-max);
+  padding-inline: var(--gutter);
+  display: flex;
+  justify-content: space-between;
+  z-index: 50;
+  pointer-events: none;
+}
+.mt-ctl-slot {
+  display: flex;
+  align-items: flex-end;
+}
+.mt-ctl {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  backdrop-filter: blur(var(--mt-glass-blur)) saturate(var(--mt-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--mt-glass-blur))
+    saturate(var(--mt-glass-saturate));
+  background-color: var(--mt-glass-bg);
+  border: 1px solid var(--mt-glass-border);
+}
+.mt-ctl svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+.mt-ctl-top svg {
+  transform: rotate(180deg); /* chevron-down icon -> points up */
+}
+
+/* Left slot: search (feed) XOR back (article). */
+.mt-ctl-back {
+  display: none;
+}
+.mt-ctl-search {
+  display: inline-flex;
+}
+body.mt-article-page .mt-ctl-back {
+  display: inline-flex;
+}
+body.mt-article-page .mt-ctl-search {
+  display: none;
+}
+
+/* Right slot: theme (at top) XOR scroll-to-top (scrolled). */
+.mt-ctl-top {
+  display: none;
+}
+.mt-ctl-appearance {
+  display: inline-flex;
+}
+body.mt-scrolled .mt-ctl-top {
+  display: inline-flex;
+}
+body.mt-scrolled .mt-ctl-appearance {
+  display: none;
+}
+
+/* ═══════════════════════════════════════════════════════════
    FIXED FOOTER
    ═══════════════════════════════════════════════════════════ */
 
@@ -1168,7 +1241,8 @@ html.ff-mobile {
 }
 html.ff-mobile .mt-site-banner,
 html.ff-mobile .mt-fixed-footer,
-html.ff-mobile .mt-mobile-menu-panel {
+html.ff-mobile .mt-mobile-menu-panel,
+html.ff-mobile .mt-ctl {
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }

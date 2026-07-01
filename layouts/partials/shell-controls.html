@@ -1,0 +1,64 @@
+{{- /*
+  shell-controls.html — the two floating glass corner buttons (FABs).
+  Left slot:  back arrow (article pages)  XOR  search (feed pages).
+  Right slot: scroll-to-top (scrolled)    XOR  theme switcher (at top).
+  Mutual exclusion is CSS-driven (body.mt-article-page / body.mt-scrolled).
+  Rendered OUTSIDE <main> (see baseof) so SPA region swaps never wipe it.
+  IDs match the existing wiring: #search-button (search.js),
+  #appearance-switcher (appearance.js), data-back-to-feed (spa-router).
+  */
+-}}
+<div class="mt-shell-controls print:hidden">
+  <div class="mt-ctl-slot mt-ctl-slot-l">
+    <a
+      href="{{ "" | relLangURL }}"
+      data-back-to-feed
+      class="mt-ctl mt-ctl-back text-white/60 hover:text-white transition-colors"
+      aria-label="Voltar">
+      {{ partial "icon.html" "arrow-left" }}
+    </a>
+    {{ if .Site.Params.enableSearch | default false }}
+      <button
+        id="search-button"
+        aria-label="{{ i18n "search.open_button_title" }}"
+        title="{{ i18n "search.open_button_title" }}"
+        class="mt-ctl mt-ctl-search text-white/60 hover:text-white transition-colors">
+        {{ partial "icon.html" "search" }}
+      </button>
+    {{ end }}
+  </div>
+  <div class="mt-ctl-slot mt-ctl-slot-r">
+    <button
+      onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+      aria-label="Voltar ao topo"
+      class="mt-ctl mt-ctl-top text-white/60 hover:text-white transition-colors">
+      {{ partial "icon.html" "chevron-down" }}
+    </button>
+    <button
+      id="appearance-switcher"
+      type="button"
+      aria-label="Dark mode switcher"
+      class="mt-ctl mt-ctl-appearance text-white/60 hover:text-white transition-colors">
+      <div class="dark:hidden">{{ partial "icon.html" "moon" }}</div>
+      <div class="hidden dark:block">{{ partial "icon.html" "sun" }}</div>
+    </button>
+  </div>
+</div>
+
+{{- /* Toggle body.mt-scrolled so the right slot swaps theme <-> scroll-top.
+  scroll-to-top.js isn't loaded (showScrollToTop:false), so this owns it. */
+-}}
+<script>
+  (function () {
+    var scrolled = null;
+    function update() {
+      var s = window.scrollY > 8;
+      if (s === scrolled) return;
+      scrolled = s;
+      document.body.classList.toggle("mt-scrolled", s);
+    }
+    window.addEventListener("scroll", update, { passive: true });
+    document.addEventListener("htmx:afterSettle", update);
+    update();
+  })();
+</script>

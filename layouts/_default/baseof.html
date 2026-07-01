@@ -17,7 +17,11 @@
     {{ $bodyLayout = printf "%s px-6 sm:px-14 md:px-24 lg:px-32" $bodyLayout }}
   {{ end }}
   {{ $bodyColor := "text-lg bg-neutral text-neutral-900 dark:bg-neutral-800 dark:text-neutral" }}
-  <body class="{{ $bodyLayout }} {{ $bodyColor }} {{ if site.Params.enableStyledScrollbar | default true }}bf-scrollbar{{ end }}"{{ if eq .Kind "term" }} data-active-cat="{{ path.Base .RelPermalink }}"{{ end }}>
+  <body
+    class="{{ $bodyLayout }} {{ $bodyColor }} {{ if site.Params.enableStyledScrollbar | default true }}
+      bf-scrollbar
+    {{ end }}"
+    {{ if eq .Kind "term" }}data-active-cat="{{ path.Base .RelPermalink }}"{{ end }}>
     <div id="the-top" class="absolute flex self-center">
       <a
         class="px-3 py-1 text-sm -translate-y-8 rounded-b-lg bg-primary-200 focus:translate-y-0 dark:bg-neutral-600"
@@ -41,6 +45,7 @@
         {{- partial "scroll-to-top.html" . -}}
       {{ end }}
       {{- partial "footer.html" . -}}
+      {{- partial "shell-controls.html" . -}}
       {{ if site.Params.enableSearch | default false }}
         {{- partial "search.html" . -}}
       {{ end }}
