@@ -32,6 +32,9 @@
   --mt-frame-3: calc(
     3 * var(--mt-col-w) + 2 * var(--mt-grid-gap) + 2 * var(--gutter)
   ); /* 3-col outer frame (972px at gap 16); phone + sub-cap shell */
+  --mt-shell-max: var(
+    --mt-frame-3
+  ); /* shell content cap: 3-col sub-1300, 4-col above */
   --sp-2: 0.5rem;
   --sp-3: 0.75rem;
   --sp-4: 1rem;
@@ -57,6 +60,12 @@
 @media (max-width: 991px) {
   :root {
     --mt-banner-h: 60px;
+  }
+}
+
+@media (min-width: 1300px) {
+  :root {
+    --mt-shell-max: var(--mt-frame);
   }
 }
 
@@ -175,15 +184,9 @@
    content (logo, nav, footer text) is constrained here. */
 .mt-header-inner {
   width: 100%;
-  max-width: var(--mt-frame-3);
+  max-width: var(--mt-shell-max);
   margin-inline: auto;
   padding-inline: var(--gutter);
-}
-
-@media (min-width: 1300px) {
-  .mt-header-inner {
-    max-width: var(--mt-frame); /* 4-col zone: shell grows with the grid */
-  }
 }
 
 /* ── Header spacer: reserves the fixed banner's height (no nav strip anymore) ── */
@@ -1041,124 +1044,52 @@ body.mt-scrolled .mt-ctl-appearance {
    FIXED FOOTER
    ═══════════════════════════════════════════════════════════ */
 
-/* One glass bar (--mt-footer-bar-h) holds an ad row (scroll button + ad) over a
-   centered legal line. The bar's definite height bounds the ad (--mt-footer-ad-cap),
-   so the leaderboard can't grow taller than the footer on wide desktop. */
+/* One glass bar (--mt-footer-bar-h) stacks the ad over a centered legal line.
+   The bar's definite height bounds the ad (--mt-footer-ad-cap), so the
+   leaderboard can't grow taller than the footer on wide desktop. */
 :root {
-  --mt-footer-bar-h: 92px; /* total footer height (ad row + legal row) */
   --mt-footer-ad-cap: 64px; /* ad height ceiling — the bounded ad height */
+  --mt-footer-bar-h: calc(
+    var(--mt-footer-ad-cap) + var(--sp-8)
+  ); /* ad cap + legal + padding */
 }
 @media (max-width: 991px) {
   :root {
-    --mt-footer-bar-h: 80px; /* phone: ~2× the old infonav height */
-    --mt-footer-ad-cap: 56px;
+    --mt-footer-ad-cap: 56px; /* bar-h recomputes to 56 + 32 = 88 */
   }
 }
 
-/* The <footer> IS the glass bar: fixed, content-grid width (centred via its
-   static position inside the centred max-w-7xl body), definite height, and a
-   flex column stacking the ad row over the legal line. Padded to the card
-   content inset so the legal text lines up with the article badges/titles. */
+/* The <footer> IS the glass bar: fixed at bottom, fit-content so it hugs its
+   ad (centred via inset-inline:0 + margin-inline:auto) on desktop and goes
+   full-width on phone. Definite height; a flex column stacking the ad over the
+   centered legal line. */
 .mt-fixed-footer {
   position: fixed;
   bottom: 0;
   z-index: 50;
-  align-self: center;
-  width: min(
-    calc(100% - 2 * var(--gutter)),
-    calc(var(--mt-frame-3) - 2 * var(--gutter))
-  );
+  inset-inline: 0;
+  margin-inline: auto;
+  width: fit-content; /* desktop: hug the ad — no empty flanks */
+  max-width: calc(100% - 2 * var(--gutter));
   height: var(--mt-footer-bar-h);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding-inline: var(--mt-card-padding-x);
+  align-items: center; /* center ad + legal horizontally */
+  padding-inline: var(--sp-3);
   backdrop-filter: blur(var(--mt-glass-blur)) saturate(var(--mt-glass-saturate));
   -webkit-backdrop-filter: blur(var(--mt-glass-blur))
     saturate(var(--mt-glass-saturate));
   background-color: var(--mt-glass-bg);
   border-top: 1px solid var(--mt-glass-border);
 }
-@media (min-width: 1300px) {
+@media (max-width: 991px) {
   .mt-fixed-footer {
-    width: min(
-      calc(100% - 2 * var(--gutter)),
-      calc(var(--mt-frame) - 2 * var(--gutter))
-    );
+    width: 100%; /* phone: full viewport width */
+    max-width: none;
+    margin-inline: 0;
+    padding-inline: var(--gutter);
   }
-}
-
-/* Ad row: 1fr·auto·1fr grid. Equal 1fr flanks keep the ad truly centred no
-   matter which control occupies each side. Each flank holds a mutually-
-   exclusive pair (only one ever has display ≠ none, so no grid overlap):
-     col 1 — back arrow (article) XOR search (feed)
-     col 3 — scroll-to-top (scrolled) XOR theme switcher (at top) */
-.mt-footer-adrow {
-  flex: 1 1 auto;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: 1fr minmax(0, auto) 1fr;
-  align-items: center;
-  gap: 0.75rem;
-}
-.mt-footer-adrow > .mt-ad-footer {
-  grid-column: 2;
-  justify-self: center;
-  min-width: 0;
-}
-
-/* col 1 — left flank: back (article) XOR search (feed), desktop + phone alike. */
-.mt-footer-back,
-.mt-footer-search {
-  grid-column: 1;
-  justify-self: start;
-  align-items: center;
-}
-.mt-footer-back svg,
-.mt-footer-search svg {
-  width: 1.25rem;
-  height: 1.25rem;
-}
-.mt-footer-back {
-  display: none;
-}
-.mt-footer-search {
-  display: inline-flex;
-}
-body.mt-article-page .mt-footer-back {
-  display: inline-flex;
-}
-body.mt-article-page .mt-footer-search {
-  display: none;
-}
-
-/* col 3 — right flank: theme switcher (at top) XOR scroll-to-top (scrolled).
-   body.mt-scrolled is toggled by the footer's inline scroll listener. */
-.mt-footer-top-btn,
-.mt-footer-appearance {
-  grid-column: 3;
-  justify-self: end;
-}
-.mt-footer-top-btn svg {
-  transform: rotate(180deg);
-  width: 1.25rem;
-  height: 1.25rem;
-}
-.mt-footer-appearance svg {
-  width: 1.25rem;
-  height: 1.25rem;
-}
-.mt-footer-top-btn {
-  display: none;
-}
-.mt-footer-appearance {
-  display: inline-flex;
-}
-body.mt-scrolled .mt-footer-top-btn {
-  display: inline-flex;
-}
-body.mt-scrolled .mt-footer-appearance {
-  display: none;
 }
 
 /* Centered, single compact line so the ad row gets the vertical room. */
@@ -1224,7 +1155,7 @@ body.mt-article-page .mt-banner-hamburger {
   display: none;
 }
 /* Search is a feed-only discovery tool: from an article it would full-reload
-   and break back/scroll-restore. The footer hides .mt-footer-search on
+   and break back/scroll-restore. The shell controls hide .mt-ctl-search on
    articles; the / shortcut is also gated in search.js. */
 /* ───────────────────────────────────────────────────────────────────── */
 
