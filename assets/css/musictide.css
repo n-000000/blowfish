@@ -59,7 +59,10 @@
 
 @media (max-width: 991px) {
   :root {
-    --mt-banner-h: 60px;
+    /* phone header height == footer's MAX (ad-state) height, so the two chrome
+       bands are balanced bookends. Linked to the footer tokens (not a bare 128)
+       so they stay equal if the footer bands change. */
+    --mt-banner-h: calc(var(--mt-footer-ad-h) + var(--mt-footer-legal-h));
   }
 }
 
@@ -923,22 +926,22 @@ body[data-active-cat="agenda"] .mt-article-badge.cat-bg--agenda {
 .mt-ad-footer {
   position: relative;
   display: block;
+  width: 100%;
+  height: var(--mt-footer-ad-h);
   text-decoration: none;
-  overflow: hidden;
 }
 
-/* Height-bounded by the footer bar via a DEFINITE px ceiling (--mt-footer-ad-cap),
-   width follows the creative's aspect. Using a real length (not height:100% against
-   an ancestor) keeps it identical across engines — sidesteps the Firefox
-   %-against-auto-height ambiguity that used to letterbox the leaderboard. On a
-   narrow phone slot, max-width caps the width instead and object-fit:contain keeps
-   the aspect (no crop, no distortion). */
+/* Fills the full band (100% width x 108px height) and center-crops via
+   object-fit: cover — no side gaps, no letterbox, no distortion (uniform scale).
+   A creative off the band AR is cropped symmetrically at the edges; key content
+   stays centered. Author mobile creatives at 3:1 (~324x108) so the crop is
+   negligible. Both dims are definite (the <a> pins the height), so there is no
+   Firefox %-against-auto-height ambiguity. */
 .mt-ad-footer-img {
   display: block;
-  height: var(--mt-footer-ad-cap);
-  width: auto;
-  max-width: 100%;
-  object-fit: contain;
+  width: 100%;
+  height: var(--mt-footer-ad-h);
+  object-fit: cover;
 }
 
 /* ── Shared flag badge (card + footer) ── */
@@ -968,72 +971,130 @@ body[data-active-cat="agenda"] .mt-article-badge.cat-bg--agenda {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   SHELL CONTROLS — glass corner blocks, in line with the footer band
-   Two slots mirror the banner's frame+gutter inset, so a control's outer edge
-   lines up with the logo and the grid cells. The controls sit in the SAME
-   bottom band as the footer (bottom:0, height == footer bar): on wide desktop
-   the centered ad is narrow so they occupy the bare flanks; as the viewport
-   narrows the ad widens toward them and the control glass overlaps the ad.
-   Only one button per slot is ever visible (mutually exclusive via body
-   classes). The container ignores pointer events; the buttons re-enable.
+   UNIFIED FOOTER — one <footer>: left · center · right
+   center stacks the ad (108px band, only when .mt-has-ad) over the legal line.
+   left/right are absolute corner overlays that FLOAT OVER the creative's ends
+   (they don't consume center width). Width binds to a "viewport": full viewport
+   on phone; the content-grid frame on desktop (styling deferred — may look off
+   until the desktop pass). Height switches 80 (no ad) ↔ 128 (ad) via .mt-has-ad.
    ═══════════════════════════════════════════════════════════ */
-.mt-shell-controls {
+:root {
+  --mt-footer-ad-h: 108px; /* creative band height = creative render height */
+  --mt-footer-legal-h: 20px; /* legal band (single line) */
+  --mt-footer-pad: 30px; /* no-ad vertical breathing: legal + 2*pad = 80 */
+  --mt-footer-btn: 48px; /* control width + legal inline clearance (height inherits the band) */
+}
+
+.mt-footer {
+  /* no-ad height: legal band + roomy top/bottom pad so the corner buttons stay tappable */
+  --mt-footer-h: calc(var(--mt-footer-legal-h) + 2 * var(--mt-footer-pad));
   position: fixed;
   bottom: 0;
+  z-index: 50;
   inset-inline: 0;
   margin-inline: auto;
   width: 100%;
   max-width: var(--mt-shell-max);
-  padding-inline: var(--gutter);
+  height: var(--mt-footer-h);
+  backdrop-filter: blur(var(--mt-glass-blur)) saturate(var(--mt-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--mt-glass-blur))
+    saturate(var(--mt-glass-saturate));
+  background-color: var(--mt-glass-bg);
+  border-top: 1px solid var(--mt-glass-border);
+}
+/* ad state is taller than no-ad BY CONSTRUCTION: creative band + legal band */
+.mt-footer.mt-has-ad {
+  --mt-footer-h: calc(var(--mt-footer-ad-h) + var(--mt-footer-legal-h));
+}
+
+/* center: full footer width; stacks ad over legal. Legal centered when no ad,
+   pinned to the bottom (ad above) when there is one. */
+.mt-footer-center {
+  width: 100%;
+  height: 100%;
   display: flex;
-  justify-content: space-between;
-  z-index: 50;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.mt-has-ad .mt-footer-center {
+  justify-content: flex-end;
+}
+
+/* ad row (center-top): fixed band, full-bleed, clips overflow at the viewport edge */
+.mt-footer-ad {
+  width: 100%;
+  height: var(--mt-footer-ad-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* legal (center-bottom): single line, band height via line-height, kept clear of
+   the corner buttons via inline padding */
+.mt-footer-legal {
+  margin: 0;
+  flex: 0 0 auto;
+  max-width: 100%;
+  text-align: center;
+  line-height: var(--mt-footer-legal-h);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-inline: var(--mt-footer-btn);
+}
+
+/* left/right: absolute bottom-corner overlays, above the creative. The container
+   is inert to pointer events on its dead space; the button re-enables. Only one
+   button per slot is visible (mutually exclusive via body classes below). */
+.mt-footer-left,
+.mt-footer-right {
+  position: absolute;
+  bottom: 0;
+  z-index: 1;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   pointer-events: none;
 }
-@media (max-width: 991px) {
-  /* Mirror the footer: full-bleed to the viewport on phone (not the content
-     frame), so the controls track the footer bar's ends at every width. */
-  .mt-shell-controls {
-    max-width: none;
-    margin-inline: 0;
+.mt-footer-left {
+  left: 0;
+}
+.mt-footer-right {
+  right: 0;
+}
+
+/* Desktop: shrink the WHOLE footer (glass band + content) to the content-grid
+   cells width via auto margins — max-width minus both gutters — so the glass
+   aligns to the cells with nothing overhanging. (Padding is wrong here: it keeps
+   the glass at frame width and only insets the content, so the background sticks
+   out into the gutter.) Controls stay at the footer edge, which is now the cell
+   edge. Phone stays full-bleed (the cap never bites). */
+@media (min-width: 992px) {
+  .mt-footer {
+    max-width: calc(var(--mt-shell-max) - 2 * var(--gutter));
   }
 }
-.mt-ctl-slot {
-  display: flex;
-  align-items: flex-end;
-}
+
 .mt-ctl {
   pointer-events: auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 128px; /* desktop control block */
-  height: 96px; /* == footer bar height, in-line with the ad */
-  backdrop-filter: blur(var(--mt-glass-blur)) saturate(var(--mt-glass-saturate));
-  -webkit-backdrop-filter: blur(var(--mt-glass-blur))
-    saturate(var(--mt-glass-saturate));
-  background-color: var(--mt-glass-bg);
-  border: 1px solid var(--mt-glass-border);
-}
-@media (max-width: 991px) {
-  .mt-ctl {
-    width: 117.333px; /* phone hit area (4:3, matches desktop ratio) */
-    height: 88px; /* == phone footer bar height */
-    /* Transparent on phone: the control overlaps the footer/ad as a layer
-       instead of a glass panel, so the ad stays fully visible — only the
-       icon floats over the bar. Desktop keeps the glass (bare flanks). */
-    background-color: transparent;
-    border-color: transparent;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-  .mt-ctl svg {
-    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6)); /* legible over the ad */
-  }
+  width: var(--mt-footer-btn);
+  height: 100%;
+  /* Phone: transparent, icon-only — the control overlays the creative as a layer,
+     so the ad stays fully visible; only the icon floats. Height fills the footer
+     band so the tap target is the full footer height, not a 48px square. */
+  background: transparent;
+  border: 0;
 }
 .mt-ctl svg {
   width: 1.25rem;
   height: 1.25rem;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6)); /* legible over the ad */
 }
 .mt-ctl-top svg {
   transform: rotate(180deg); /* chevron-down icon -> points up */
@@ -1067,72 +1128,14 @@ body.mt-scrolled .mt-ctl-appearance {
   display: none;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   FIXED FOOTER
-   ═══════════════════════════════════════════════════════════ */
-
-/* One glass bar (--mt-footer-bar-h) stacks the ad over a centered legal line.
-   The bar's definite height bounds the ad (--mt-footer-ad-cap), so the
-   leaderboard can't grow taller than the footer on wide desktop. */
-:root {
-  --mt-footer-ad-cap: 64px; /* ad height ceiling — the bounded ad height */
-  --mt-footer-bar-h: calc(
-    var(--mt-footer-ad-cap) + var(--sp-8)
-  ); /* ad cap + legal + padding */
-}
-@media (max-width: 991px) {
-  :root {
-    --mt-footer-ad-cap: 56px; /* bar-h recomputes to 56 + 32 = 88 */
-  }
-}
-
-/* The <footer> IS the glass bar: fixed at bottom, fit-content so it hugs its
-   ad (centred via inset-inline:0 + margin-inline:auto) on desktop and goes
-   full-width on phone. Definite height; a flex column stacking the ad over the
-   centered legal line. */
-.mt-fixed-footer {
-  position: fixed;
-  bottom: 0;
-  z-index: 50;
-  inset-inline: 0;
-  margin-inline: auto;
-  width: fit-content; /* desktop: hug the ad — no empty flanks */
-  max-width: calc(100% - 2 * var(--gutter));
-  height: var(--mt-footer-bar-h);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center; /* center ad + legal horizontally */
-  padding-inline: var(--sp-3);
-  backdrop-filter: blur(var(--mt-glass-blur)) saturate(var(--mt-glass-saturate));
-  -webkit-backdrop-filter: blur(var(--mt-glass-blur))
-    saturate(var(--mt-glass-saturate));
-  background-color: var(--mt-glass-bg);
-  border-top: 1px solid var(--mt-glass-border);
-}
-@media (max-width: 991px) {
-  .mt-fixed-footer {
-    width: 100%; /* phone: full viewport width */
-    max-width: none;
-    margin-inline: 0;
-    padding-inline: var(--gutter);
-  }
-}
-
-/* Centered, single compact line so the ad row gets the vertical room. */
-.mt-footer-legal {
-  margin: 0;
-  flex: 0 0 auto;
-  text-align: center;
-  line-height: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Content reserves the footer bar height so it never underlaps. */
+/* Content reserves the tallest (ad-state) footer height + rhythm so it never
+   underlaps. ponytail: reserves 128 even on no-ad pages (over-reserves ~48px);
+   the footer ad pool is site-wide, so this is all-or-nothing anyway — a body-level
+   has-ad class is not worth it. */
 body {
-  padding-bottom: calc(var(--mt-footer-bar-h) + var(--sp-8));
+  padding-bottom: calc(
+    var(--mt-footer-ad-h) + var(--mt-footer-legal-h) + var(--sp-8)
+  );
 }
 
 /* Light theme: a soft silver page backdrop instead of straight white (brand
@@ -1198,7 +1201,7 @@ html.ff-mobile {
   --mt-glass-bg: rgba(0, 0, 0, 0.85);
 }
 html.ff-mobile .mt-site-banner,
-html.ff-mobile .mt-fixed-footer,
+html.ff-mobile .mt-footer,
 html.ff-mobile .mt-mobile-menu-panel,
 html.ff-mobile .mt-ctl {
   backdrop-filter: none;
