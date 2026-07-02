@@ -926,22 +926,24 @@ body[data-active-cat="agenda"] .mt-article-badge.cat-bg--agenda {
 .mt-ad-footer {
   position: relative;
   display: block;
-  width: 100%;
+  width: auto;
+  max-width: none;
   height: var(--mt-footer-ad-h);
+  flex: 0 0 auto;
   text-decoration: none;
 }
 
-/* Fills the full band (100% width x 108px height) and center-crops via
-   object-fit: cover — no side gaps, no letterbox, no distortion (uniform scale).
-   A creative off the band AR is cropped symmetrically at the edges; key content
-   stays centered. Author mobile creatives at 3:1 (~324x108) so the crop is
-   negligible. Both dims are definite (the <a> pins the height), so there is no
-   Firefox %-against-auto-height ambiguity. */
+/* Scaled to the band HEIGHT (108px) at NATURAL width — no object-fit. The parent
+   .mt-footer-ad (flex-center + overflow:hidden) centers the creative and clips
+   horizontal overflow symmetrically: a creative wider than the band is cropped
+   left/right (never squished, never vertically cropped). A creative narrower than
+   the band sits centered with the glass showing through at the sides. Height is
+   definite (108px) so there is no Firefox %-against-auto-height ambiguity. */
 .mt-ad-footer-img {
   display: block;
-  width: 100%;
   height: var(--mt-footer-ad-h);
-  object-fit: cover;
+  width: auto;
+  max-width: none;
 }
 
 /* ── Shared flag badge (card + footer) ── */
