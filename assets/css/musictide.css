@@ -7,7 +7,11 @@
   --container-7xl: 100%; /* phone: body fills viewport */
   --mt-max-width: max(90vw, 1600px);
   --mt-cat-bg-opacity: 0.9;
-  --mt-banner-h: 96px; /* fixed px — 12svh blew up to ~230px on tall/portrait viewports */
+  /* header height == footer's MAX (ad-state) height at all widths, so the two chrome
+     bands are balanced bookends. Linked to the footer tokens (not a bare 128) so they
+     stay equal if the footer bands change. (Fixed px — 12svh blew up to ~230px on
+     tall/portrait viewports.) */
+  --mt-banner-h: calc(var(--mt-footer-ad-h) + var(--mt-footer-legal-h));
   --mt-card-padding-x: 0.75rem;
 
   /* ── Shell glass (banner, nav strip, footer, search modal) ──
@@ -56,15 +60,6 @@
     --mt-grid-gap: 16px;
   }
 } /* multi-col gap */
-
-@media (max-width: 991px) {
-  :root {
-    /* phone header height == footer's MAX (ad-state) height, so the two chrome
-       bands are balanced bookends. Linked to the footer tokens (not a bare 128)
-       so they stay equal if the footer bands change. */
-    --mt-banner-h: calc(var(--mt-footer-ad-h) + var(--mt-footer-legal-h));
-  }
-}
 
 @media (min-width: 1300px) {
   :root {
