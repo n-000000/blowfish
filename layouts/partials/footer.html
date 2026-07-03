@@ -105,11 +105,13 @@
     if (!band) return;
     var imgs = [].slice.call(band.querySelectorAll(".mt-ad-footer-img"));
     if (imgs.length < 2) return;
+    var flag = band.querySelector(".mt-ad-footer-flag");
     var btnW = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--mt-footer-btn"));
 
     function pick() {
-      var idealW = band.getBoundingClientRect().width - 2 * btnW; // gap between the buttons
-      var win = null, winKey = null;
+      var bandW = band.getBoundingClientRect().width;
+      var idealW = bandW - 2 * btnW;               // gap between the buttons
+      var win = null, winKey = null, winW = 0;
       imgs.forEach(function (img) {
         var w = img.getBoundingClientRect().width; // CSS already scaled it to band height
         if (!w) return;                            // still loading — no laid-out width yet
@@ -117,11 +119,13 @@
         // largest creative that fits the gap; if all overflow, the smallest overflow
         var key = [over > 0 ? 1 : 0, Math.abs(over)];
         if (!winKey || key[0] < winKey[0] || (key[0] === winKey[0] && key[1] < winKey[1])) {
-          win = img; winKey = key;
+          win = img; winKey = key; winW = w;
         }
       });
       if (!win) return;
       imgs.forEach(function (img) { img.style.visibility = img === win ? "visible" : "hidden"; });
+      // glue the flag to the (centered) winner's right edge, not the full-width band corner
+      if (flag) flag.style.right = Math.max(0, (bandW - winW) / 2) + "px";
     }
 
     var raf = 0;
