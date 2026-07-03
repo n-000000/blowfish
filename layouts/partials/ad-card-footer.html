@@ -1,0 +1,20 @@
+{{- /*
+  ad-card-footer.html — footer multi-creative pool renderer (data-map source).
+  Usage: {{ partial "ad-card-footer.html" (dict "creatives" $urls "url" $ct "alt" $alt) }}
+  One <a> wraps every creative as an <img>. CSS shows only the first (:first-child) —
+  that is the no-JS fallback. footer-fit.js measures naturalW/H and reveals the
+  best-fitting creative for the current footer width. http(s) guards on both the
+  click-through and each creative (build-side; callers already pre-filter creatives).
+*/ -}}
+{{- $url := .url -}}
+{{- $alt := .alt -}}
+{{- if or (hasPrefix $url "https://") (hasPrefix $url "http://") -}}
+<a class="mt-ad-footer" href="{{ $url }}" target="_blank" rel="noopener noreferrer sponsored" data-ad>
+  {{- range .creatives }}
+    {{- if or (hasPrefix . "https://") (hasPrefix . "http://") }}
+  <img class="mt-ad-footer-img" src="{{ . }}" alt="{{ $alt }}" loading="lazy" decoding="async">
+    {{- end }}
+  {{- end }}
+  <span class="mt-ad-footer-flag">Publicidade</span>
+</a>
+{{- end -}}

@@ -922,28 +922,36 @@ body[data-active-cat="agenda"] .mt-article-badge.cat-bg--agenda {
   object-fit: cover;
 }
 
-/* ── Footer banner ad ── */
+/* ── Footer banner ad (multi-creative pool) ── */
+/* The <a> spans the full band (edge-to-edge click target, flag anchored top-right).
+   Creatives stack absolute-centered inside it; footer-fit.js reveals the best-fitting
+   one for the current width. Each is scaled to the band HEIGHT (108px) at natural
+   width — no object-fit — so a wide creative is cropped left/right (never squished,
+   never vertically cropped), a narrow one shows glass at the sides. Definite height
+   avoids the Firefox %-against-auto-height ambiguity. */
 .mt-ad-footer {
   position: relative;
   display: block;
-  width: auto;
-  max-width: none;
+  width: 100%;
   height: var(--mt-footer-ad-h);
-  flex: 0 0 auto;
+  overflow: hidden;
   text-decoration: none;
 }
 
-/* Scaled to the band HEIGHT (108px) at NATURAL width — no object-fit. The parent
-   .mt-footer-ad (flex-center + overflow:hidden) centers the creative and clips
-   horizontal overflow symmetrically: a creative wider than the band is cropped
-   left/right (never squished, never vertically cropped). A creative narrower than
-   the band sits centered with the glass showing through at the sides. Height is
-   definite (108px) so there is no Firefox %-against-auto-height ambiguity. */
 .mt-ad-footer-img {
-  display: block;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
   height: var(--mt-footer-ad-h);
   width: auto;
   max-width: none;
+}
+
+/* No-JS fallback: first creative visible, rest hidden. visibility (not display:none)
+   keeps naturalWidth/naturalHeight readable so footer-fit.js can measure them. */
+.mt-ad-footer-img:not(:first-child) {
+  visibility: hidden;
 }
 
 /* ── Shared flag badge (card + footer) ── */
