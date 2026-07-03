@@ -91,7 +91,7 @@
         </div>
         {{- /* One 3:2 Inline ad anchored at the top of the media gallery. */ -}}
         {{- if gt (len $contentAds) 0 }}
-        <div class="mt-ad-inline print:hidden">{{ partial "ad-card.html" (dict "ad" (index $contentAds 0) "placement" "card") }}</div>
+        <div class="mt-ad-inline not-prose print:hidden">{{ partial "ad-card.html" (dict "ad" (index $contentAds 0) "placement" "card") }}</div>
         {{- end }}
         {{ partial "article-gallery.html" . }}
         {{ partial "series/series-closed.html" . }}

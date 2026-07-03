@@ -984,7 +984,7 @@ body[data-active-cat="agenda"] .mt-article-badge.cat-bg--agenda {
   --mt-footer-ad-h: 108px; /* creative band height = creative render height */
   --mt-footer-legal-h: 20px; /* legal band (single line) */
   --mt-footer-pad: 30px; /* no-ad vertical breathing: legal + 2*pad = 80 */
-  --mt-footer-btn: 48px; /* control width + legal inline clearance (height inherits the band) */
+  --mt-footer-btn: 84px; /* control width + legal inline clearance (height inherits the band) */
 }
 
 .mt-footer {
@@ -1099,7 +1099,10 @@ body[data-active-cat="agenda"] .mt-article-badge.cat-bg--agenda {
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6)); /* legible over the ad */
 }
 .mt-ctl-top svg {
-  transform: rotate(180deg); /* chevron-down icon -> points up */
+  transform: rotate(180deg); /* chevron-bold (points down) -> points up (^) */
+}
+.mt-ctl-back svg {
+  transform: rotate(90deg); /* chevron-bold (points down) -> points left (<) */
 }
 
 /* Left slot: search (feed) XOR back (article). */

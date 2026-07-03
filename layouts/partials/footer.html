@@ -23,7 +23,7 @@
       data-back-to-feed
       class="mt-ctl mt-ctl-back text-white/60 hover:text-white transition-colors"
       aria-label="Voltar">
-      {{ partial "icon.html" "arrow-left" }}
+      {{ partial "icon.html" "chevron-bold" }}
     </a>
     {{ if .Site.Params.enableSearch | default false }}
       <button
@@ -52,7 +52,7 @@
       onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
       aria-label="Voltar ao topo"
       class="mt-ctl mt-ctl-top text-white/60 hover:text-white transition-colors">
-      {{ partial "icon.html" "chevron-down" }}
+      {{ partial "icon.html" "chevron-bold" }}
     </button>
     <button
       id="appearance-switcher"
