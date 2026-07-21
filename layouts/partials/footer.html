@@ -7,75 +7,90 @@
   .mt-has-ad drives the 128/80 height switch.
   */
 -}}
-{{- /* Footer ad source: the data map site.Data.ads.footer (NOT a Page). Render only
-  when is_active AND at least one creative is a non-empty http(s) URL — is_active alone
-  must never widen the band. This same $hasAd drives .mt-has-ad (80↔128 height). */ -}}
+{{- /* Footer ad source: the data map site.Data.ads.footer (NOT a Page). Two side-by-side
+  slots (left/right), each an independent ad with its own creative pool + click-through.
+  A slot renders only when is_active AND it holds at least one http(s) creative — is_active
+  alone must never widen the band. One slot present → it fills the band (flex:1); both →
+  50/50. $hasAd (either side non-empty) drives .mt-has-ad (80↔128 height). */ -}}
 {{- $footer := site.Data.ads.footer -}}
-{{- $creatives := slice -}}
-{{- range ($footer.creatives | default slice) -}}
-  {{- if or (hasPrefix . "https://") (hasPrefix . "http://") -}}{{- $creatives = $creatives | append . -}}{{- end -}}
+{{- $left := slice -}}
+{{- range ($footer.creatives_left | default slice) -}}
+  {{- if or (hasPrefix . "https://") (hasPrefix . "http://") -}}{{- $left = $left | append . -}}{{- end -}}
 {{- end -}}
-{{- $hasAd := and ($footer.is_active | default false) (gt (len $creatives) 0) -}}
+{{- $right := slice -}}
+{{- range ($footer.creatives_right | default slice) -}}
+  {{- if or (hasPrefix . "https://") (hasPrefix . "http://") -}}{{- $right = $right | append . -}}{{- end -}}
+{{- end -}}
+{{- $hasAd := and ($footer.is_active | default false) (or (gt (len $left) 0) (gt (len $right) 0)) -}}
 
 
 <footer class="{{ cond $hasAd "mt-footer mt-has-ad" "mt-footer" }} print:hidden" role="contentinfo">
+  {{- /* left/right: empty structural placeholders (controls moved to the header). Absolute
+     + inert, so they keep the left·center·right skeleton without touching the layout. */ -}}
+  <div class="mt-footer-left"></div>
   <div class="mt-footer-center">
     {{- if $hasAd }}
       <div class="mt-footer-ad">
-        {{ partial "ad-card-footer.html" (dict "creatives" $creatives "url" ($footer.click_through_url | default "") "alt" ($footer.notes | default "Publicidade")) }}
+        {{- if gt (len $left) 0 }}
+        {{ partial "ad-card-footer.html" (dict "creatives" $left "url" ($footer.click_through_url_left | default "") "alt" ($footer.notes | default "Publicidade")) }}
+        {{- end }}
+        {{- if gt (len $right) 0 }}
+        {{ partial "ad-card-footer.html" (dict "creatives" $right "url" ($footer.click_through_url_right | default "") "alt" ($footer.notes | default "Publicidade")) }}
+        {{- end }}
       </div>
     {{- end }}
     <p class="mt-footer-legal text-xs text-white/60">
       &copy; {{ now.Format "2006" }} Espinho Magazine &mdash; Todos os direitos reservados
     </p>
   </div>
+  <div class="mt-footer-right"></div>
 </footer>
 
-{{- /* Footer-ad fitness selection: reveal the creative that best fits the space
-  BETWEEN the two corner buttons — idealW = containerW - 2*btnW. Prefer the LARGEST
-  creative that fits the gap; only if every creative overflows it, the smallest
-  (least overflow). Each creative's rendered width is already the height-scaled width
-  (CSS pins them to the band height), so we read getBoundingClientRect().width
-  directly. A ResizeObserver re-picks on any layout change — window resize, SPA swap,
-  scrollbar, desktop grid reflow, or a creative resolving its size on load — and fires
-  once on observe() for the initial pick. With one creative, or JS off, CSS shows the first. */ -}}
+{{- /* Footer-ad fitness selection, PER SLOT. For each ad <a>, reveal the creative that
+  best fits that slot's own width (idealW = slot width — the corner buttons that used to
+  inset it moved to the header). Prefer the LARGEST creative that fits; only if every
+  creative overflows, the smallest (least overflow). Each creative's rendered width is
+  already the height-scaled width (CSS pins them to the band height), so we read
+  getBoundingClientRect().width directly. A ResizeObserver re-picks on any layout change —
+  window resize, SPA swap, scrollbar, desktop grid reflow, or a creative resolving its
+  size on load — and fires once on observe() for the initial pick. One creative, or JS
+  off → CSS shows the first. */ -}}
 {{- if $hasAd }}
 <script>
   (function () {
-    var band = document.querySelector(".mt-footer-ad");
-    if (!band) return;
-    var imgs = [].slice.call(band.querySelectorAll(".mt-ad-footer-img"));
-    if (imgs.length < 2) return;
-    var flag = band.querySelector(".mt-ad-footer-flag");
-    var btnW = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--mt-footer-btn"));
+    var ads = [].slice.call(document.querySelectorAll(".mt-footer-ad .mt-ad-footer"));
+    ads.forEach(function (ad) {
+      var imgs = [].slice.call(ad.querySelectorAll(".mt-ad-footer-img"));
+      if (imgs.length < 2) return;
+      var flag = ad.querySelector(".mt-ad-footer-flag");
 
-    function pick() {
-      var bandW = band.getBoundingClientRect().width;
-      var idealW = bandW - 2 * btnW;               // gap between the buttons
-      var win = null, winKey = null, winW = 0;
-      imgs.forEach(function (img) {
-        var w = img.getBoundingClientRect().width; // CSS already scaled it to band height
-        if (!w) return;                            // still loading — no laid-out width yet
-        var over = w - idealW;                     // >0 = wider than the gap
-        // largest creative that fits the gap; if all overflow, the smallest overflow
-        var key = [over > 0 ? 1 : 0, Math.abs(over)];
-        if (!winKey || key[0] < winKey[0] || (key[0] === winKey[0] && key[1] < winKey[1])) {
-          win = img; winKey = key; winW = w;
-        }
+      function pick() {
+        var idealW = ad.getBoundingClientRect().width; // this slot's width
+        var win = null, winKey = null, winW = 0;
+        imgs.forEach(function (img) {
+          var w = img.getBoundingClientRect().width; // CSS already scaled it to band height
+          if (!w) return;                            // still loading — no laid-out width yet
+          var over = w - idealW;                     // >0 = wider than the slot
+          // largest creative that fits the slot; if all overflow, the smallest overflow
+          var key = [over > 0 ? 1 : 0, Math.abs(over)];
+          if (!winKey || key[0] < winKey[0] || (key[0] === winKey[0] && key[1] < winKey[1])) {
+            win = img; winKey = key; winW = w;
+          }
+        });
+        if (!win) return;
+        imgs.forEach(function (img) { img.style.visibility = img === win ? "visible" : "hidden"; });
+        // glue the flag to the (centered) winner's right edge, not the slot corner
+        if (flag) flag.style.right = Math.max(0, (idealW - winW) / 2) + "px";
+      }
+
+      var raf = 0;
+      var ro = new ResizeObserver(function () {
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(pick);
       });
-      if (!win) return;
-      imgs.forEach(function (img) { img.style.visibility = img === win ? "visible" : "hidden"; });
-      // glue the flag to the (centered) winner's right edge, not the full-width band corner
-      if (flag) flag.style.right = Math.max(0, (bandW - winW) / 2) + "px";
-    }
-
-    var raf = 0;
-    var ro = new ResizeObserver(function () {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(pick);
+      ro.observe(ad);
+      imgs.forEach(function (img) { ro.observe(img); });
     });
-    ro.observe(band);
-    imgs.forEach(function (img) { ro.observe(img); });
   })();
 </script>
 {{- end }}

@@ -924,10 +924,13 @@ body[data-active-cat="agenda"] .mt-article-badge.cat-bg--agenda {
    width — no object-fit — so a wide creative is cropped left/right (never squished,
    never vertically cropped), a narrow one shows glass at the sides. Definite height
    avoids the Firefox %-against-auto-height ambiguity. */
+/* Each ad is a flex slot in .mt-footer-ad: one present → fills the band; two → 50/50.
+   min-width:0 lets a wide creative crop at the slot edge instead of pushing the row. */
 .mt-ad-footer {
   position: relative;
   display: block;
-  width: 100%;
+  flex: 1 1 0;
+  min-width: 0;
   height: var(--mt-footer-ad-h);
   overflow: hidden;
   text-decoration: none;
@@ -976,18 +979,17 @@ body[data-active-cat="agenda"] .mt-article-badge.cat-bg--agenda {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   UNIFIED FOOTER — one <footer>: left · center · right
-   center stacks the ad (108px band, only when .mt-has-ad) over the legal line.
-   left/right are absolute corner overlays that FLOAT OVER the creative's ends
-   (they don't consume center width). Width binds to a "viewport": full viewport
-   on phone; the content-grid frame on desktop (styling deferred — may look off
-   until the desktop pass). Height switches 80 (no ad) ↔ 128 (ad) via .mt-has-ad.
+   UNIFIED FOOTER — one <footer>, center column only: the ad band (108px, only
+   when .mt-has-ad) stacked over the legal line. The ad band holds one or two ad
+   slots side by side (see .mt-ad-footer). The old back/search/theme corner
+   overlays moved to the header banner, so the band is unobstructed. Width binds
+   to a "viewport": full viewport on phone; the content-grid frame on desktop.
+   Height switches 80 (no ad) ↔ 128 (ad) via .mt-has-ad.
    ═══════════════════════════════════════════════════════════ */
 :root {
   --mt-footer-ad-h: 108px; /* creative band height = creative render height */
   --mt-footer-legal-h: 20px; /* legal band (single line) */
   --mt-footer-pad: 30px; /* no-ad vertical breathing: legal + 2*pad = 80 */
-  --mt-footer-btn: 84px; /* control width + legal inline clearance (height inherits the band) */
 }
 
 .mt-footer {
@@ -1036,8 +1038,9 @@ body[data-active-cat="agenda"] .mt-article-badge.cat-bg--agenda {
   overflow: hidden;
 }
 
-/* legal (center-bottom): single line, band height via line-height, kept clear of
-   the corner buttons via inline padding */
+/* legal (center-bottom): single line, band height via line-height. Spans the full
+   footer width now that the corner buttons are gone (they moved to the header); just
+   a gutter of edge breathing so the text never touches the glass. */
 .mt-footer-legal {
   margin: 0;
   flex: 0 0 auto;
@@ -1047,12 +1050,14 @@ body[data-active-cat="agenda"] .mt-article-badge.cat-bg--agenda {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding-inline: var(--mt-footer-btn);
+  padding-inline: var(--gutter);
 }
 
-/* left/right: absolute bottom-corner overlays, above the creative. The container
-   is inert to pointer events on its dead space; the button re-enables. Only one
-   button per slot is visible (mutually exclusive via body classes below). */
+/* left/right: structural placeholder columns, absolute bottom-corner overlays that
+   float over the creative's ends without consuming center width. Currently empty
+   (the back/search/theme controls they used to host moved to the header banner);
+   kept as scaffolding + inert to pointer events so the footer keeps its left·center·
+   right skeleton and nothing here bears on the layout. */
 .mt-footer-left,
 .mt-footer-right {
   position: absolute;
