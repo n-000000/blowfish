@@ -1,15 +1,10 @@
 {{- /*
   footer.html — musictide unified glass footer (phone-first).
-  ONE <footer> with three children: left · center · right.
-  - center: the ad (center-top, only when a footer ad exists) stacked over the
-  legal line (center-bottom).
-  - left / right: the shell controls (migrated from the old shell-controls.html),
-  absolutely positioned at the footer's bottom corners so they FLOAT OVER the
-  creative's ends without consuming center width.
-  Width binds to a "viewport": full viewport on phone, the content-grid frame on
-  desktop (styling deferred). Rendered OUTSIDE <main> so SPA swaps never wipe it.
-  Wiring unchanged: #search-button (search.js), #appearance-switcher (appearance.js),
-  data-back-to-feed (spa-router). .mt-has-ad drives the 128/80 height switch.
+  Center-only: the ad (center-top, only when a footer ad exists) stacked over the
+  legal line (center-bottom). The shell controls (back/search/theme) moved to the
+  header banner (header/banner.html); the footer no longer carries them, so the ad
+  band is unobstructed. Rendered OUTSIDE <main> so SPA swaps never wipe it.
+  .mt-has-ad drives the 128/80 height switch.
   */
 -}}
 {{- /* Footer ad source: the data map site.Data.ads.footer (NOT a Page). Render only
@@ -24,25 +19,6 @@
 
 
 <footer class="{{ cond $hasAd "mt-footer mt-has-ad" "mt-footer" }} print:hidden" role="contentinfo">
-  <div class="mt-footer-left">
-    <a
-      href="{{ "" | relLangURL }}"
-      data-back-to-feed
-      class="mt-ctl mt-ctl-back text-white/60 hover:text-white transition-colors"
-      aria-label="Voltar">
-      {{ partial "icon.html" "chevron-bold" }}
-    </a>
-    {{ if .Site.Params.enableSearch | default false }}
-      <button
-        id="search-button"
-        aria-label="{{ i18n "search.open_button_title" }}"
-        title="{{ i18n "search.open_button_title" }}"
-        class="mt-ctl mt-ctl-search text-white/60 hover:text-white transition-colors">
-        {{ partial "icon.html" "search" }}
-      </button>
-    {{ end }}
-  </div>
-
   <div class="mt-footer-center">
     {{- if $hasAd }}
       <div class="mt-footer-ad">
@@ -53,42 +29,7 @@
       &copy; {{ now.Format "2006" }} Espinho Magazine &mdash; Todos os direitos reservados
     </p>
   </div>
-
-  <div class="mt-footer-right">
-    <button
-      onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
-      aria-label="Voltar ao topo"
-      class="mt-ctl mt-ctl-top text-white/60 hover:text-white transition-colors">
-      {{ partial "icon.html" "chevron-bold" }}
-    </button>
-    <button
-      id="appearance-switcher"
-      type="button"
-      aria-label="Dark mode switcher"
-      class="mt-ctl mt-ctl-appearance text-white/60 hover:text-white transition-colors">
-      <div class="dark:hidden">{{ partial "icon.html" "moon" }}</div>
-      <div class="hidden dark:block">{{ partial "icon.html" "sun" }}</div>
-    </button>
-  </div>
 </footer>
-
-{{- /* Toggle body.mt-scrolled so the right slot swaps theme <-> scroll-top.
-  scroll-to-top.js isn't loaded (showScrollToTop:false), so this owns it. */
--}}
-<script>
-  (function () {
-    var scrolled = null;
-    function update() {
-      var s = window.scrollY > 8;
-      if (s === scrolled) return;
-      scrolled = s;
-      document.body.classList.toggle("mt-scrolled", s);
-    }
-    window.addEventListener("scroll", update, { passive: true });
-    document.addEventListener("htmx:afterSettle", update);
-    update();
-  })();
-</script>
 
 {{- /* Footer-ad fitness selection: reveal the creative that best fits the space
   BETWEEN the two corner buttons — idealW = containerW - 2*btnW. Prefer the LARGEST

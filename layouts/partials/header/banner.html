@@ -23,8 +23,10 @@
 
 <div class="mt-site-banner">
   <div class="mt-header-inner w-full flex items-center justify-between h-full">
-    {{- /* Logo — inert brand mark (non-interactive), left-aligned within container */ -}}
-    <span class="mt-banner-logo-link" aria-label="{{ .Site.Title }}">
+    {{- /* Logo — doubles as back-to-feed (spa-router binds [data-back-to-feed]);
+           redundant with the header back button by design, so desktop articles
+           (which have no header back button) still have a home affordance. */ -}}
+    <a href="{{ "" | relLangURL }}" data-back-to-feed class="mt-banner-logo-link" aria-label="{{ .Site.Title }}">
       {{- if $bannerLogo }}
         <img
           src="{{ $bannerLogo }}"
@@ -43,15 +45,52 @@
           <span class="text-2xl font-black text-white">{{ .Site.Title }}</span>
         {{- end }}
       {{- end }}
-    </span>
+    </a>
 
-    {{- /* Banner controls: category nav (desktop) + hamburger (phone). Back/search/
-           theme moved to the footer. Desktop vs phone visibility is CSS-driven. */ -}}
+    {{- /* Banner controls. One DOM order serves all four states via the theme's
+           existing responsive hiding (categories hidden on phone, hamburger hidden
+           on desktop):
+             [search|back] · [categories] · [theme] · [hamburger]
+             phone  → search|back · theme · ☰      (categories hidden)
+             desktop→ search|back · categories · theme   (hamburger hidden; back is
+                      desktop-hidden on articles, so it reads categories · theme)
+           search↔back swap is CSS-driven by body.mt-article-page (set in baseof).
+           Wiring unchanged: #search-button (search.js), #appearance-switcher
+           (appearance.js), data-back-to-feed (spa-router). */ -}}
     <div class="mt-banner-controls">
-      {{- /* Desktop: horizontal category nav (hidden on phone via CSS) */ -}}
+      {{- /* Slot 1: search (feed) XOR back (article) — one visible at a time. */ -}}
+      {{ if .Site.Params.enableSearch | default false }}
+        <button
+          id="search-button"
+          aria-label="{{ i18n "search.open_button_title" }}"
+          title="{{ i18n "search.open_button_title" }}"
+          class="mt-banner-ctl mt-ctl-search text-white/80 hover:text-white transition-colors">
+          {{ partial "icon.html" "search" }}
+        </button>
+      {{ end }}
+      <a
+        href="{{ "" | relLangURL }}"
+        data-back-to-feed
+        class="mt-banner-ctl mt-ctl-back text-white/80 hover:text-white transition-colors"
+        aria-label="Voltar">
+        {{ partial "icon.html" "chevron-bold" }}
+      </a>
+
+      {{- /* Slot 2: horizontal category nav (hidden on phone via CSS) */ -}}
       {{ partial "header/components/desktop-menu.html" . }}
 
-      {{- /* Phone: hamburger toggles the drawer (hidden on desktop via CSS) */ -}}
+      {{- /* Slot 3: night/day toggle — right of the categories on desktop, between
+             the search/back slot and the hamburger on phone (by DOM order). */ -}}
+      <button
+        id="appearance-switcher"
+        type="button"
+        aria-label="Dark mode switcher"
+        class="mt-banner-ctl mt-ctl-appearance text-white/80 hover:text-white transition-colors">
+        <div class="dark:hidden">{{ partial "icon.html" "moon" }}</div>
+        <div class="hidden dark:block">{{ partial "icon.html" "sun" }}</div>
+      </button>
+
+      {{- /* Slot 4: hamburger toggles the drawer (hidden on desktop via CSS) */ -}}
       {{- if or .Site.Menus.main .Site.Menus.subnavigation -}}
         <label for="mobile-menu-toggle" class="mt-banner-hamburger flex items-center justify-center cursor-pointer text-white/80 hover:text-white">
           {{ partial "icon.html" "bars" }}
