@@ -1,38 +1,30 @@
 {{- /*
-  article-gallery.html — renders the sveltia `gallery:` frontmatter array.
-  Splits by file extension: videos -> dedicated video-gallery partial;
-  images -> responsive grid whose anchors GLightbox opens fullscreen.
-  Each sub-gallery renders only when it has >=1 item.
+  article-gallery.html — renders the sveltia `videos:` and `photos:` frontmatter arrays.
+  videos -> dedicated video-gallery partial (native <video> player, above);
+  photos -> responsive grid whose anchors GLightbox opens fullscreen (below).
+  Each sub-gallery renders only when its field has >=1 item.
+
+  Superseded the old single `gallery:` array that was split by file extension:
+  the CMS now stores photos and videos in separate fields, so the type is known
+  up front and no extension sniffing is needed.
 */ -}}
-{{- with .Params.gallery -}}
-  {{- $images := slice -}}
-  {{- $videos := slice -}}
-  {{- range . -}}
-    {{- $ext := lower (path.Ext .) -}}
-    {{- if in (slice ".mp4" ".webm" ".mov") $ext -}}
-      {{- $videos = $videos | append . -}}
-    {{- else -}}
-      {{- $images = $images | append . -}}
-    {{- end -}}
-  {{- end -}}
 
-  {{- /* ── Video gallery (dedicated, conditional) — above the photos ── */ -}}
-  {{- with $videos -}}
-    {{- partial "video-gallery.html" (dict "videos" . "site" $.Site) -}}
-  {{- end -}}
+{{- /* ── Video gallery (dedicated, conditional) — above the photos ── */ -}}
+{{- with .Params.videos -}}
+  {{- partial "video-gallery.html" (dict "videos" . "site" $.Site) -}}
+{{- end -}}
 
-  {{- /* ── Photo gallery: grid + GLightbox ── */ -}}
-  {{- with $images -}}
-    {{- $alg := $.Site.Params.fingerprintAlgorithm | default "sha512" -}}
-    <link rel="stylesheet" href="{{ (resources.Get "lib/glightbox/glightbox.min.css" | resources.Fingerprint $alg).RelPermalink }}">
-    <div class="mt-gallery-grid">
-      {{- range . }}
-      <a href="{{ . }}" class="mt-glightbox" data-gallery="article-gallery">
-        <img src="{{ . }}" alt="" loading="lazy" decoding="async">
-      </a>
-      {{- end }}
-    </div>
-    <script src="{{ (resources.Get "lib/glightbox/glightbox.min.js" | resources.Fingerprint $alg).RelPermalink }}"></script>
-    <script src="{{ (resources.Get "js/gallery.js" | resources.Minify | resources.Fingerprint $alg).RelPermalink }}"></script>
-  {{- end -}}
+{{- /* ── Photo gallery: grid + GLightbox ── */ -}}
+{{- with .Params.photos -}}
+  {{- $alg := $.Site.Params.fingerprintAlgorithm | default "sha512" -}}
+  <link rel="stylesheet" href="{{ (resources.Get "lib/glightbox/glightbox.min.css" | resources.Fingerprint $alg).RelPermalink }}">
+  <div class="mt-gallery-grid">
+    {{- range . }}
+    <a href="{{ . }}" class="mt-glightbox" data-gallery="article-gallery">
+      <img src="{{ . }}" alt="" loading="lazy" decoding="async">
+    </a>
+    {{- end }}
+  </div>
+  <script src="{{ (resources.Get "lib/glightbox/glightbox.min.js" | resources.Fingerprint $alg).RelPermalink }}"></script>
+  <script src="{{ (resources.Get "js/gallery.js" | resources.Minify | resources.Fingerprint $alg).RelPermalink }}"></script>
 {{- end -}}
