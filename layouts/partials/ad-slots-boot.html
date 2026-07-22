@@ -1,0 +1,20 @@
+{{- /*
+  ad-slots-boot.html — emits the content-ad pool ONCE per page as JSON + loads the
+  rotator. Invoked from baseof.html (never from a *grid-fragment.html, which is bare
+  and streamed repeatedly). Mirrors the placement + http(s) guard of ad-card.html:
+  an entry is emitted only when its click-through is http(s), so the JS pool matches
+  what the server would render. Emits nothing when the pool is empty (N=0 edge case).
+*/ -}}
+{{- $pool := partial "ads.html" (dict "placement" "content") -}}
+{{- $ads := slice -}}
+{{- range $pool -}}
+  {{- $url := .Params.click_through_url | default "" -}}
+  {{- if or (hasPrefix $url "https://") (hasPrefix $url "http://") -}}
+    {{- $ads = $ads | append (dict "img" .Params.creative_image "href" $url "alt" .Title) -}}
+  {{- end -}}
+{{- end -}}
+{{- if gt (len $ads) 0 -}}
+<script type="application/json" id="mt-content-ad-pool">{{ $ads | jsonify | safeJS }}</script>
+{{ $js := resources.Get "js/ad-slots.js" | resources.Minify | resources.Fingerprint (.Site.Params.fingerprintAlgorithm | default "sha512") }}
+<script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
+{{- end -}}

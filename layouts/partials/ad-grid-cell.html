@@ -15,10 +15,10 @@
 {{- if gt (len $pool) 0 -}}
   {{- if and (ge $g 6) (eq (mod (sub $g 6) 9) 0) -}}
     {{- $ad := index $pool (mod (div (sub $g 6) 9 | int) (len $pool)) -}}
-<div class="mt-grid-item mt-grid-ad mt-grid-ad--wide">{{ partial "ad-card.html" (dict "ad" $ad "placement" "card") }}</div>
+<div class="mt-grid-item mt-grid-ad mt-grid-ad--wide mt-ad-slot">{{ partial "ad-card.html" (dict "ad" $ad "placement" "card") }}</div>
   {{- end -}}
   {{- if and (ge $g 1) (eq (mod (sub $g 1) 9) 0) -}}
     {{- $ad := index $pool (mod (div (sub $g 1) 9 | int) (len $pool)) -}}
-<div class="mt-grid-item mt-grid-ad mt-grid-ad--narrow">{{ partial "ad-card.html" (dict "ad" $ad "placement" "card") }}</div>
+<div class="mt-grid-item mt-grid-ad mt-grid-ad--narrow mt-ad-slot">{{ partial "ad-card.html" (dict "ad" $ad "placement" "card") }}</div>
   {{- end -}}
 {{- end -}}

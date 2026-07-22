@@ -50,6 +50,7 @@
       {{ end }}
     </div>
     {{- partial "spa-router.html" . -}}
+    {{- partial "ad-slots-boot.html" . -}}
   </body>
   {{ if site.Params.buymeacoffee.globalWidget | default false }}
     <script

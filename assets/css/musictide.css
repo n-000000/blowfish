@@ -978,6 +978,20 @@ body[data-active-cat="agenda"] .mt-article-badge.cat-bg--agenda {
   overflow: hidden;
 }
 
+/* Rotating ad slots — two stacked .mt-ad-card layers crossfade (see assets/js/ad-slots.js).
+   Default layer is visible so a JS-off visitor still sees the server-rendered ad; JS adds
+   .mt-ad-hidden to the outgoing layer each tick. */
+.mt-ad-slot { position: relative; }
+.mt-ad-slot .mt-ad-card {
+  position: absolute;
+  inset: 0;
+  transition: opacity 0.6s ease;
+}
+.mt-ad-slot .mt-ad-card.mt-ad-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
 /* ═══════════════════════════════════════════════════════════
    UNIFIED FOOTER — one <footer>, center column only: the ad band (108px, only
    when .mt-has-ad) stacked over the legal line. The ad band holds one or two ad
