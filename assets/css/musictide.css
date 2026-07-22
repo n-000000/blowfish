@@ -853,16 +853,17 @@ body::after {
   transform: scaleX(0);
 }
 
-/* The X only appears on the active pill — it's the "click to clear" affordance. */
-.mt-nav-categories [data-category-link] .mt-cat-close {
+/* The X only appears on the active link — it's the "click to clear" affordance.
+   Unscoped: covers both the desktop pill and the mobile drawer's underline style. */
+[data-category-link] .mt-cat-close {
   display: none;
   margin-left: 0.4rem;
 }
-.mt-nav-categories [data-category-link] .mt-cat-close svg {
+[data-category-link] .mt-cat-close svg {
   width: 0.7rem;
   height: 0.7rem;
 }
-.mt-nav-categories [data-category-link].mt-nav-active .mt-cat-close {
+[data-category-link].mt-nav-active .mt-cat-close {
   display: inline-flex;
 }
 

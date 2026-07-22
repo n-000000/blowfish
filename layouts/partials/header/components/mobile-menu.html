@@ -31,6 +31,10 @@
                 <span class="mr-2">{{ partial "icon.html" .Pre }}</span>
               {{ end }}
               {{ .Name | markdownify }}
+              {{- /* Shown only when spa-router.js marks this link .mt-nav-active. */ -}}
+              {{ if $hex }}
+                <span class="mt-cat-close" aria-hidden="true">{{ partial "icon.html" "xmark" }}</span>
+              {{ end }}
             </a>
           </li>
         {{ end }}
