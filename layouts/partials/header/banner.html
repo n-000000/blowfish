@@ -50,10 +50,10 @@
     {{- /* Banner controls. One DOM order serves all four states via the theme's
            existing responsive hiding (categories hidden on phone, hamburger hidden
            on desktop):
-             [search|back] · [categories] · [theme] · [hamburger]
+             [search|back] · [theme] · [categories] · [hamburger]
              phone  → search|back · theme · ☰      (categories hidden)
-             desktop→ search|back · categories · theme   (hamburger hidden; back is
-                      desktop-hidden on articles, so it reads categories · theme)
+             desktop→ search|back · theme · categories   (hamburger hidden; back is
+                      desktop-hidden on articles, so it reads theme · categories)
            search↔back swap is CSS-driven by body.mt-article-page (set in baseof).
            Wiring unchanged: #search-button (search.js), #appearance-switcher
            (appearance.js), data-back-to-feed (spa-router). */ -}}
@@ -76,11 +76,8 @@
         {{ partial "icon.html" "chevron-bold" }}
       </a>
 
-      {{- /* Slot 2: horizontal category nav (hidden on phone via CSS) */ -}}
-      {{ partial "header/components/desktop-menu.html" . }}
-
-      {{- /* Slot 3: night/day toggle — right of the categories on desktop, between
-             the search/back slot and the hamburger on phone (by DOM order). */ -}}
+      {{- /* Slot 2: night/day toggle — right of search/back on both breakpoints
+             (by DOM order). */ -}}
       <button
         id="appearance-switcher"
         type="button"
@@ -89,6 +86,9 @@
         <div class="dark:hidden">{{ partial "icon.html" "moon" }}</div>
         <div class="hidden dark:block">{{ partial "icon.html" "sun" }}</div>
       </button>
+
+      {{- /* Slot 3: horizontal category nav (hidden on phone via CSS) */ -}}
+      {{ partial "header/components/desktop-menu.html" . }}
 
       {{- /* Slot 4: hamburger toggles the drawer (hidden on desktop via CSS) */ -}}
       {{- if or .Site.Menus.main .Site.Menus.subnavigation -}}

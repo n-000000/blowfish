@@ -93,6 +93,9 @@
           {{ .Name | markdownify }}
         </span>
       {{ end }}
+      {{- /* Shown only when spa-router.js marks this link .mt-nav-active (it's a
+             toggle: clicking the active category again clears the filter). */ -}}
+      <span class="mt-cat-close" aria-hidden="true">{{ partial "icon.html" "xmark" }}</span>
     </a>
   {{ end }}
 {{ end }}

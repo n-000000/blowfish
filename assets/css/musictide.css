@@ -853,6 +853,19 @@ body::after {
   transform: scaleX(0);
 }
 
+/* The X only appears on the active pill — it's the "click to clear" affordance. */
+.mt-nav-categories [data-category-link] .mt-cat-close {
+  display: none;
+  margin-left: 0.4rem;
+}
+.mt-nav-categories [data-category-link] .mt-cat-close svg {
+  width: 0.7rem;
+  height: 0.7rem;
+}
+.mt-nav-categories [data-category-link].mt-nav-active .mt-cat-close {
+  display: inline-flex;
+}
+
 /* Filtered (category) feed: each GRID card shows ONLY the active category's
    badge — sibling badges hide, so a multi-category article reads as the one you
    filtered by, and the active category stays on-screen as a persistent
